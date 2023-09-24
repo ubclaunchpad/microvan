@@ -1,23 +1,17 @@
-/** @type {import('tailwindcss').Config} */
-
-import defaultTheme from "tailwindcss/defaultTheme";
-
-module.exports = {
-  content: ["src/**/*.{js,jsx,ts,tsx}"],
+const config = {
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
   theme: {
-    screens: {
-      desktop: { max: "1440px" },
-      basic: { max: "1280px" },
-      laptop: { max: "1024px" },
-      tablet: { max: "768px" },
-      medium: { max: "640px" },
-      mobile: { max: "430px" },
-    },
     extend: {
-      fontFamily: {
-        sans: ["", ...defaultTheme.fontFamily.sans], // default font style
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+        "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
     },
   },
   plugins: [],
 };
+export default config;
