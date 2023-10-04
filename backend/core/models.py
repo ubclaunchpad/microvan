@@ -4,7 +4,7 @@ from django.db import models
 from django.utils import timezone
 
 
-class AuditModel(models.Model):
+class MainModel(models.Model):
     """
         The skeleton for all models, will provide three unique fields
         that every model should have. All models should extend this. 
