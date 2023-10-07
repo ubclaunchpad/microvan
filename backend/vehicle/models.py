@@ -5,6 +5,9 @@ class Brand(MainModel):
     name = models.CharField(max_length=150, null=False)
     
 
+class VehicleType(MainModel):
+    name = models.CharField(max_length=150, null=False)
+    
 class Vehicle(MainModel):
     date = models.DateTimeField(editable=False)
     asking_price = models.IntegerField(null=False)
@@ -13,6 +16,4 @@ class Vehicle(MainModel):
     auction = models.ForeignKey("auction.Auction", on_delete=models.PROTECT)
     unicode_id = models.IntegerField()
     model_number = models.IntegerField()
-
-class VehicleType(MainModel):
-    name = models.CharField(max_length=150, null=False)
+    vehicle_type = models.ForeignKey(VehicleType, on_delete=models.PROTECT)
