@@ -9,7 +9,7 @@ on:
 
 jobs:
   python:
-    uses: backend/python.yml
+    uses: ubclaunchpad/microvan/.github/workflows/backend/python.yml
     secrets:
       django_secret: ${{ secrets.DJANGO_SECRET }}
 
