@@ -14,9 +14,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Set up Python ${{ inputs.python_version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ inputs.python_version }}
 
@@ -25,7 +26,7 @@ jobs:
           python -m pip install --upgrade pipenv wheel
 
       - id: cache-pipenv
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.local/share/virtualenvs
           key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
@@ -40,4 +41,3 @@ jobs:
           SECRET_KEY: ${{ secrets.django_secret }}
         run: |
           pipenv run python manage.py check
-

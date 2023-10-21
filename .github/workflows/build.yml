@@ -2,9 +2,9 @@ name: Build Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -12,11 +12,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out code
-      uses: actions/checkout@v4
+      - name: Check out code
+        uses: actions/checkout@v4
 
-    - name: Run Python workflow
-      uses: ubclaunchpad/microvan/.github/workflows/backend/python.yml@main
-      with:
-        django_secret: ${{ secrets.DJANGO_SECRET }}
-
+      - name: Run Python workflow
+        uses: ./.github/workflows/backend/python.yml
+        with:
+          django_secret: ${{ secrets.DJANGO_SECRET }}
