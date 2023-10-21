@@ -1,25 +1,22 @@
-name: Build Python and Django
+name: Build Pipeline for Python and Django
 
 on:
-  workflow_call:
-    inputs:
-      python_version:
-        description: 'Python version'
-        type: string
-        default: '3.10'
-    secrets:
-      django_secret:
-        required: true
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up Python ${{ inputs.python_version }}
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: ${{ inputs.python_version }}
+          python-version: '3.10'
 
       - name: Install pipenv
         run: |
@@ -38,6 +35,6 @@ jobs:
 
       - name: Makes sure it runs
         env:
-          SECRET_KEY: ${{ secrets.django_secret }}
+          SECRET_KEY: ${{ secrets.DJANGO_SECRET }}
         run: |
           pipenv run python manage.py check
