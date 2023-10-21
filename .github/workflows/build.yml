@@ -1,0 +1,15 @@
+name: Build Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  python:
+    uses: backend/python.yml
+    secrets:
+      django_secret: ${{ secrets.DJANGO_SECRET }}
+
