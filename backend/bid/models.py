@@ -1,8 +1,9 @@
 from django.db import models
-from django.db import models
+
 from core.models import MainModel
 from user.models import User
 from vehicle.models import Vehicle
+
 
 class Bid(MainModel):
     amount = models.IntegerField(null=False)

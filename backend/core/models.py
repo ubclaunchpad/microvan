@@ -6,9 +6,10 @@ from django.utils import timezone
 
 class MainModel(models.Model):
     """
-        The skeleton for all models, will provide three unique fields
-        that every model should have. All models should extend this. 
+    The skeleton for all models, will provide three unique fields
+    that every model should have. All models should extend this.
     """
+
     identifier = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField(editable=False)
     updated_at = models.DateTimeField()
@@ -19,7 +20,7 @@ class MainModel(models.Model):
 
     def save(self, *args, **kwargs):
         date = timezone.now()
-        if not self.id and self.created_at is None:  
+        if not self.id and self.created_at is None:
             self.created_at = date
         self.updated_at = date
 

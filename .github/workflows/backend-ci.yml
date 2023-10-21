@@ -37,8 +37,16 @@ jobs:
         run: |
           pipenv install --deploy --dev
 
+      - name: Run linting
+        run: |
+          pipenv run flake8
+      
       - name: Makes sure it runs
         env:
           SECRET_KEY: ${{ secrets.DJANGO_SECRET }}
         run: |
           pipenv run python manage.py check
+
+      - name: Run tests
+        run: |
+          pipenv run python manage.py test
