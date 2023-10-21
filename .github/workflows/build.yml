@@ -8,8 +8,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  python:
-    uses: ubclaunchpad/microvan/.github/workflows/backend/python.yml
-    secrets:
-      django_secret: ${{ secrets.DJANGO_SECRET }}
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: Run Python workflow
+      uses: ubclaunchpad/microvan/.github/workflows/backend/python.yml@main
+      with:
+        django_secret: ${{ secrets.DJANGO_SECRET }}
 
