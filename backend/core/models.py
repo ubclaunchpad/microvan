@@ -10,9 +10,11 @@ class MainModel(models.Model):
     that every model should have. All models should extend this.
     """
 
-    identifier = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
-    created_at = models.DateTimeField(editable=False)
-    updated_at = models.DateTimeField()
+    id = models.UUIDField(
+        unique=True, default=uuid.uuid4, editable=False, primary_key=True
+    )
+    created_at = models.DateTimeField(editable=False, auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         abstract = True
