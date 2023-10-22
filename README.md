@@ -5,7 +5,7 @@
   <a href="https://github.com/ubclaunchpad/microvan">
     <img src="frontend/public/LogoIcon.png" alt="Logo" height="100" resize>
   </a>
-  <h3 align="center">Labby</h3>
+  <h3 align="center">Microvan Inc.</h3>
 </p>
 
 
@@ -34,14 +34,14 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-BC Cancer Lab Management System
+Microvan Inc. focuses on the importation, trade and sale of second-hand construction and industrial machinery, trucks and vehicles in the Philippines. Previously, Microvan Inc. would do in-person auctions every two months. However, due to the pandemic, many of their competitors have shifted to online auctions and Microvan Inc. needs a new auction site to ensure they aren't left behind.
 
 
 ### Built With
 
-* React JS - Frontend
-* Express JS - Backend
-* MySQL - Database
+* Next JS - Frontend
+* Django JS - Backend
+* PostgreSQL - Database
 * AWS - Hosting
 
 
@@ -52,24 +52,23 @@ To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
-* yarn
+* [NodeJS/npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+* [Python/pip](https://packaging.python.org/en/latest/tutorials/installing-packages/)
+* [pipenv](https://pipenv.pypa.io/en/latest/installation/)
 
 ### Installation
-#### Express Backend
+#### Django Backend
 
 1. `cd` into backend folder
-2. run `yarn start`
+2. run `pipenv install` to install dependencies
+3. run `pipenv shell` to enter virtual environment
+4. run `pipenv run start`
 
-Backend will be exposed on port 3000
-
-#### React Frontend
+#### NextJS Frontend
 
 1. `cd` into frontend folder
-2. run `yarn` to install dependencies
-3. run `yarn start`
-
-#### Docker Setup
-1. run `docker-compose up --build -d`
+2. run `npm install` to install dependencies
+3. run `npm start`
 
 <!-- DEPLOYMENT -->
 ## Deployment
