@@ -14,5 +14,7 @@ class Auction(MainModel):
 
     def __str__(self):
         return (
-            self.name if self.name is None else "Auction at {start_date} to {end_date}"
+            self.name
+            if self.name is not None
+            else "Auction at {start_date} to {end_date}"
         )
