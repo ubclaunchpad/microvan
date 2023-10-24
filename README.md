@@ -60,9 +60,10 @@ To get a local copy up and running follow these simple steps.
 #### Django Backend
 
 1. `cd` into backend folder
-2. run `pipenv install` to install dependencies
-3. run `pipenv shell` to enter virtual environment
-4. run `pipenv run start`
+2. Make a copy of sample.env, rename it to .env, and fill out the environment variables.
+3. run `pipenv install` to install dependencies
+4. run `pipenv shell` to enter virtual environment
+5. run `pipenv run start`
 
 #### NextJS Frontend
 
