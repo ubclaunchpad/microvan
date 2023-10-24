@@ -1,6 +1,6 @@
-from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.db import models
 
 from core.models import MainModel
 from user.models import Bidder
@@ -10,8 +10,9 @@ class Bid(MainModel):
     """
     created_at field on MainModel will be used to determine when the bid was
     """
+
     amount = models.IntegerField(null=False)
     bidder = models.ForeignKey(Bidder, on_delete=models.PROTECT)
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     object_id = models.UUIDField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey("content_type", "object_id")

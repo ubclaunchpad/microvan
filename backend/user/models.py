@@ -1,7 +1,9 @@
 import random
+
 from django.db import models
 
 from core.models import MainModel
+
 
 # Create your models here.
 class Admin(MainModel):
@@ -42,4 +44,3 @@ class Bidder(MainModel):
 
     def __str__(self):
         return f"Bidder: {self.first_name} {self.last_name}"
-    

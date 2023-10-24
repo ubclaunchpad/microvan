@@ -1,6 +1,6 @@
-from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.db import models
 
 from core.models import MainModel
 
@@ -49,8 +49,12 @@ class Equipment(MainModel):
     differentials_condition = models.CharField(max_length=100, blank=True, null=True)
     brake_condition = models.CharField(max_length=100, blank=True, null=True)
     electrical_condition = models.CharField(max_length=100, blank=True, null=True)
-    hydraulic_cylindar_condition = models.CharField(max_length=100, blank=True, null=True)
-    hydraulic_hoses_and_chrome_condition = models.CharField(max_length=100, blank=True, null=True)
+    hydraulic_cylindar_condition = models.CharField(
+        max_length=100, blank=True, null=True
+    )
+    hydraulic_hoses_and_chrome_condition = models.CharField(
+        max_length=100, blank=True, null=True
+    )
     chassis_condition = models.CharField(max_length=100, blank=True, null=True)
     body_condition = models.CharField(max_length=100, blank=True, null=True)
 
@@ -72,5 +76,4 @@ class UnitImage(MainModel):
     image_url = models.CharField(max_length=500, null=False)
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     object_id = models.UUIDField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-
+    content_object = GenericForeignKey("content_type", "object_id")
