@@ -62,6 +62,7 @@ def update_user_profile(request, email, role):
             bidder.save()
             return Response({"message": "Bidder has been updated"})
         except Bidder.DoesNotExist:
-            return Response({"error": "Bidder not found"}, status=400) 
+            return Response({"error": "Bidder not found"}, status=400)
     else:
         return Response({"error": "Invalid role"}, status=400)
+    
