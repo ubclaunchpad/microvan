@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Admin, Bidder
 
+
 @api_view(['POST'])
 def set_user_role(request):
     email = request.data.get("email")
@@ -33,7 +34,8 @@ def set_user_role(request):
             bidder.is_blacklisted = request.data.get("is_blacklisted")
             bidder.save()
 
-    return Response({"message": f"User has been converted to {role} and fields have been populated"})
+    return Response({"message": f"User converted to {role}, fields populated"})
+
 
 @api_view(['PUT'])
 def update_user_profile(request, email, role):
@@ -48,7 +50,6 @@ def update_user_profile(request, email, role):
             return Response({"message": "Admin has been updated"})
         except Admin.DoesNotExist:
             return Response({"error": "Admin not found"}, status=400)
-        
     elif role == "bidder":
         try:
             bidder = Bidder.objects.get(email=email)
@@ -61,8 +62,6 @@ def update_user_profile(request, email, role):
             bidder.save()
             return Response({"message": "Bidder has been updated"})
         except Bidder.DoesNotExist:
-            return Response({"error": "Bidder not found"}, status=400)
-        
+            return Response({"error": "Bidder not found"}, status=400) 
     else:
         return Response({"error": "Invalid role"}, status=400)
-
