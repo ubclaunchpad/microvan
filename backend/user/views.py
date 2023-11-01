@@ -65,4 +65,3 @@ def update_user_profile(request, email, role):
             return Response({"error": "Bidder not found"}, status=400)
     else:
         return Response({"error": "Invalid role"}, status=400)
-    
