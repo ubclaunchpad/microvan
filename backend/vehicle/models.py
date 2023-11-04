@@ -49,7 +49,7 @@ class Equipment(MainModel):
     differentials_condition = models.CharField(max_length=100, blank=True, null=True)
     brake_condition = models.CharField(max_length=100, blank=True, null=True)
     electrical_condition = models.CharField(max_length=100, blank=True, null=True)
-    hydraulic_cylindar_condition = models.CharField(
+    hydraulic_cylinder_condition = models.CharField(
         max_length=100, blank=True, null=True
     )
     hydraulic_hoses_and_chrome_condition = models.CharField(
