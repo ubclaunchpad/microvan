@@ -6,7 +6,7 @@ from .models import Vehicle
 from .serializers import VehicleSerializer
 
 
-class VehicleApiView(APIView):
+class VehicleAPIView(APIView):
     serializer_class = VehicleSerializer
     def get(self, request, *args, **kwargs):
         """
