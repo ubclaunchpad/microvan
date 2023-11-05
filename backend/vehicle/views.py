@@ -2,9 +2,12 @@ from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Vehicle
+from .models import Vehicle, Brand, Type
 from .serializers import VehicleSerializer
-
+"""
+    Documentation for generic views:
+    https://www.django-rest-framework.org/api-guide/generic-views/#genericapiview
+"""
 
 class VehicleAPIView(APIView):
     serializer_class = VehicleSerializer
@@ -12,8 +15,8 @@ class VehicleAPIView(APIView):
         """
         Get specific vehicle
         """
-        identifier = request.data.get("identifier")
-        vehicle = Vehicle.objects.get(identifier=identifier)
+        identifier = request.data.get("id")
+        vehicle = Vehicle.objects.get(id=identifier)
         serialized_data = self.serializer_class(vehicle)
         try:
             return Response(serialized_data.data, status=status.HTTP_200_OK)
@@ -21,16 +24,31 @@ class VehicleAPIView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
     
     def post(self, request, *args, **kwargs):
-        data = request.data.get("data")
-        unicode_id = data.get("unicode_id")
-        vehicle = Vehicle.objects.create(unicode_id=unicode_id)
+        data = request.data
+        #unicode_id = data.get("unicode_id")
+        brand_id = data.get("brand")
+        type_id = data.get("type")
+        data.pop("brand")
+        data.pop("type")
+        brand = Brand.objects.get(id=brand_id)
+        type = Type.objects.get(id=type_id)
+        vehicle = Vehicle.objects.create(**data, brand=brand, vehicle_type=type)
         serialized_data = self.serializer_class(vehicle)
         return Response(serialized_data.data, status=status.HTTP_200_OK)
-"""
-class UpdateVehicle(generics.UpdateAPIView):
-    serializer_class = VehicleSerializer
     
-    def patch(self, request):
+class VehicleUpdateAPIView(generics.UpdateAPIView):
+    """
+        Endpoint for updating a vehicle
+    """
+    queryset = Vehicle.objects.all()  # Queryset for your model
+    serializer_class = VehicleSerializer
+    lookup_field = 'id' 
 
-"""
+class VehicleDeleteAPIView(generics.DestroyAPIView):
+    """
+        Endpoint for deleting a vehicle
+    """
+    queryset = Vehicle.objects.all()  # Queryset for your model
+    serializer_class = VehicleSerializer
+    lookup_field = 'id' 
 
