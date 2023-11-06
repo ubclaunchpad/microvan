@@ -4,10 +4,6 @@ from rest_framework.views import APIView
 
 from .models import Vehicle, Brand, Type
 from .serializers import VehicleSerializer
-"""
-    Documentation for generic views:
-    https://www.django-rest-framework.org/api-guide/generic-views/#genericapiview
-"""
 
 class VehicleAPIView(APIView):
     serializer_class = VehicleSerializer
@@ -35,20 +31,3 @@ class VehicleAPIView(APIView):
         vehicle = Vehicle.objects.create(**data, brand=brand, vehicle_type=type)
         serialized_data = self.serializer_class(vehicle)
         return Response(serialized_data.data, status=status.HTTP_200_OK)
-    
-class VehicleUpdateAPIView(generics.UpdateAPIView):
-    """
-        Endpoint for updating a vehicle
-    """
-    queryset = Vehicle.objects.all()  # Queryset for your model
-    serializer_class = VehicleSerializer
-    lookup_field = 'id' 
-
-class VehicleDeleteAPIView(generics.DestroyAPIView):
-    """
-        Endpoint for deleting a vehicle
-    """
-    queryset = Vehicle.objects.all()  # Queryset for your model
-    serializer_class = VehicleSerializer
-    lookup_field = 'id' 
-
