@@ -8,6 +8,8 @@ django = ">=4.2.6"
 djangorestframework = ">=3.14.0"
 django-environ = ">=0.11.2"
 psycopg2 = ">=2.9.9"
+boto3 = "*"
+django-storages = "*"
 
 [dev-packages]
 flake8 = ">=6.1.0"
