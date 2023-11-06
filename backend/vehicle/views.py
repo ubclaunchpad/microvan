@@ -5,8 +5,10 @@ from rest_framework.views import APIView
 from .models import Vehicle, Brand, Type
 from .serializers import VehicleSerializer
 
+
 class VehicleAPIView(APIView):
     serializer_class = VehicleSerializer
+
     def get(self, request, *args, **kwargs):
         """
         Get specific vehicle
@@ -18,10 +20,9 @@ class VehicleAPIView(APIView):
             return Response(serialized_data.data, status=status.HTTP_200_OK)
         except vehicle.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-    
+
     def post(self, request, *args, **kwargs):
         data = request.data
-        #unicode_id = data.get("unicode_id")
         brand_id = data.get("brand")
         type_id = data.get("type")
         data.pop("brand")
