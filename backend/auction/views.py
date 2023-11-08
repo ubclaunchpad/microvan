@@ -1,9 +1,9 @@
 from datetime import datetime
 
 from rest_framework import status
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import get_object_or_404
 
 from .models import Auction
 from .serializers import AuctionSerializer
@@ -68,6 +68,7 @@ class AuctionDetailApiView(APIView):
     """
     Retrieve, update or delete an auction instance.
     """
+
     def get(self, request, auction_id, format=None):
         auction = get_object_or_404(Auction, id=auction_id)
         serializer = AuctionSerializer(auction)
