@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from rest_framework import status
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -8,7 +9,6 @@ from .models import Auction
 from .serializers import AuctionSerializer
 
 
-# Create your views here.
 class AuctionListApiView(APIView):
     def get(self, request, *args, **kwargs):
         """
@@ -62,3 +62,27 @@ class AuctionListApiView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AuctionDetailApiView(APIView):
+    """
+    Retrieve, update or delete an auction instance.
+    """
+
+    def get(self, request, auction_id, format=None):
+        auction = get_object_or_404(Auction, id=auction_id)
+        serializer = AuctionSerializer(auction)
+        return Response(serializer.data)
+
+    def put(self, request, auction_id, format=None):
+        auction = get_object_or_404(Auction, id=auction_id)
+        serializer = AuctionSerializer(auction, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, auction_id, format=None):
+        auction = get_object_or_404(Auction, id=auction_id)
+        auction.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
