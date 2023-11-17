@@ -60,9 +60,12 @@ class VehicleDetailApiView(APIView):
         Get specific vehicle
         """
         try:
-            identifier = request.data.get("id")
-            vehicle = Vehicle.objects.get(id=identifier)
-            serialized_data = self.serializer_class(vehicle)
-            return Response(serialized_data.data, status=status.HTTP_200_OK)
+            vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+            serializer = VehicleSerializer(vehicle)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+            # identifier = request.data.get("id")
+            # vehicle = Vehicle.objects.get(id=identifier)
+            # serialized_data = self.serializer_class(vehicle)
+            # return Response(serialized_data.data, status=status.HTTP_200_OK)
         except vehicle.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
