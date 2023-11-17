@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Brand, Type, Vehicle, Equipment, Supplier, Trailer, UnitImage
-from .serializers import BrandSerializer, TypeSerializer, VehicleSerializer, EquipmentSerializer, SupplierSerializer, TrailerSerializer, UnitImageSerializer
+from .serializers import VehicleSerializer
 
 
 # Create your views here.
@@ -48,7 +48,8 @@ class VehicleListApiView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+
 class VehicleDetailApiView(APIView):
     serializer_class = VehicleSerializer
     """
