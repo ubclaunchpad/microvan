@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -12,7 +12,7 @@ from .serializers import BrandSerializer, TypeSerializer, VehicleSerializer, Equ
 class VehicleListApiView(APIView):
     def get(self, request, *args, **kwargs):
         """
-        Get all auctions
+        Get all vehicles
         """
         vehicles = Vehicle.objects.all()
         serializer = VehicleSerializer(vehicles, many=True)
@@ -48,3 +48,21 @@ class VehicleListApiView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class VehicleDetailApiView(APIView):
+    serializer_class = VehicleSerializer
+    """
+    Retrieve, update or delete a vehicle instance.
+    """
+
+    def get(self, request, vehicle_id, *args, **kwargs):
+        """
+        Get specific vehicle
+        """
+        try:
+            identifier = request.data.get("id")
+            vehicle = Vehicle.objects.get(id=identifier)
+            serialized_data = self.serializer_class(vehicle)
+            return Response(serialized_data.data, status=status.HTTP_200_OK)
+        except vehicle.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
