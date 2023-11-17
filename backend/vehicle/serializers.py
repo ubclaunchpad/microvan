@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from .models import Brand, Type, Equipment, Vehicle, Supplier, Trailer, UnitImage
 
 
@@ -37,5 +36,3 @@ class UnitImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = UnitImage
         fields = ["id", "image_url", "content_type", "object_id", "content_object"]
-
-
