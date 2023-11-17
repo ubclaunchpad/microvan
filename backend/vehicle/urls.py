@@ -1,8 +1,9 @@
 from django.contrib import admin
 from django.urls import include, path
 
-from vehicle import views
+from .views import VehicleDetailApiView, VehicleListApiView
 
 urlpatterns = [
-    path("", views.VehicleAPIView.as_view(), name="vehicle"),
+    path("", VehicleListApiView.as_view(), name="vehicle"),
+    path("<uuid:vehicle_id>/", VehicleDetailApiView.as_view(), name="vehicle_detail"),
 ]
