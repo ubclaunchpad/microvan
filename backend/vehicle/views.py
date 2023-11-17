@@ -1,11 +1,14 @@
 from datetime import datetime
 
-from rest_framework import status, generics
+from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Brand, Type, Vehicle, Equipment, Supplier, Trailer, UnitImage
-from .serializers import BrandSerializer, TypeSerializer, VehicleSerializer, EquipmentSerializer, SupplierSerializer, TrailerSerializer, UnitImageSerializer
+from .models import (
+    Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle)
+from .serializers import (
+    BrandSerializer, EquipmentSerializer, SupplierSerializer,
+    TrailerSerializer, TypeSerializer, UnitImageSerializer, VehicleSerializer)
 
 
 # Create your views here.
@@ -38,7 +41,9 @@ class VehicleListApiView(APIView):
             "differentials_condition": request.data.get("differentials_condition"),
             "brake_condition": request.data.get("brake_condition"),
             "electrical_condition": request.data.get("electrical_condition"),
-            "operating_system_condition": request.data.get("operating_system_condition"),
+            "operating_system_condition": request.data.get(
+                "operating_system_condition"
+            ),
             "chassis_condition": request.data.get("chassis_condition"),
             "body_condition": request.data.get("body_condition"),
         }
@@ -48,7 +53,8 @@ class VehicleListApiView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+
 class VehicleDetailApiView(APIView):
     serializer_class = VehicleSerializer
     """
