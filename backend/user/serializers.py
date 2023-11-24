@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Bidder
+from .models import Admin, Bidder
 
 
 class BidderSerializer(serializers.ModelSerializer):
@@ -19,3 +19,9 @@ class BidderBlacklistedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bidder
         fields = ["id", "is_blacklisted"]
+
+
+class AdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Admin
+        fields = "__all__"

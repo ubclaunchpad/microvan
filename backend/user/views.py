@@ -3,9 +3,10 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Bidder
+from .models import Admin, Bidder
 from .serializers import (
-    BidderBlacklistedSerializer, BidderSerializer, BidderVerifiedSerializer)
+    AdminSerializer, BidderBlacklistedSerializer, BidderSerializer,
+    BidderVerifiedSerializer)
 
 
 class BidderListApiView(APIView):
@@ -96,3 +97,54 @@ class BidderBlacklistApiView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdminListApiView(APIView):
+    def get(self, request):
+        """
+        Return a list of all admins.
+        """
+        admins = Admin.objects.all()
+        serializer = AdminSerializer(admins, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        """
+        Create a new admin.
+        """
+        serializer = AdminSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdminDetailApiView(APIView):
+    def get(self, request, admin_id):
+        """
+        Return a single admin.
+        """
+        admin = get_object_or_404(Admin, id=admin_id)
+        serializer = AdminSerializer(admin)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, admin_id):
+        """
+        Update a single admin.
+        """
+        admin = get_object_or_404(Admin, id=admin_id)
+        serializer = AdminSerializer(admin, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, admin_id):
+        """
+        Delete a single admin.
+        """
+        admin = get_object_or_404(Admin, id=admin_id)
+        admin.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
