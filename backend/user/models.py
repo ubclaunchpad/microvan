@@ -8,7 +8,6 @@ from core.models import MainModel
 # Create your models here.
 class Admin(MainModel):
     email = models.CharField(max_length=150, null=False)
-    password = models.CharField(max_length=50, null=False)
     first_name = models.CharField(max_length=150, null=False)
     last_name = models.CharField(max_length=150, null=False)
     permission_level = models.IntegerField(default=0)
@@ -19,11 +18,10 @@ class Admin(MainModel):
 
 class Bidder(MainModel):
     email = models.CharField(max_length=150, null=False)
-    password = models.CharField(max_length=50, null=False)
     first_name = models.CharField(max_length=150, null=False)
     last_name = models.CharField(max_length=150, null=False)
-    company_name = models.CharField(max_length=150)
-    bidder_number = models.IntegerField(unique=True, null=False)
+    company_name = models.CharField(max_length=150, blank=True, null=True)
+    bidder_number = models.IntegerField(unique=True, blank=True, null=False)
     is_verified = models.BooleanField(default=False)
     is_blacklisted = models.BooleanField(default=False)
 
