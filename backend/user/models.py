@@ -35,10 +35,11 @@ class Bidder(MainModel):
 
     def generate_unique_bidder_number(self):
         # Generate an 8-digit number and check if it's unique
-        while True:
+        for _ in range(99999999):
             bidder_number = random.randint(10000000, 99999999)
             if not Bidder.objects.filter(bidder_number=bidder_number).exists():
                 return bidder_number
+        raise Exception("Could not generate unique bidder number")
 
     def __str__(self):
         return f"Bidder: {self.first_name} {self.last_name}"
