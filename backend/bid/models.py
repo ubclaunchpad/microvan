@@ -13,6 +13,7 @@ class Bid(MainModel):
 
     amount = models.IntegerField(null=False)
     bidder = models.ForeignKey(Bidder, on_delete=models.PROTECT)
+    auction = models.ForeignKey("auction.Auction", on_delete=models.PROTECT)
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     object_id = models.UUIDField()
     content_object = GenericForeignKey("content_type", "object_id")
