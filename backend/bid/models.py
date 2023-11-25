@@ -21,7 +21,7 @@ class Bid(MainModel):
 
     def clean(self):
         # Restrict content_type to specific models
-        valid_models = ['vehicle', 'equipment', 'trailer']
+        valid_models = ["vehicle", "equipment", "trailer"]
         if self.content_type.model not in valid_models:
             raise ValidationError(f"ContentType must be one of {valid_models}")
 

@@ -81,7 +81,7 @@ class UnitImage(MainModel):
 
     def clean(self):
         # Restrict content_type to specific models
-        valid_models = ['vehicle', 'equipment', 'trailer']
+        valid_models = ["vehicle", "equipment", "trailer"]
         if self.content_type.model not in valid_models:
             raise ValidationError(f"ContentType must be one of {valid_models}")
 
@@ -98,11 +98,11 @@ class SavedUnits(MainModel):
     content_object = GenericForeignKey("content_type", "object_id")
 
     class Meta:
-        unique_together = ('auction_id', 'bidder_id', 'object_id')
+        unique_together = ("auction_id", "bidder_id", "object_id")
 
     def clean(self):
         # Restrict content_type to specific models
-        valid_models = ['vehicle', 'equipment', 'trailer']
+        valid_models = ["vehicle", "equipment", "trailer"]
         if self.content_type.model not in valid_models:
             raise ValidationError(f"ContentType must be one of {valid_models}")
 
