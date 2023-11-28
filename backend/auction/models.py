@@ -21,7 +21,7 @@ class Auction(MainModel):
         return (
             self.name
             if self.name is not None
-            else "Auction at {start_date} to {end_date}"
+            else f"Auction from {self.start_date} to {self.end_date}"
         )
 
 
