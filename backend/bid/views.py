@@ -18,35 +18,10 @@ class BidListApiView(APIView):
         bids = Bid.objects.all()
         serializer = BidSerializer(bids, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-class BidDetailApiView(APIView):
-    """
-    Retrieve, update or delete an bid instance.
-    """
-
-    def get(self, request, bid_id, format=None):
-        bid = get_object_or_404(Bid, id=bid_id)
-        serializer = BidSerializer(bid)
-        return Response(serializer.data)
-
-    def put(self, request, bid_id, format=None):
-        bid = get_object_or_404(Bid, id=bid_id)
-        serializer = BidSerializer(bid, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, bid_id, format=None):
-        bid = get_object_or_404(Bid, id=bid_id)
-        bid.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-class MakeBidApiView(APIView):
+    
     """
     API endpoint to make a bid on an object
     """
-
     def post(self, request, *args, **kwargs):
         data = request.data
         amount = data.get('amount') 
@@ -75,3 +50,27 @@ class MakeBidApiView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class BidDetailApiView(APIView):
+    """
+    Retrieve, update or delete an bid instance.
+    """
+
+    def get(self, request, bid_id, format=None):
+        bid = get_object_or_404(Bid, id=bid_id)
+        serializer = BidSerializer(bid)
+        return Response(serializer.data)
+
+    def put(self, request, bid_id, format=None):
+        bid = get_object_or_404(Bid, id=bid_id)
+        serializer = BidSerializer(bid, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, bid_id, format=None):
+        bid = get_object_or_404(Bid, id=bid_id)
+        bid.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    

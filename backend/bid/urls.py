@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import include, path
 
-from .views import BidDetailApiView, BidListApiView, MakeBidApiView
+from .views import BidDetailApiView, BidListApiView
 
 urlpatterns = [
     path("", BidListApiView.as_view(), name="bid_list"),
