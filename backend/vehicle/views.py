@@ -5,11 +5,8 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import (
-    Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle)
-from .serializers import (
-    BrandSerializer, EquipmentSerializer, SupplierSerializer,
-    TrailerSerializer, TypeSerializer, UnitImageSerializer, VehicleSerializer)
+from .models import Vehicle
+from .serializers import VehicleSerializer
 
 
 # Create your views here.
@@ -70,9 +67,5 @@ class VehicleDetailApiView(APIView):
             vehicle = get_object_or_404(Vehicle, id=vehicle_id)
             serializer = VehicleSerializer(vehicle)
             return Response(serializer.data, status=status.HTTP_200_OK)
-            # identifier = request.data.get("id")
-            # vehicle = Vehicle.objects.get(id=identifier)
-            # serialized_data = self.serializer_class(vehicle)
-            # return Response(serialized_data.data, status=status.HTTP_200_OK)
         except vehicle.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
