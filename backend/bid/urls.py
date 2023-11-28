@@ -1,4 +1,10 @@
 from django.contrib import admin
 from django.urls import include, path
 
-urlpatterns = []
+from .views import BidDetailApiView, BidListApiView, MakeBidApiView
+
+urlpatterns = [
+    path("", BidListApiView.as_view(), name="bid_list"),
+    path("<uuid:bid_id>/", BidDetailApiView.as_view(), name="bid_detail"),
+]
+
