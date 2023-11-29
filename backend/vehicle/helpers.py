@@ -20,12 +20,12 @@ def infinite_filter(request):
 
 
 def has_more_data(request):
-    o = request.GET.get("o")
-    l = request.GET.get("l")
-    if o:
-        return Vehicle.objects.all().count() > int(o)
+    offset = request.GET.get("o")
+    limit = request.GET.get("l")
+    if offset:
+        return Vehicle.objects.all().count() > (int(offset) + int(limit))
 
-    elif l:
-        return Vehicle.objects.all().count() > int(l)
+    elif limit:
+        return Vehicle.objects.all().count() > int(limit)
     else:
         return False

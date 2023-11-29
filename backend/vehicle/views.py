@@ -19,6 +19,7 @@ from .serializers import (
 
 # Create your views here.
 class VehicleListApiView(APIView):
+    serializer_class = VehicleSerializer
     def get(self, request, *args, **kwargs):
         """
         Get all vehicles
@@ -31,34 +32,17 @@ class VehicleListApiView(APIView):
         """
         Create the Vehicle with given vehicle data
         """
-        data = {
-            "unicode_id": request.data.get("unicode_id"),
-            "model_number": request.data.get("model_number"),
-            "chassis_number": request.data.get("chassis_number"),
-            "description": request.data.get("description"),
-            "brand": request.data.get("brand"),
-            "vehicle_type": request.data.get("vehicle_type"),
-            "minimum_price": request.data.get("minimum_price"),
-            "is_sold": request.data.get("is_sold"),
-            "remarks": request.data.get("remarks"),
-            "classification_type": request.data.get("classification_type"),
-            "engine_condition": request.data.get("engine_condition"),
-            "transmission_condition": request.data.get("tansmission_condition"),
-            "differentials_condition": request.data.get("differentials_condition"),
-            "brake_condition": request.data.get("brake_condition"),
-            "electrical_condition": request.data.get("electrical_condition"),
-            "operating_system_condition": request.data.get(
-                "operating_system_condition"
-            ),
-            "chassis_condition": request.data.get("chassis_condition"),
-            "body_condition": request.data.get("body_condition"),
-        }
-        serializer = VehicleSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        data = request.data.copy()
+        brand_id = data.pop("brand", None)
+        type_id = data.pop("type", None)
+        # Handling the possibility that brand or type IDs might not exist
+        brand = get_object_or_404(Brand, id=brand_id) if brand_id else None
+        vehicle_type = get_object_or_404(Type, id=type_id) if type_id else None
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        vehicle = Vehicle.objects.create(brand=brand, vehicle_type=vehicle_type, **data)
+        # Use the serializer class's data directly
+        serialized_data = self.serializer_class(vehicle)
+        return Response(serialized_data.data, status=status.HTTP_201_CREATED)
 
 
 class VehicleDetailApiView(APIView):
@@ -83,7 +67,7 @@ class VehicleDetailApiView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-class VehicleListViewset(viewsets.ModelViewSet):
+class VehicleFilterList(APIView):
     """
     Get list of vehicles based off of filter
     Takes limit + offset from url
@@ -93,7 +77,7 @@ class VehicleListViewset(viewsets.ModelViewSet):
         queryset = infinite_filter(self.request)
         return queryset
 
-    def list(self, request):
+    def get(self, request):
         url_parameter = request.GET.get("p")
         if url_parameter:
             vehicles = self.get_queryset()
