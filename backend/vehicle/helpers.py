@@ -2,7 +2,7 @@ from .models import Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicl
 
 
 def infinite_filter(request):
-    url_parameter = request.GET.get("p")
+    url_parameter = request.GET.get("search")
     if url_parameter:
         limit = request.GET.get("l")
         offset = request.GET.get("o")

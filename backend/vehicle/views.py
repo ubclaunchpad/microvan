@@ -60,10 +60,6 @@ class VehicleDetailApiView(APIView):
             vehicle = get_object_or_404(Vehicle, id=vehicle_id)
             serializer = VehicleSerializer(vehicle)
             return Response(serializer.data, status=status.HTTP_200_OK)
-            # identifier = request.data.get("id")
-            # vehicle = Vehicle.objects.get(id=identifier)
-            # serialized_data = self.serializer_class(vehicle)
-            # return Response(serialized_data.data, status=status.HTTP_200_OK)
         except vehicle.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -79,7 +75,7 @@ class VehicleFilterList(APIView):
         return queryset
 
     def get(self, request):
-        url_parameter = request.GET.get("p")
+        url_parameter = request.GET.get("search")
         if url_parameter:
             vehicles = self.get_queryset()
 
