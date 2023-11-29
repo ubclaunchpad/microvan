@@ -5,11 +5,16 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .helpers import has_more_data, infinite_filter
-from .models import (
-    Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle)
+from .models import Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle
 from .serializers import (
-    BrandSerializer, EquipmentSerializer, SupplierSerializer,
-    TrailerSerializer, TypeSerializer, UnitImageSerializer, VehicleSerializer)
+    BrandSerializer,
+    EquipmentSerializer,
+    SupplierSerializer,
+    TrailerSerializer,
+    TypeSerializer,
+    UnitImageSerializer,
+    VehicleSerializer,
+)
 
 
 # Create your views here.
@@ -77,24 +82,26 @@ class VehicleDetailApiView(APIView):
         except vehicle.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-class VehicleListViewset(viewsets.ModelViewSet): 
+
+class VehicleListViewset(viewsets.ModelViewSet):
     """
     Get list of vehicles based off of filter
     Takes limit + offset from url
     """
+
     def get_queryset(self):
         queryset = infinite_filter(self.request)
         return queryset
+
     def list(self, request):
-        url_parameter = request.GET.get('p') 
+        url_parameter = request.GET.get("p")
         if url_parameter:
             vehicles = self.get_queryset()
-        
+
             serialized_data = VehicleSerializer(vehicles, many=True)
 
-            return Response({
-                "vehicles" : serialized_data.data,
-                "more_data" : has_more_data(request)
-            })
+            return Response(
+                {"vehicles": serialized_data.data, "more_data": has_more_data(request)}
+            )
 
         return Response(VehicleSerializer(Vehicle.objects.all()[:10], many=True).data)
