@@ -20,6 +20,7 @@ from .serializers import (
 # Create your views here.
 class VehicleListApiView(APIView):
     serializer_class = VehicleSerializer
+
     def get(self, request, *args, **kwargs):
         """
         Get all vehicles
