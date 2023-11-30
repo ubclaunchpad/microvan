@@ -22,11 +22,10 @@ class BidListApiView(APIView):
         serializer = BidSerializer(bids, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    """
-    API endpoint to make a bid on an object
-    """
-
     def post(self, request, *args, **kwargs):
+        """
+        Create a bid
+        """
         data = request.data
         amount = data.get("amount")
         bidder_id = data.get("bidder")
