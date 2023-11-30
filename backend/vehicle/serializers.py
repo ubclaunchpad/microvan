@@ -87,6 +87,13 @@ class TrailerSerializer(serializers.ModelSerializer):
 
 
 class UnitImageSerializer(serializers.ModelSerializer):
+    unit_type = serializers.SerializerMethodField()
+
     class Meta:
         model = UnitImage
-        fields = ["id", "image_url", "content_type", "object_id", "content_object"]
+        fields = ["id", "image_url", "unit_type", "object_id"]
+
+    def get_unit_type(self, obj):
+        if obj.content_type:
+            return obj.content_type.model
+        return None

@@ -21,7 +21,7 @@ class Auction(MainModel):
         return (
             self.name
             if self.name is not None
-            else "Auction at {start_date} to {end_date}"
+            else f"Auction from {self.start_date} to {self.end_date}"
         )
 
 
@@ -37,12 +37,6 @@ class AuctionItem(MainModel):
 
     class Meta:
         unique_together = ("auction_id", "content_type", "object_id")
-
-    def clean(self):
-        # Restrict content_type to specific models
-        valid_models = ["vehicle", "equipment", "trailer"]
-        if self.content_type.model not in valid_models:
-            raise ValidationError(f"ContentType must be one of {valid_models}")
 
     def save(self, *args, **kwargs):
         self.clean()

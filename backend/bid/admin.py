@@ -1,7 +1,5 @@
 from django.contrib import admin
-from django.contrib.contenttypes.admin import GenericTabularInline
-
-from auction.models import Auction
+from django.contrib.contenttypes.models import ContentType
 
 from .models import Bid
 
@@ -20,9 +18,9 @@ class BidAdmin(admin.ModelAdmin):
     list_filter = ("auction", "bidder", "content_type")
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        # This method can be used to filter foreign key choices in the admin
-        if db_field.name == "auction":
-            kwargs["queryset"] = Auction.objects.filter(is_published=True)
+        if db_field.name == "content_type":
+            valid_models = ["vehicle", "equipment", "trailer"]
+            kwargs["queryset"] = ContentType.objects.filter(model__in=valid_models)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
