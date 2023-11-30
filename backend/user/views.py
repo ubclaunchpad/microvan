@@ -5,11 +5,8 @@ from rest_framework.views import APIView
 
 from .models import Admin, Bidder
 from .serializers import (
-    AdminSerializer,
-    BidderBlacklistedSerializer,
-    BidderSerializer,
-    BidderVerifiedSerializer,
-)
+    AdminSerializer, BidderBlacklistedSerializer, BidderSerializer,
+    BidderVerifiedSerializer)
 
 
 class BidderListApiView(APIView):

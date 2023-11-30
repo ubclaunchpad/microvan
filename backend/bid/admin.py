@@ -20,8 +20,7 @@ class BidAdmin(admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "content_type":
             valid_models = ["vehicle", "equipment", "trailer"]
-            kwargs["queryset"] = ContentType.objects.filter(
-                model__in=valid_models)
+            kwargs["queryset"] = ContentType.objects.filter(model__in=valid_models)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
