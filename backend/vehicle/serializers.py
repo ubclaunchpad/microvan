@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from .models import (
-    Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle)
+from .models import Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle
 
 
 class BrandSerializer(serializers.ModelSerializer):
