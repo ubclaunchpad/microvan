@@ -37,7 +37,7 @@ class BidListApiView(APIView):
         if not all([amount, bidder_id, auction_id, content_type_name, object_id]):
             return Response(
                 {
-                    "error": "Bid amount, bidder, auction, content type, and object ID are required."
+                    "error": "Missing fields in request."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
