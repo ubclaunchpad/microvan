@@ -1,33 +1,27 @@
 from rest_framework import serializers
 
-from .models import Admin
-from .models import Bidder
-
-
-class AdminSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Admin
-        fields = [
-            "id",
-            "email",
-            "password",
-            "first_name",
-            "last_name",
-            "permission_level",
-        ]
+from .models import Admin, Bidder
 
 
 class BidderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bidder
-        fields = [
-            "id",
-            "email",
-            "password",
-            "first_name",
-            "last_name",
-            "company_name",
-            "bidder_number",
-            "is_verified",
-            "is_blacklisted",
-        ]
+        fields = "__all__"
+
+
+class BidderVerifiedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bidder
+        fields = ["id", "is_verified"]
+
+
+class BidderBlacklistedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bidder
+        fields = ["id", "is_blacklisted"]
+
+
+class AdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Admin
+        fields = "__all__"

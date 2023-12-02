@@ -1,10 +1,14 @@
 {
-  "plugins": ["@typescript-eslint"],
-  "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended", "prettier"],
-  "rules": {
-    // 0 = "off", 1 = "warn", 2 = "error"
-    "@typescript-eslint/no-unused-vars": 2,
-    "@typescript-eslint/no-explicit-any": 1,
-    "@typescript-eslint/no-empty-function": 1
-  }
+	"env": {
+		"browser": true,
+		"es2021": true
+	},
+	"extends": ["plugin:react/recommended", "airbnb", "prettier"],
+	"overrides": [],
+	"parserOptions": {
+		"ecmaVersion": "latest",
+		"sourceType": "module"
+	},
+	"plugins": ["react"],
+	"rules": {}
 }
