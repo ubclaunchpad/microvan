@@ -69,3 +69,12 @@ class VehicleDetailApiView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except vehicle.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, vehicle_id, format=None):
+        """
+        Delete specific vehicle
+        """
+
+        vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+        vehicle.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
