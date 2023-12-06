@@ -3,7 +3,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/ubclaunchpad/microvan">
-    <img src="frontend/public/LogoIcon.png" alt="Logo" height="100" resize>
+    <img src="frontend/public/microvan_logo.svg" alt="Logo" height="100" resize>
   </a>
   <h3 align="center">Microvan Inc.</h3>
 </p>

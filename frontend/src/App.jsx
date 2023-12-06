@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import logo from './assets/logo.svg';
-import './index.css';
+import './globals.css';
 
 function App() {
 	return (
