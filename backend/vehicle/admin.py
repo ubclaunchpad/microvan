@@ -2,7 +2,15 @@ from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
 
 from .models import (
-    Brand, Equipment, SavedUnits, Supplier, Trailer, Type, UnitImage, Vehicle)
+    Brand,
+    Equipment,
+    SavedUnits,
+    Supplier,
+    Trailer,
+    Type,
+    UnitImage,
+    Vehicle,
+)
 
 
 class BrandAdmin(admin.ModelAdmin):
@@ -84,8 +92,7 @@ class UnitImageAdmin(admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "content_type":
             valid_models = ["vehicle", "equipment", "trailer"]
-            kwargs["queryset"] = ContentType.objects.filter(
-                model__in=valid_models)
+            kwargs["queryset"] = ContentType.objects.filter(model__in=valid_models)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
@@ -105,8 +112,7 @@ class SavedUnitsAdmin(admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "content_type":
             valid_models = ["vehicle", "equipment", "trailer"]
-            kwargs["queryset"] = ContentType.objects.filter(
-                model__in=valid_models)
+            kwargs["queryset"] = ContentType.objects.filter(model__in=valid_models)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 

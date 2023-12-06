@@ -7,4 +7,3 @@ urlpatterns = [
     path("", BidListApiView.as_view(), name="bid_list"),
     path("<uuid:bid_id>/", BidDetailApiView.as_view(), name="bid_detail"),
 ]
-

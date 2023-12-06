@@ -24,13 +24,18 @@ class Vehicle(MainModel):
     minimum_price = models.IntegerField(blank=True, null=True)
     is_sold = models.BooleanField(default=False)
     remarks = models.CharField(max_length=2000, blank=True, null=True)
-    classification_type = models.CharField(max_length=50, blank=True, null=True)
+    classification_type = models.CharField(
+        max_length=50, blank=True, null=True)
     engine_condition = models.CharField(max_length=100, blank=True, null=True)
-    transmission_condition = models.CharField(max_length=100, blank=True, null=True)
-    differentials_condition = models.CharField(max_length=100, blank=True, null=True)
+    transmission_condition = models.CharField(
+        max_length=100, blank=True, null=True)
+    differentials_condition = models.CharField(
+        max_length=100, blank=True, null=True)
     brake_condition = models.CharField(max_length=100, blank=True, null=True)
-    electrical_condition = models.CharField(max_length=100, blank=True, null=True)
-    operating_system_condition = models.CharField(max_length=100, blank=True, null=True)
+    electrical_condition = models.CharField(
+        max_length=100, blank=True, null=True)
+    operating_system_condition = models.CharField(
+        max_length=100, blank=True, null=True)
     chassis_condition = models.CharField(max_length=100, blank=True, null=True)
     body_condition = models.CharField(max_length=100, blank=True, null=True)
 
@@ -44,12 +49,16 @@ class Equipment(MainModel):
     brand = models.ForeignKey(Brand, on_delete=models.PROTECT)
     equipment_type = models.ForeignKey(Type, on_delete=models.PROTECT)
     location = models.CharField(max_length=50, blank=True, null=True)
-    classification_type = models.CharField(max_length=50, blank=True, null=True)
+    classification_type = models.CharField(
+        max_length=50, blank=True, null=True)
     engine_condition = models.CharField(max_length=100, blank=True, null=True)
-    transmission_condition = models.CharField(max_length=100, blank=True, null=True)
-    differentials_condition = models.CharField(max_length=100, blank=True, null=True)
+    transmission_condition = models.CharField(
+        max_length=100, blank=True, null=True)
+    differentials_condition = models.CharField(
+        max_length=100, blank=True, null=True)
     brake_condition = models.CharField(max_length=100, blank=True, null=True)
-    electrical_condition = models.CharField(max_length=100, blank=True, null=True)
+    electrical_condition = models.CharField(
+        max_length=100, blank=True, null=True)
     hydraulic_cylinder_condition = models.CharField(
         max_length=100, blank=True, null=True
     )
@@ -79,12 +88,6 @@ class UnitImage(MainModel):
     object_id = models.UUIDField()
     content_object = GenericForeignKey("content_type", "object_id")
 
-    def clean(self):
-        # Restrict content_type to specific models
-        valid_models = ["vehicle", "equipment", "trailer"]
-        if self.content_type.model not in valid_models:
-            raise ValidationError(f"ContentType must be one of {valid_models}")
-
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
@@ -99,12 +102,6 @@ class SavedUnits(MainModel):
 
     class Meta:
         unique_together = ("auction_id", "bidder_id", "object_id")
-
-    def clean(self):
-        # Restrict content_type to specific models
-        valid_models = ["vehicle", "equipment", "trailer"]
-        if self.content_type.model not in valid_models:
-            raise ValidationError(f"ContentType must be one of {valid_models}")
 
     def save(self, *args, **kwargs):
         self.clean()
