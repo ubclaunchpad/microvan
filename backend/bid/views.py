@@ -36,9 +36,7 @@ class BidListApiView(APIView):
         # Check for missing fields
         if not all([amount, bidder_id, auction_id, content_type_name, object_id]):
             return Response(
-                {
-                    "error": "Missing fields in request."
-                },
+                {"error": "Missing fields in request."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

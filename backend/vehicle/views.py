@@ -41,8 +41,7 @@ class VehicleListApiView(APIView):
         brand = get_object_or_404(Brand, id=brand_id) if brand_id else None
         vehicle_type = get_object_or_404(Type, id=type_id) if type_id else None
 
-        vehicle = Vehicle.objects.create(
-            brand=brand, vehicle_type=vehicle_type, **data)
+        vehicle = Vehicle.objects.create(brand=brand, vehicle_type=vehicle_type, **data)
         # Use the serializer class's data directly
         serialized_data = self.serializer_class(vehicle)
         return Response(serialized_data.data, status=status.HTTP_201_CREATED)
@@ -92,8 +91,7 @@ class VehicleFilterList(APIView):
             serialized_data = VehicleSerializer(vehicles, many=True)
 
             return Response(
-                {"vehicles": serialized_data.data,
-                    "more_data": has_more_data(request)}
+                {"vehicles": serialized_data.data, "more_data": has_more_data(request)}
             )
 
         return Response(VehicleSerializer(Vehicle.objects.all()[:10], many=True).data)

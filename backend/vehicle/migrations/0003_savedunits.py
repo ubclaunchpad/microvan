@@ -6,7 +6,6 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("user", "0003_remove_admin_password"),
         ("auction", "0002_auction_cover_image_auction_is_published_and_more"),
@@ -19,18 +18,44 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='SavedUnits',
+            name="SavedUnits",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('object_id', models.UUIDField()),
-                ('auction_id', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='auction.auction')),
-                ('bidder_id', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='user.bidder')),
-                ('content_type', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='contenttypes.contenttype')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        unique=True,
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("object_id", models.UUIDField()),
+                (
+                    "auction_id",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="auction.auction",
+                    ),
+                ),
+                (
+                    "bidder_id",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="user.bidder"
+                    ),
+                ),
+                (
+                    "content_type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="contenttypes.contenttype",
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('auction_id', 'bidder_id', 'object_id')},
+                "unique_together": {("auction_id", "bidder_id", "object_id")},
             },
         ),
     ]

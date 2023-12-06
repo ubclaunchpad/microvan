@@ -84,8 +84,7 @@ class TrailerAdmin(admin.ModelAdmin):
 
 
 class UnitImageAdmin(admin.ModelAdmin):
-    list_display = ("id", "image_url", "content_type",
-                    "object_id", "created_at")
+    list_display = ("id", "image_url", "content_type", "object_id", "created_at")
     search_fields = ("content_type__model",)
     list_filter = ("content_type",)
 
@@ -105,8 +104,7 @@ class SavedUnitsAdmin(admin.ModelAdmin):
         "object_id",
         "created_at",
     )
-    search_fields = ("bidder_id__first_name",
-                     "auction_id__name", "content_type__model")
+    search_fields = ("bidder_id__first_name", "auction_id__name", "content_type__model")
     list_filter = ("auction_id", "bidder_id", "content_type")
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
