@@ -9,6 +9,7 @@ from .views import (
     BidderListApiView,
     BidderVerifyApiView,
 )
+from rest_framework_simplejwt import views as jwt_views
 
 urlpatterns = [
     path("bidders/", BidderListApiView.as_view(), name="bidder-list"),
@@ -27,4 +28,6 @@ urlpatterns = [
     ),
     path("admins/", AdminListApiView.as_view(), name="admin-list"),
     path("admins/<uuid:admin_id>/", AdminDetailApiView.as_view(), name="admin-detail"),
+    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 ]
