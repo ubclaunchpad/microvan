@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .helpers import has_more_data, infinite_filter
-from .models import Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle
+from .models import Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle, Auction
 from .serializers import (
     BrandSerializer,
     EquipmentSerializer,

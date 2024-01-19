@@ -5,7 +5,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Auction
+from .models import Auction, AuctionItem, Vehicle
 from .serializers import AuctionSerializer
 
 
@@ -86,3 +86,15 @@ class AuctionDetailApiView(APIView):
         auction = get_object_or_404(Auction, id=auction_id)
         auction.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class AddToAuction(APIView):
+    """
+    Takes in a vehicle and auction ID and associates it with an auction by creating an AuctionItem
+    """
+    def post(self, request):
+        auction_id = request.body.get("auction_id")
+        vehicle_id = request.body.get("vehicle_id")
+
+        auction = Auction.objects.get(id=auction_id)
+        vehicle = Vehicle.objects.get(id=vehicle_id)
+        
