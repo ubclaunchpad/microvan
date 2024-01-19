@@ -174,7 +174,7 @@ class ListBlacklisted(APIView):
         bidders = Bidder.objects.all()
         blacklistedBidders = []
         for index in range(len(bidders)):
-            if bidder[index].is_blacklisted == True:
+            if bidders[index].is_blacklisted == True:
                 blacklistedBidders.append(bidders[index])
         serializer = BlacklistedBidderSerializer(blacklistedBidders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -186,7 +186,7 @@ class ListVerified(APIView):
         bidders = Bidder.objects.all()
         verifiedBidders = []
         for index in range(len(bidders)):
-            if bidder[index].is_verified == True:
+            if bidders[index].is_verified == True:
                 verifiedBidders.append(bidders[index])
         serializer = VerifiedBidderSerializer(verifiedBidders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
