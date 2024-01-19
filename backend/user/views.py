@@ -151,3 +151,39 @@ class AdminDetailApiView(APIView):
         admin = get_object_or_404(Admin, id=admin_id)
         admin.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ListUnverified(APIView):
+    def get(self, request):
+
+        bidders = Bidder.objects.all()
+        unverifiedBidders = []
+        for index in range(len(bidders)):
+            if bidders[index].is_verified == False:
+                unverifiedBidders.append(bidders[index])
+        serializer = UnverifiedBidderSerializer(unverifiedBidders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ListBlacklisted(APIView):
+    def get(self, request):
+
+        bidders = Bidder.objects.all()
+        blacklistedBidders = []
+        for index in range(len(bidders)):
+            if bidder[index].is_blacklisted == True:
+                blacklistedBidders.append(bidders[index])
+        serializer = BlacklistedBidderSerializer(blacklistedBidders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ListVerified(APIView):
+    def get(self, request):
+
+        bidders = Bidder.objects.all()
+        verifiedBidders = []
+        for index in range(len(bidders)):
+            if bidder[index].is_verified == True:
+                verifiedBidders.append(bidders[index])
+        serializer = VerifiedBidderSerializer(verifiedBidders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

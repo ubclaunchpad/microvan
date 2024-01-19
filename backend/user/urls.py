@@ -8,6 +8,9 @@ from .views import (
     BidderDetailApiView,
     BidderListApiView,
     BidderVerifyApiView,
+    ListUnverified,
+    ListBlacklisted,
+    ListVerified,
 )
 
 urlpatterns = [
@@ -27,4 +30,7 @@ urlpatterns = [
     ),
     path("admins/", AdminListApiView.as_view(), name="admin-list"),
     path("admins/<uuid:admin_id>/", AdminDetailApiView.as_view(), name="admin-detail"),
+    path("bidders/unverified", ListUnverified.as_view(), name="unverified-list"),
+    path("bidders/blacklisted", ListBlacklisted.as_view(), name="blacklisted-list"),
+    path("bidders/verified", ListVerified.as_view(), name="verified-list"),
 ]
