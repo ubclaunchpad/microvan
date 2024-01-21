@@ -20,10 +20,20 @@ def parse_excel_to_vehicle(excel_file):
     vehicles = []
 
     # iterate through rows in dataframe
-    for index, row in df0.iterrows():
-        # create a vehicle object for each row and append it to the list
-        vehicle = models.Vehicle(row)
-        vehicles.append(vehicle)
+    # for index, row in df0.iterrows():
+    # create a vehicle object for each row and append it to the list
+    # vehicle = models.Vehicle(row)
+    # vehicles.append(vehicle)
+
+    # while loop
+    not_end_of_file = True
+    while not_end_of_file:
+        for index, row in df0.iterrows():
+            # create a vehicle object for each row and append it to the list
+            # vehicle = models.Vehicle(row)
+            vehicle = models.Vehicle()
+            vehicles.append(vehicle)
+            # if index in something = "", set not_end_of_file = false
 
     return vehicles
 
