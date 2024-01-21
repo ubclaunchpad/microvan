@@ -34,6 +34,7 @@ class VehicleListApiView(APIView):
         """
         Create the Vehicle with given vehicle data
         """
+        parse_excel
         data = request.data.copy()
         brand_id = data.pop("brand", None)
         type_id = data.pop("type", None)
