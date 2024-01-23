@@ -123,7 +123,7 @@ class SaveUnitApiView(APIView):
             vehicles = bidder.saved_list.all()
             serialized_data = VehicleSerializer(vehicles, many=True)
             return Response(serialized_data.data)
-        except Exception as e:
+        except Exception:
             return Response("Bidder not found")
 
     def post(self, request):
@@ -138,5 +138,5 @@ class SaveUnitApiView(APIView):
 
             bidder.saved_list.add(vehicle)
             return Response("Unit added successfully")
-        except Exception as e:
+        except Exception:
             return Response("Bidder or vehicle not found")
