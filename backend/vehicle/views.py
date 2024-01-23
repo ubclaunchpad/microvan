@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 
 from .helpers import has_more_data, infinite_filter
 from .models import Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle
+from user.models import Bidder
 from .serializers import (
     BrandSerializer,
     EquipmentSerializer,
@@ -41,8 +42,7 @@ class VehicleListApiView(APIView):
         brand = get_object_or_404(Brand, id=brand_id) if brand_id else None
         vehicle_type = get_object_or_404(Type, id=type_id) if type_id else None
 
-        vehicle = Vehicle.objects.create(
-            brand=brand, vehicle_type=vehicle_type, **data)
+        vehicle = Vehicle.objects.create(brand=brand, vehicle_type=vehicle_type, **data)
         # Use the serializer class's data directly
         serialized_data = self.serializer_class(vehicle)
         return Response(serialized_data.data, status=status.HTTP_201_CREATED)
@@ -71,8 +71,7 @@ class VehicleDetailApiView(APIView):
 
         """
         vehicle = get_object_or_404(Vehicle, id=vehicle_id)
-        serializer = VehicleSerializer(
-            vehicle, data=request.data)
+        serializer = VehicleSerializer(vehicle, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -105,8 +104,39 @@ class VehicleFilterList(APIView):
             serialized_data = VehicleSerializer(vehicles, many=True)
 
             return Response(
-                {"vehicles": serialized_data.data,
-                    "more_data": has_more_data(request)}
+                {"vehicles": serialized_data.data, "more_data": has_more_data(request)}
             )
 
         return Response(VehicleSerializer(Vehicle.objects.all()[:10], many=True).data)
+
+
+class SaveUnitApiView(APIView):
+    """
+    An endpoint to handle saving a vehicle to a bidder's saved vehicle list
+    """
+
+    def get(self, request):
+        # Replace this line to obtain user id once authentication has been implemented
+        bidder_id = request.data.get("bidder_id")
+        try:
+            bidder = Bidder.objects.get(id=bidder_id)
+            vehicles = bidder.saved_list.all()
+            serialized_data = VehicleSerializer(vehicles, many=True)
+            return Response(serialized_data.data)
+        except Exception as e:
+            return Response("Bidder not found")
+
+    def post(self, request):
+        vehicle_id = request.data.get("vehicle_id")
+
+        # Replace this later to fetch authentication details from headers instead of body
+        bidder_id = request.data.get("bidder_id")
+
+        try:
+            vehicle = Vehicle.objects.get(id=vehicle_id)
+            bidder = Bidder.objects.get(id=bidder_id)
+
+            bidder.saved_list.add(vehicle)
+            return Response("Unit added successfully")
+        except Exception as e:
+            return Response("Bidder or vehicle not found")

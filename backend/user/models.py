@@ -3,6 +3,7 @@ import random
 from django.db import models
 
 from core.models import MainModel
+from vehicle.models import Vehicle
 
 
 # Create your models here.
@@ -24,6 +25,7 @@ class Bidder(MainModel):
     bidder_number = models.IntegerField(unique=True, blank=True, null=False)
     is_verified = models.BooleanField(default=False)
     is_blacklisted = models.BooleanField(default=False)
+    saved_list = models.ManyToManyField(Vehicle)
 
     def save(self, *args, **kwargs):
         # Check if the bidder_number is not set yet
