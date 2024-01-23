@@ -129,7 +129,7 @@ class SaveUnitApiView(APIView):
     def post(self, request):
         vehicle_id = request.data.get("vehicle_id")
 
-        # Replace this later to fetch authentication details 
+        # Replace this later to fetch authentication details
         # from headers instead of body
         bidder_id = request.data.get("bidder_id")
 
