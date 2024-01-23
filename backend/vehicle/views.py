@@ -132,12 +132,18 @@ class SaveUnitApiView(APIView):
         # Replace this later to fetch authentication details
         # from headers instead of body
         bidder_id = request.data.get("bidder_id")
+        delete = request.GET.get("delete")
 
         try:
             vehicle = Vehicle.objects.get(id=vehicle_id)
             bidder = Bidder.objects.get(id=bidder_id)
 
-            bidder.saved_list.add(vehicle)
+            if delete:
+                bidder.saved_list.remove(vehicle)
+                return Response("Unit removed from saved list")
+            else:
+                bidder.saved_list.add(vehicle)
             return Response("Unit added successfully")
         except Exception:
             return Response("Bidder or vehicle not found")
+        
