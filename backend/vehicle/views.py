@@ -146,4 +146,3 @@ class SaveUnitApiView(APIView):
             return Response("Unit added successfully")
         except Exception:
             return Response("Bidder or vehicle not found")
-        
