@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from rest_framework import generics, status
+from rest_framework import generics, status, filters
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
@@ -57,6 +57,7 @@ class VehicleListApiView(APIView):
 
 
 class VehicleDetailApiView(APIView):
+    queryset = Vehicle.objects.all()
     serializer_class = VehicleSerializer
     """
     Retrieve, update or delete a vehicle instance.
