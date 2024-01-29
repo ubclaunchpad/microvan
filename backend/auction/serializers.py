@@ -8,8 +8,8 @@ class AuctionSerializer(serializers.ModelSerializer):
         model = Auction
         fields = ["id", "name", "start_date", "end_date"]
 
+
 class AuctionItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = AuctionItem
-        fields = ['auction_id', 'content_type', 'object_id']
-
+        fields = ["auction_id", "content_type", "object_id"]

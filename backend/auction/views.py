@@ -9,6 +9,7 @@ from .models import Auction, AuctionItem
 from .serializers import AuctionSerializer
 from vehicle.models import Vehicle
 
+
 class AuctionListApiView(APIView):
     def get(self, request, *args, **kwargs):
         """
@@ -87,10 +88,12 @@ class AuctionDetailApiView(APIView):
         auction.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class AddToAuctionApiView(APIView):
     """
     Takes in a vehicle and auction ID and associates it with an auction by creating an AuctionItem
     """
+
     def post(self, request):
         auction_id = request.data.get("auction_id")
         vehicle_id = request.data.get("vehicle_id")
@@ -102,11 +105,20 @@ class AddToAuctionApiView(APIView):
             auction_item = AuctionItem(auction_id=auction, content_object=vehicle)
             auction_item.save()
 
-            return Response({"message": "Vehicle added to auction successfully"}, status=status.HTTP_201_CREATED)
+            return Response(
+                {"message": "Vehicle added to auction successfully"},
+                status=status.HTTP_201_CREATED,
+            )
 
         except Auction.DoesNotExist:
-            return Response({"error": "Auction not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Auction not found"}, status=status.HTTP_404_NOT_FOUND
+            )
         except Vehicle.DoesNotExist:
-            return Response({"error": "Vehicle not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Vehicle not found"}, status=status.HTTP_404_NOT_FOUND
+            )
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
