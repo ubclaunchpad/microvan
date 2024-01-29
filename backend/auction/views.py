@@ -91,7 +91,8 @@ class AuctionDetailApiView(APIView):
 
 class AddToAuctionApiView(APIView):
     """
-    Takes in a vehicle and auction ID and associates it with an auction by creating an AuctionItem
+    Takes in a vehicle and auction ID and associates
+    it with an auction by creating an AuctionItem
     """
 
     def post(self, request):
