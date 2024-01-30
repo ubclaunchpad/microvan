@@ -111,25 +111,26 @@ class VehicleFilterList(APIView):
 
         return Response(VehicleSerializer(Vehicle.objects.all()[:10], many=True).data)
 
-    
+
 class VehiclePriceApiView(APIView):
     """
     Update a vehicle's minimum price
     """
     serializer_class = VehicleSerializer
-    
+
     def put(self, request, vehicle_id, format=None):
         """
         Update specific vehicle price
-
         """
         vehicle = get_object_or_404(Vehicle, id=vehicle_id)
-        
+
         new_price = request.data.get("minimum_price")
         if new_price is None:
-            return Response({"error": "Must provide minimum price"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Must provide minimum price"}, 
+                            status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = VehicleSerializer(vehicle, data={'minimum_price': new_price}, partial=True)
+        serializer = VehicleSerializer(vehicle, 
+                            data={'minimum_price': new_price}, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
