@@ -2,6 +2,9 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.models import User
 
 from .models import Admin, Bidder
 from .serializers import (
@@ -13,6 +16,7 @@ from .serializers import (
 
 
 class BidderListApiView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         """
         Return a list of all bidders.
@@ -58,10 +62,20 @@ class BidderDetailApiView(APIView):
         Delete a single bidder.
         """
         # TODO: User JWT Token to check that admin is making this request
+        token = request.auth
+        if token and 'user_id' in token:
+            user_id = token['user_id']
+            user = get_object_or_404(User, id=user_id)
 
-        bidder = get_object_or_404(Bidder, id=bidder_id)
-        bidder.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+            # Check if the user is an admin
+            if user.is_staff:
+                bidder = get_object_or_404(Bidder, id=bidder_id)
+                bidder.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response({'detail': 'Permission denied. User is not an admin.'}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            return Response({'detail': 'Invalid or missing token.'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class BidderVerifyApiView(APIView):
