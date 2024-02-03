@@ -21,7 +21,7 @@ export default function NavBar() {
 			<img src={logo} alt="logo" className="w-[60px] h-[60px]" />
 			<div className="h-full flex items-center gap-[43px]">
 				<NavLink
-					exact
+					exact="true"
 					to="/"
 					className={isHomePage ? 'active-navbar-text' : 'inactive-navbar-text'}
 				>
