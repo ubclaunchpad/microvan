@@ -14,6 +14,7 @@ from vehicle.models import Vehicle, SavedUnits, Type, Brand
 from vehicle.serializers import VehicleSerializer
 from auction.models import Auction, AuctionItem
 
+
 class BidderListApiView(APIView):
     def get(self, request):
         """
@@ -153,7 +154,8 @@ class AdminDetailApiView(APIView):
         admin = get_object_or_404(Admin, id=admin_id)
         admin.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
+
 class SaveUnitApiView(APIView):
     """
     An endpoint to handle saving a vehicle to a bidder's saved vehicle list, as well as retrieving a list of all saved vehicles
@@ -165,12 +167,15 @@ class SaveUnitApiView(APIView):
         bidder = get_object_or_404(Bidder, id=bidder_id)
 
         saved_units = SavedUnits.objects.filter(bidder_id=bidder)
-        vehicle_list = [saved_unit.content_object for saved_unit in saved_units if isinstance(saved_unit.content_object, Vehicle)]
+        vehicle_list = [
+            saved_unit.content_object
+            for saved_unit in saved_units
+            if isinstance(saved_unit.content_object, Vehicle)
+        ]
 
         vehicle_data = [{"id": vehicle.id} for vehicle in vehicle_list]
 
         return Response({"vehicles": vehicle_data}, status=status.HTTP_200_OK)
-
 
     def post(self, request, **kwargs):
         vehicle_id = kwargs.get("vehicle_id")
@@ -178,25 +183,41 @@ class SaveUnitApiView(APIView):
         # Replace this later to fetch authentication details
         # from headers instead of body
         bidder_id = kwargs.get("bidder_id")
-        bidder = Bidder.objects.create(email="sdfsdf@gmail.com", first_name="sdfsdf", last_name="sdfsdf", bidder_number="193334456")
-        #vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+        bidder = Bidder.objects.create(
+            email="sdfsdf@gmail.com",
+            first_name="sdfsdf",
+            last_name="sdfsdf",
+            bidder_number="193334456",
+        )
+        # vehicle = get_object_or_404(Vehicle, id=vehicle_id)
         brand = Brand.objects.create(name="sdfsdf")
         type = Type.objects.create(name="sdfsdfsdf")
-        vehicle = Vehicle.objects.create(unicode_id=123348445, brand=brand, vehicle_type=type)
-        auction = Auction.objects.create(name="sdfsdf", start_date="2024-02-03", end_date="2024-02-23")
+        vehicle = Vehicle.objects.create(
+            unicode_id=123348445, brand=brand, vehicle_type=type
+        )
+        auction = Auction.objects.create(
+            name="sdfsdf", start_date="2024-02-03", end_date="2024-02-23"
+        )
         auction_item = AuctionItem(auction_id=auction, content_object=vehicle)
         auction_item.save()
-        auction_for_vehicle = Auction.objects.filter(auctionitem__content_type=ContentType.objects.get_for_model(Vehicle),
-                                                         auctionitem__object_id=vehicle.id).first()
-        #bidder = get_object_or_404(Bidder, id=bidder_id)
-        saved_unit = SavedUnits(auction_id=auction_for_vehicle, bidder_id=bidder, object_id=vehicle.id, content_object=vehicle)
+        auction_for_vehicle = Auction.objects.filter(
+            auctionitem__content_type=ContentType.objects.get_for_model(Vehicle),
+            auctionitem__object_id=vehicle.id,
+        ).first()
+        # bidder = get_object_or_404(Bidder, id=bidder_id)
+        saved_unit = SavedUnits(
+            auction_id=auction_for_vehicle,
+            bidder_id=bidder,
+            object_id=vehicle.id,
+            content_object=vehicle,
+        )
         saved_unit.save()
         return Response(bidder.id)
         return Response(
             {"message": "Vehicle saved successfully"},
             status=status.HTTP_200_OK,
         )
-        
+
     def delete(self, request, **kwargs):
         vehicle_id = kwargs.get("vehicle_id")
         bidder_id = kwargs.get("bidder_id")

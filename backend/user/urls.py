@@ -8,7 +8,7 @@ from .views import (
     BidderDetailApiView,
     BidderListApiView,
     BidderVerifyApiView,
-    SaveUnitApiView
+    SaveUnitApiView,
 )
 
 urlpatterns = [
@@ -28,6 +28,9 @@ urlpatterns = [
     ),
     path("admins/", AdminListApiView.as_view(), name="admin-list"),
     path("admins/<uuid:admin_id>/", AdminDetailApiView.as_view(), name="admin-detail"),
-    path("<uuid:bidder_id>/vehicles/<uuid:vehicle_id>", SaveUnitApiView.as_view(), name="save-unit-to-list"),
-
+    path(
+        "<uuid:bidder_id>/vehicles/<uuid:vehicle_id>",
+        SaveUnitApiView.as_view(),
+        name="save-unit-to-list",
+    ),
 ]
