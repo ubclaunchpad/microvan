@@ -5,12 +5,10 @@ from .views import (
     VehicleDetailApiView,
     VehicleFilterList,
     VehicleListApiView,
-    SaveUnitApiView,
 )
 
 urlpatterns = [
     path("", VehicleListApiView.as_view(), name="vehicle"),
     path("filter/", VehicleFilterList.as_view(), name="vehicle-list"),
-    path("save/", SaveUnitApiView.as_view(), name="save-unit-to-list"),
     path("<uuid:vehicle_id>/", VehicleDetailApiView.as_view(), name="vehicle_detail"),
 ]

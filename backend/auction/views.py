@@ -38,7 +38,7 @@ class AuctionListApiView(APIView):
         end_date = datetime.strptime(request.data.get("end_date"), date_format)
 
         # Check if start date is in the past
-        if start_date < datetime.now().date():
+        if start_date.date() < datetime.now().date():
             return Response(
                 {"error": "Start date should be in the future"},
                 status=status.HTTP_400_BAD_REQUEST,
