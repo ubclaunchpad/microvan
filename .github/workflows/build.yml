@@ -8,7 +8,7 @@ on:
 
 jobs:
   call-backend-build:
-    uses: ./.github/workflows/backend/build.yml
+    uses: ./.github/workflows/backend-build.yml
     with:
       pythonVersion: '3.10'
     secrets:
@@ -19,6 +19,6 @@ jobs:
       AWS_S3_REGION_NAME: ${{ secrets.AWS_S3_REGION_NAME }}
 
   call-frontend-build:
-    uses: ./.github/workflows/frontend/build.yml
+    uses: ./.github/workflows/frontend-build.yml
     with:
       nodeVersion: '20.x'
