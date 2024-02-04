@@ -2,20 +2,20 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import logo from '../assets/microvan_logo.svg';
 import OnboardingInputField from '../components/inputs/OnboardingInputField';
-import LogInButton from "../components/buttons/LogInButton";
+import LogInButton from '../components/buttons/LogInButton';
 
 export default function BidderLogInPage() {
 	const navigate = useNavigate();
 
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
 
 	const handleEmailChange = (event) => setEmail(event.target.value);
 	const handlePasswordChange = (event) => setPassword(event.target.value);
 
 	const handleLogIn = () => {
 		console.log(`Email: ${email}, Password: ${password}`); // eslint-disable-line no-console
-	}
+	};
 
 	return (
 		<div className="flex flex-col items-center justify-between h-screen w-screen bg-mv-white">
@@ -51,7 +51,7 @@ export default function BidderLogInPage() {
 						onChange={handleEmailChange}
 					/>
 				</div>
-        <div className="flex flex-col items-start w-[60%] mt-[22px] space-y-[5px]">
+				<div className="flex flex-col items-start w-[60%] mt-[22px] space-y-[5px]">
 					<p className="text-dark-grey text-xl font-normal">Password</p>
 					<OnboardingInputField
 						placeholder="**********"
@@ -62,11 +62,15 @@ export default function BidderLogInPage() {
 					/>
 				</div>
 				<div className="mt-[49px] w-full flex items-center justify-center">
-					<LogInButton onClick={handleLogIn}/>
+					<LogInButton onClick={handleLogIn} />
 				</div>
-				<p className="text-mv-green text-xs font-normal hover:cursor-pointer mt-[18px]">
+				<button
+					type="button"
+					className="text-mv-green text-xs font-normal focus:outline-none mt-[18px] border-none"
+					onClick={() => navigate('/signin/forgotpassword')}
+				>
 					Forgot Password?
-				</p>
+				</button>
 			</div>
 
 			<div className="flex-grow" />
