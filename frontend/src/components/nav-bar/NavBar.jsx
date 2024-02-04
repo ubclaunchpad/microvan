@@ -21,7 +21,7 @@ export default function NavBar() {
 			<img src={logo} alt="logo" className="w-[60px] h-[60px]" />
 			<div className="h-full flex items-center gap-[43px]">
 				<NavLink
-					exact
+					exact="true"
 					to="/"
 					className={isHomePage ? 'active-navbar-text' : 'inactive-navbar-text'}
 				>
@@ -29,19 +29,25 @@ export default function NavBar() {
 				</NavLink>
 				<NavLink
 					to="/listings"
-					className={isListingsPage ? 'active-navbar-text' : 'inactive-navbar-text'}
+					className={
+						isListingsPage ? 'active-navbar-text' : 'inactive-navbar-text'
+					}
 				>
 					Listings
 				</NavLink>
 				<NavLink
 					to="/tutorial"
-					className={isTutorialPage ? 'active-navbar-text' : 'inactive-navbar-text'}
+					className={
+						isTutorialPage ? 'active-navbar-text' : 'inactive-navbar-text'
+					}
 				>
 					Tutorial
 				</NavLink>
 				<NavLink
 					to="/contact"
-					className={isContactUsPage ? 'active-navbar-text' : 'inactive-navbar-text'}
+					className={
+						isContactUsPage ? 'active-navbar-text' : 'inactive-navbar-text'
+					}
 				>
 					Contact Us
 				</NavLink>
