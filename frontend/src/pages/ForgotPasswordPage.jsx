@@ -28,7 +28,7 @@ export default function ForgotPasswordPage() {
 				</button>
 			</div>
 
-			<div className="flex w-screen h-full items-start justify-center space-x-[31px] mt-[10%] ml-[-5%]">
+			<div className="flex min-w-screen min-h-full items-start justify-center space-x-[31px] mt-[10%] ml-[-5%]">
 				<div className="flex flex-col">
 					<img src={logo} alt="logo" className="w-[80px] h-[80px]" />
 				</div>

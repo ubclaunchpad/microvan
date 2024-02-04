@@ -18,7 +18,7 @@ export default function BidderLogInPage() {
 	};
 
 	return (
-		<div className="flex flex-col items-center justify-between h-screen w-screen bg-mv-white">
+		<div className="flex flex-col items-center justify-between min-h-screen min-w-screen bg-mv-white">
 			<div className="self-start pl-[29px] pt-[27px]">
 				<button
 					type="button"

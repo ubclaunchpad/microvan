@@ -2,13 +2,13 @@ import React from 'react';
 import { useNavigate } from 'react-router';
 import altLogo from '../assets/alt-microvan-logo.svg';
 import ToRegisterPageButton from '../components/buttons/ToRegisterPageButton';
-import ToLogInPageButton from "../components/buttons/ToLogInPageButton";
+import ToLogInPageButton from '../components/buttons/ToLogInPageButton';
 
 export default function OnboardPage() {
 	const navigate = useNavigate();
 
 	return (
-		<div className="flex flex-col items-center justify-between h-screen w-screen bg-mv-green">
+		<div className="flex flex-col items-center justify-between min-h-screen min-w-screen bg-mv-green">
 			<div className="self-start pl-[29px] pt-[27px]">
 				<button
 					type="button"
@@ -37,9 +37,11 @@ export default function OnboardPage() {
 				</p>
 				<div className="flex flex-col mt-[36px] mb-[18px] space-y-[25px]">
 					<ToRegisterPageButton />
-          <ToLogInPageButton />
+					<ToLogInPageButton />
 				</div>
-        <p className="text-mv-white text-xs font-normal hover:cursor-pointer">Log In As Admin</p>
+				<p className="text-mv-white text-xs font-normal hover:cursor-pointer">
+					Log In As Admin
+				</p>
 			</div>
 
 			<div className="flex-grow" />

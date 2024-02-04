@@ -1,6 +1,12 @@
 import React from 'react';
 
-export default function OnboardingInputField({ placeholder, className, type, value, onChange }) {
+export default function OnboardingInputField({
+	placeholder,
+	className,
+	type,
+	value,
+	onChange,
+}) {
 	return (
 		<input
 			placeholder={placeholder}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from "react-router";
+import { useNavigate } from 'react-router';
 import NavBar from '../components/nav-bar/NavBar';
 
 export default function HomePage() {
@@ -8,7 +8,9 @@ export default function HomePage() {
 	return (
 		<div className="App">
 			<NavBar />
-			<button type="button" onClick={() => navigate("/onboard")}>Onboard</button>
+			<button type="button" onClick={() => navigate('/onboard')}>
+				Onboard
+			</button>
 		</div>
 	);
 }

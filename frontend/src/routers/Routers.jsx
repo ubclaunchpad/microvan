@@ -1,12 +1,12 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from '../pages/HomePage';
-import ListingsPage from "../pages/ListingsPage";
-import ContactUsPage from "../pages/ContactUsPage";
-import OnboardPage from "../pages/OnboardingPage";
-import BidderLogInPage from "../pages/BidderLogInPage";
-import BidderRegisterPage from "../pages/BidderRegisterPage";
-import ForgotPasswordPage from "../pages/ForgotPasswordPage";
+import ListingsPage from '../pages/ListingsPage';
+import ContactUsPage from '../pages/ContactUsPage';
+import OnboardPage from '../pages/OnboardingPage';
+import BidderLogInPage from '../pages/BidderLogInPage';
+import BidderRegisterPage from '../pages/BidderRegisterPage';
+import ForgotPasswordPage from '../pages/ForgotPasswordPage';
 
 export default function Routers() {
 	return (

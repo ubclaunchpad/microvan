@@ -29,19 +29,25 @@ export default function NavBar() {
 				</NavLink>
 				<NavLink
 					to="/listings"
-					className={isListingsPage ? 'active-navbar-text' : 'inactive-navbar-text'}
+					className={
+						isListingsPage ? 'active-navbar-text' : 'inactive-navbar-text'
+					}
 				>
 					Listings
 				</NavLink>
 				<NavLink
 					to="/tutorial"
-					className={isTutorialPage ? 'active-navbar-text' : 'inactive-navbar-text'}
+					className={
+						isTutorialPage ? 'active-navbar-text' : 'inactive-navbar-text'
+					}
 				>
 					Tutorial
 				</NavLink>
 				<NavLink
 					to="/contact"
-					className={isContactUsPage ? 'active-navbar-text' : 'inactive-navbar-text'}
+					className={
+						isContactUsPage ? 'active-navbar-text' : 'inactive-navbar-text'
+					}
 				>
 					Contact Us
 				</NavLink>
