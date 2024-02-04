@@ -1,10 +1,11 @@
-name: Build Pipeline for Node and React
+name: Frontend Build Pipeline
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_call:
+    inputs:
+      nodeVersion:
+        required: true
+        type: string
 
 jobs:
   build:
