@@ -93,27 +93,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-""""""
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-    },
-}
-
-"""
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env("DB_NAME"),
-        'USER': env("DB_USER"),
-        'PASSWORD': env("DB_PASSWORD"),
-        'HOST': env("DB_HOST"),
-        'PORT': env("DB_PORT"),
+if env("ENVIRONMENT") == 'prod':
+    DATABASES = {
+        "default": {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('RDS_DB_NAME', 'your_database_name'),
+            'USER': os.environ.get('RDS_USERNAME', 'your_username'),
+            'PASSWORD': os.environ.get('RDS_PASSWORD', 'your_password'),
+            'HOST': os.environ.get('RDS_HOSTNAME', 'your_rds_endpoint'),
+            'PORT': os.environ.get('RDS_PORT', '5432'),
+        }
     }
-"""
+else:  # Assuming 'dev' or any other value will use SQLite
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        },
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
