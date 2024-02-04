@@ -6,6 +6,9 @@ on:
       pythonVersion:
         required: true
         type: string
+      environment:
+        required: true
+        type: string 
     secrets:
       SECRET_KEY:
         required: true
