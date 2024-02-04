@@ -5,11 +5,8 @@ from rest_framework.views import APIView
 
 from .models import Admin, Bidder
 from .serializers import (
-    AdminSerializer,
-    BidderBlacklistedSerializer,
-    BidderSerializer,
-    BidderVerifiedSerializer,
-)
+    AdminSerializer, BidderBlacklistedSerializer, BidderSerializer,
+    BidderVerifiedSerializer)
 
 
 class BidderListApiView(APIView):
@@ -151,3 +148,36 @@ class AdminDetailApiView(APIView):
         admin = get_object_or_404(Admin, id=admin_id)
         admin.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ListUnverified(APIView):
+    def get(self, request):
+        bidders = Bidder.objects.all()
+        unverifiedBidders = []
+        for index in range(len(bidders)):
+            if bidders[index].is_verified is False:
+                unverifiedBidders.append(bidders[index])
+        serializer = BidderSerializer(unverifiedBidders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ListBlacklisted(APIView):
+    def get(self, request):
+        bidders = Bidder.objects.all()
+        blacklistedBidders = []
+        for index in range(len(bidders)):
+            if bidders[index].is_blacklisted is True:
+                blacklistedBidders.append(bidders[index])
+        serializer = BidderSerializer(blacklistedBidders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ListVerified(APIView):
+    def get(self, request):
+        bidders = Bidder.objects.all()
+        verifiedBidders = []
+        for index in range(len(bidders)):
+            if bidders[index].is_verified is True:
+                verifiedBidders.append(bidders[index])
+        serializer = BidderSerializer(verifiedBidders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

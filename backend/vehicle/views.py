@@ -6,16 +6,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .helpers import has_more_data, infinite_filter
-from .models import Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle
+from .models import (
+    Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle)
 from .serializers import (
-    BrandSerializer,
-    EquipmentSerializer,
-    SupplierSerializer,
-    TrailerSerializer,
-    TypeSerializer,
-    UnitImageSerializer,
-    VehicleSerializer,
-)
+    BrandSerializer, EquipmentSerializer, SupplierSerializer,
+    TrailerSerializer, TypeSerializer, UnitImageSerializer, VehicleSerializer)
 
 
 # Create your views here.
@@ -41,8 +36,7 @@ class VehicleListApiView(APIView):
         brand = get_object_or_404(Brand, id=brand_id) if brand_id else None
         vehicle_type = get_object_or_404(Type, id=type_id) if type_id else None
 
-        vehicle = Vehicle.objects.create(
-            brand=brand, vehicle_type=vehicle_type, **data)
+        vehicle = Vehicle.objects.create(brand=brand, vehicle_type=vehicle_type, **data)
         # Use the serializer class's data directly
         serialized_data = self.serializer_class(vehicle)
         return Response(serialized_data.data, status=status.HTTP_201_CREATED)
@@ -71,8 +65,7 @@ class VehicleDetailApiView(APIView):
 
         """
         vehicle = get_object_or_404(Vehicle, id=vehicle_id)
-        serializer = VehicleSerializer(
-            vehicle, data=request.data)
+        serializer = VehicleSerializer(vehicle, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -105,8 +98,7 @@ class VehicleFilterList(APIView):
             serialized_data = VehicleSerializer(vehicles, many=True)
 
             return Response(
-                {"vehicles": serialized_data.data,
-                    "more_data": has_more_data(request)}
+                {"vehicles": serialized_data.data, "more_data": has_more_data(request)}
             )
 
         return Response(VehicleSerializer(Vehicle.objects.all()[:10], many=True).data)
@@ -116,6 +108,7 @@ class VehiclePriceApiView(APIView):
     """
     Update a vehicle's minimum price
     """
+
     serializer_class = VehicleSerializer
 
     def put(self, request, vehicle_id, format=None):
@@ -126,12 +119,14 @@ class VehiclePriceApiView(APIView):
 
         new_price = request.data.get("minimum_price")
         if new_price is None:
-            return Response({"error": "Must provide minimum price"},
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Must provide minimum price"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        serializer = VehicleSerializer(vehicle,
-                                       data={'minimum_price': new_price},
-                                       partial=True)
+        serializer = VehicleSerializer(
+            vehicle, data={"minimum_price": new_price}, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
