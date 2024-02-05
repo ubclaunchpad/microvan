@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 from .views import (
+add-saved-list
     AdminDetailApiView,
     AdminListApiView,
     BidderBlacklistApiView,
@@ -9,6 +10,9 @@ from .views import (
     BidderListApiView,
     BidderVerifyApiView,
     SaveUnitApiView,
+    ListBlacklisted, 
+    ListUnverified, 
+    ListVerified
 )
 
 urlpatterns = [
@@ -33,4 +37,8 @@ urlpatterns = [
         SaveUnitApiView.as_view(),
         name="save-unit-to-list",
     ),
+    path("bidders/unverified", ListUnverified.as_view(), name="unverified-list"),
+    path("bidders/blacklisted", ListBlacklisted.as_view(), name="blacklisted-list"),
+    path("bidders/verified", ListVerified.as_view(), name="verified-list"),
+
 ]

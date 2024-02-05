@@ -2,15 +2,7 @@ from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
 
 from .models import (
-    Brand,
-    Equipment,
-    SavedUnits,
-    Supplier,
-    Trailer,
-    Type,
-    UnitImage,
-    Vehicle,
-)
+    Brand, Equipment, SavedUnits, Supplier, Trailer, Type, UnitImage, Vehicle)
 
 
 class BrandAdmin(admin.ModelAdmin):

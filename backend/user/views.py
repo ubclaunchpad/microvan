@@ -15,6 +15,7 @@ from vehicle.serializers import VehicleSerializer
 from auction.models import Auction, AuctionItem
 
 
+
 class BidderListApiView(APIView):
     def get(self, request):
         """
@@ -217,3 +218,34 @@ class SaveUnitApiView(APIView):
             {"message": "Saved unit deleted successfully"},
             status=status.HTTP_200_OK,
         )
+class ListUnverified(APIView):
+    def get(self, request):
+        bidders = Bidder.objects.all()
+        unverifiedBidders = []
+        for index in range(len(bidders)):
+            if bidders[index].is_verified is False:
+                unverifiedBidders.append(bidders[index])
+        serializer = BidderSerializer(unverifiedBidders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ListBlacklisted(APIView):
+    def get(self, request):
+        bidders = Bidder.objects.all()
+        blacklistedBidders = []
+        for index in range(len(bidders)):
+            if bidders[index].is_blacklisted is True:
+                blacklistedBidders.append(bidders[index])
+        serializer = BidderSerializer(blacklistedBidders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ListVerified(APIView):
+    def get(self, request):
+        bidders = Bidder.objects.all()
+        verifiedBidders = []
+        for index in range(len(bidders)):
+            if bidders[index].is_verified is True:
+                verifiedBidders.append(bidders[index])
+        serializer = BidderSerializer(verifiedBidders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
