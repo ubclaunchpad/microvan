@@ -1,4 +1,4 @@
-name: Deploy Frontend
+name: Deploy Resources
 
 on:
   push:
@@ -7,7 +7,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  deploy-frontend:
+    name: Deploy Frontend
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -22,19 +23,62 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
-
+      
       - name: Install dependencies
         run: npm install
-
-      - name: Build app
+      
+      - name: Build the project
         run: npm run build
 
-      - name: Upload to S3
-        uses: jakejarvis/s3-sync-action@master
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          args: --acl public-read
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1
+  
+      - name: Install AWS Amplify CLI
+        run: npm install -g @aws-amplify/cli
+  
+      - name: Deploy to Amplify
+        run: |
+          amplify init --yes
+          amplify publish --yes
+  
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [ deploy-frontend ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepare release
+        id: prep_release
+        run: |
+          # Example script to generate tag and release notes, needs to be customized
+          TAG_NAME=$(git tag --sort=-v:refname | head -n 1 | awk -F '.' '{print $1 "." $2+1}')
+          if [ -z "$TAG_NAME" ]; then
+            TAG_NAME="1.0"
+          fi
+          RELEASE_NOTES=$(git log $(git describe --tags --abbrev=0)..HEAD --oneline)
+          if [ -z "$RELEASE_NOTES" ]; then
+            RELEASE_NOTES="Initial release"
+          fi
+          echo "::set-output name=tag_name::$TAG_NAME"
+          echo "::set-output name=release_notes::$RELEASE_NOTES"
+        shell: bash
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
         env:
-          SOURCE_DIR: frontend/build/
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_FRONTEND_BUCKET }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.prep_release.outputs.tag_name }}
+          release_name: Release ${{ steps.prep_release.outputs.tag_name }}
+          body: ${{ steps.prep_release.outputs.release_notes }}
+          draft: false
+          prerelease: false
+
