@@ -1,0 +1,25 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  call-backend-build:
+    uses: ./.github/workflows/backend-build.yml
+    with:
+      pythonVersion: '3.10'
+      environment: ${{ github.event_name == 'push' && 'prod' || 'dev' }}
+    secrets:
+      SECRET_KEY: ${{ secrets.DJANGO_SECRET }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_STORAGE_BUCKET_NAME: ${{ secrets.AWS_STORAGE_BUCKET_NAME }}
+      AWS_S3_REGION_NAME: ${{ secrets.AWS_S3_REGION_NAME }}
+
+  call-frontend-build:
+    uses: ./.github/workflows/frontend-build.yml
+    with:
+      nodeVersion: '20.x'
