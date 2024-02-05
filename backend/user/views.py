@@ -178,33 +178,17 @@ class SaveUnitApiView(APIView):
         return Response({"vehicles": vehicle_data}, status=status.HTTP_200_OK)
 
     def post(self, request, **kwargs):
+        bidder_id = kwargs.get("bidder_id")
         vehicle_id = kwargs.get("vehicle_id")
-
         # Replace this later to fetch authentication details
         # from headers instead of body
-        bidder_id = kwargs.get("bidder_id")
-        bidder = Bidder.objects.create(
-            email="sdfsdf@gmail.com",
-            first_name="sdfsdf",
-            last_name="sdfsdf",
-            bidder_number="193334456",
-        )
-        # vehicle = get_object_or_404(Vehicle, id=vehicle_id)
-        brand = Brand.objects.create(name="sdfsdf")
-        type = Type.objects.create(name="sdfsdfsdf")
-        vehicle = Vehicle.objects.create(
-            unicode_id=123348445, brand=brand, vehicle_type=type
-        )
-        auction = Auction.objects.create(
-            name="sdfsdf", start_date="2024-02-03", end_date="2024-02-23"
-        )
-        auction_item = AuctionItem(auction_id=auction, content_object=vehicle)
-        auction_item.save()
+        vehicle = get_object_or_404(Vehicle, id=vehicle_id)
         auction_for_vehicle = Auction.objects.filter(
             auctionitem__content_type=ContentType.objects.get_for_model(Vehicle),
             auctionitem__object_id=vehicle.id,
         ).first()
-        # bidder = get_object_or_404(Bidder, id=bidder_id)
+
+        bidder = get_object_or_404(Bidder, id=bidder_id)
         saved_unit = SavedUnits(
             auction_id=auction_for_vehicle,
             bidder_id=bidder,
@@ -212,7 +196,6 @@ class SaveUnitApiView(APIView):
             content_object=vehicle,
         )
         saved_unit.save()
-        return Response(bidder.id)
         return Response(
             {"message": "Vehicle saved successfully"},
             status=status.HTTP_200_OK,
@@ -222,14 +205,15 @@ class SaveUnitApiView(APIView):
         vehicle_id = kwargs.get("vehicle_id")
         bidder_id = kwargs.get("bidder_id")
 
-        vehicle = get_object_or_404(Vehicle, id=vehicle_id)
         bidder = get_object_or_404(Bidder, id=bidder_id)
 
-        saved_unit = get_object_or_404(SavedUnits, vehicle_id=vehicle, bidder_id=bidder)
+        saved_unit = get_object_or_404(
+            SavedUnits, object_id=vehicle_id, bidder_id=bidder
+        )
 
         saved_unit.delete()
 
         return Response(
-            {"message": "SavedUnit deleted successfully"},
+            {"message": "Saved unit deleted successfully"},
             status=status.HTTP_200_OK,
         )
