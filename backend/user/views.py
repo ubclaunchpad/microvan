@@ -15,7 +15,6 @@ from vehicle.serializers import VehicleSerializer
 from auction.models import Auction, AuctionItem
 
 
-
 class BidderListApiView(APIView):
     def get(self, request):
         """
@@ -159,7 +158,8 @@ class AdminDetailApiView(APIView):
 
 class SaveUnitApiView(APIView):
     """
-    An endpoint to handle saving a vehicle to a bidder's saved vehicle list, as well as retrieving a list of all saved vehicles
+    An endpoint to handle saving a vehicle to a bidder's saved vehicle list,
+    as well as retrieving a list of all saved vehicles
     """
 
     def get(self, request, **kwargs):
@@ -218,6 +218,8 @@ class SaveUnitApiView(APIView):
             {"message": "Saved unit deleted successfully"},
             status=status.HTTP_200_OK,
         )
+
+
 class ListUnverified(APIView):
     def get(self, request):
         bidders = Bidder.objects.all()

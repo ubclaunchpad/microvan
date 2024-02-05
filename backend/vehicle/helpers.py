@@ -1,5 +1,4 @@
-from .models import (
-    Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle)
+from .models import Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle
 
 
 def infinite_filter(request):

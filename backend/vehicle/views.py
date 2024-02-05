@@ -7,11 +7,16 @@ from rest_framework.views import APIView
 
 from .helpers import has_more_data, infinite_filter
 from user.models import Bidder
-from .models import (
-    Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle)
+from .models import Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle
 from .serializers import (
-    BrandSerializer, EquipmentSerializer, SupplierSerializer,
-    TrailerSerializer, TypeSerializer, UnitImageSerializer, VehicleSerializer)
+    BrandSerializer,
+    EquipmentSerializer,
+    SupplierSerializer,
+    TrailerSerializer,
+    TypeSerializer,
+    UnitImageSerializer,
+    VehicleSerializer,
+)
 
 
 # Create your views here.
