@@ -5,8 +5,9 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Auction
+from .models import Auction, AuctionItem
 from .serializers import AuctionSerializer
+from vehicle.models import Vehicle
 
 
 class AuctionListApiView(APIView):
@@ -38,7 +39,7 @@ class AuctionListApiView(APIView):
         end_date = datetime.strptime(request.data.get("end_date"), date_format)
 
         # Check if start date is in the past
-        if start_date < datetime.now().date():
+        if start_date.date() < datetime.now().date():
             return Response(
                 {"error": "Start date should be in the future"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -86,3 +87,25 @@ class AuctionDetailApiView(APIView):
         auction = get_object_or_404(Auction, id=auction_id)
         auction.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AddToAuctionApiView(APIView):
+    """
+    Takes in a vehicle and auction ID and associates
+    it with an auction by creating an AuctionItem
+    """
+
+    def post(self, request, *args, **kwargs):
+        auction_id = kwargs.get("auction_id")
+        vehicle_id = kwargs.get("vehicle_id")
+
+        auction = get_object_or_404(Auction, id=auction_id)
+        vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+
+        auction_item = AuctionItem(auction_id=auction, content_object=vehicle)
+        auction_item.save()
+
+        return Response(
+            {"message": "Vehicle added to auction successfully"},
+            status=status.HTTP_201_CREATED,
+        )
