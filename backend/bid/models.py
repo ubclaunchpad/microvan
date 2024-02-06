@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from core.models import MainModel
-from user.models import Bidder
+from user.models import User
 
 
 class Bid(MainModel):
@@ -13,7 +13,7 @@ class Bid(MainModel):
     """
 
     amount = models.IntegerField(null=False)
-    bidder = models.ForeignKey(Bidder, on_delete=models.PROTECT)
+    bidder = models.ForeignKey(User, on_delete=models.PROTECT)
     auction = models.ForeignKey("auction.Auction", on_delete=models.PROTECT)
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     object_id = models.UUIDField()

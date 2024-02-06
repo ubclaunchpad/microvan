@@ -2,13 +2,14 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.contrib.contenttypes.models import ContentType
-from .models import Admin, Bidder
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .models import User
 from .serializers import (
     AdminSerializer,
     BidderBlacklistedSerializer,
     BidderSerializer,
     BidderVerifiedSerializer,
+    MyTokenObtainPairSerializer,
 )
 
 
@@ -17,7 +18,7 @@ class BidderListApiView(APIView):
         """
         Return a list of all bidders.
         """
-        bidders = Bidder.objects.all()
+        bidders = User.objects.all().filter(is_admin=False)
         serializer = BidderSerializer(bidders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -37,7 +38,7 @@ class BidderDetailApiView(APIView):
         """
         Return a single bidder.
         """
-        bidder = get_object_or_404(Bidder, id=bidder_id)
+        bidder = get_object_or_404(User, id=bidder_id)
         serializer = BidderSerializer(bidder)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -45,7 +46,7 @@ class BidderDetailApiView(APIView):
         """
         Update a single bidder.
         """
-        bidder = get_object_or_404(Bidder, id=bidder_id)
+        bidder = get_object_or_404(User, id=bidder_id)
         serializer = BidderSerializer(bidder, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -59,7 +60,7 @@ class BidderDetailApiView(APIView):
         """
         # TODO: User JWT Token to check that admin is making this request
 
-        bidder = get_object_or_404(Bidder, id=bidder_id)
+        bidder = get_object_or_404(User, id=bidder_id)
         bidder.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -73,7 +74,7 @@ class BidderVerifyApiView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        bidder = get_object_or_404(Bidder, id=bidder_id)
+        bidder = get_object_or_404(User, id=bidder_id)
 
         serializer = BidderVerifiedSerializer(bidder, data=request.data, partial=True)
         if serializer.is_valid():
@@ -91,7 +92,7 @@ class BidderBlacklistApiView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        bidder = get_object_or_404(Bidder, id=bidder_id)
+        bidder = get_object_or_404(User, id=bidder_id)
 
         serializer = BidderBlacklistedSerializer(
             bidder, data=request.data, partial=True
@@ -107,7 +108,7 @@ class AdminListApiView(APIView):
         """
         Return a list of all admins.
         """
-        admins = Admin.objects.all()
+        admins = User.objects.all().filter(is_admin=True)
         serializer = AdminSerializer(admins, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -115,7 +116,7 @@ class AdminListApiView(APIView):
         """
         Create a new admin.
         """
-        serializer = AdminSerializer(data=request.data)
+        serializer = AdminSerializer(data=request.data, is_admin=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -128,7 +129,7 @@ class AdminDetailApiView(APIView):
         """
         Return a single admin.
         """
-        admin = get_object_or_404(Admin, id=admin_id)
+        admin = get_object_or_404(User, id=admin_id)
         serializer = AdminSerializer(admin)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -136,7 +137,7 @@ class AdminDetailApiView(APIView):
         """
         Update a single admin.
         """
-        admin = get_object_or_404(Admin, id=admin_id)
+        admin = get_object_or_404(User, id=admin_id)
         serializer = AdminSerializer(admin, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -148,14 +149,14 @@ class AdminDetailApiView(APIView):
         """
         Delete a single admin.
         """
-        admin = get_object_or_404(Admin, id=admin_id)
+        admin = get_object_or_404(User, id=admin_id)
         admin.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ListUnverified(APIView):
     def get(self, request):
-        bidders = Bidder.objects.all()
+        bidders = User.objects.all().filter(is_admin=False)
         unverifiedBidders = []
         for index in range(len(bidders)):
             if bidders[index].is_verified is False:
@@ -166,7 +167,7 @@ class ListUnverified(APIView):
 
 class ListBlacklisted(APIView):
     def get(self, request):
-        bidders = Bidder.objects.all()
+        bidders = User.objects.all().filter(is_admin=False)
         blacklistedBidders = []
         for index in range(len(bidders)):
             if bidders[index].is_blacklisted is True:
@@ -177,10 +178,14 @@ class ListBlacklisted(APIView):
 
 class ListVerified(APIView):
     def get(self, request):
-        bidders = Bidder.objects.all()
+        bidders = User.objects.all().filter(is_admin=False)
         verifiedBidders = []
         for index in range(len(bidders)):
             if bidders[index].is_verified is True:
                 verifiedBidders.append(bidders[index])
         serializer = BidderSerializer(verifiedBidders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer

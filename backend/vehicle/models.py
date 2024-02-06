@@ -85,7 +85,7 @@ class UnitImage(MainModel):
 
 
 class SavedUnits(MainModel):
-    bidder_id = models.ForeignKey("user.Bidder", on_delete=models.PROTECT)
+    bidder_id = models.ForeignKey("user.User", on_delete=models.PROTECT)
     auction_id = models.ForeignKey("auction.Auction", on_delete=models.PROTECT)
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     object_id = models.UUIDField()

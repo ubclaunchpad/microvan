@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from auction.models import Auction
-from user.models import Bidder
+from user.models import User
 
 from .models import Bid
 from .serializers import BidSerializer
@@ -52,9 +52,9 @@ class BidListApiView(APIView):
 
         # Validate bidder and auction
         try:
-            bidder = Bidder.objects.get(id=bidder_id)
+            bidder = User.objects.get(id=bidder_id)
             auction = Auction.objects.get(id=auction_id)
-        except (Bidder.DoesNotExist, Auction.DoesNotExist):
+        except (User.DoesNotExist, Auction.DoesNotExist):
             return Response(
                 {"error": "Invalid bidder or auction."},
                 status=status.HTTP_400_BAD_REQUEST,

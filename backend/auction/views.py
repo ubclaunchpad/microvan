@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from .models import Auction, AuctionItem
 from .serializers import AuctionSerializer
 from vehicle.models import Vehicle, SavedUnits, ContentType
-from user.models import Bidder
+from user.models import User
 
 
 class AuctionListApiView(APIView):
@@ -105,7 +105,7 @@ class SaveUnitApiView(APIView):
         # from headers instead of body
         vehicle = get_object_or_404(Vehicle, id=vehicle_id)
         auction_for_vehicle = Auction.objects.get(id=auction_id)
-        bidder = get_object_or_404(Bidder, id=bidder_id)
+        bidder = get_object_or_404(User, id=bidder_id)
         if SavedUnits.objects.filter(
             auction_id=auction_for_vehicle, bidder_id=bidder, object_id=vehicle.id
         ):
@@ -130,7 +130,7 @@ class SaveUnitApiView(APIView):
         vehicle_id = kwargs.get("vehicle_id")
         bidder_id = kwargs.get("bidder_id")
         auction = kwargs.get("auction_id")
-        bidder = get_object_or_404(Bidder, id=bidder_id)
+        bidder = get_object_or_404(User, id=bidder_id)
 
         saved_unit = get_object_or_404(
             SavedUnits, object_id=vehicle_id, bidder_id=bidder, auction_id=auction
@@ -154,7 +154,7 @@ class GetSavedUnitApiView(APIView):
         # Replace this line to obtain user id once authentication has been implemented
         bidder_id = kwargs.get("bidder_id")
         auction_id = kwargs.get("auction_id")
-        bidder = get_object_or_404(Bidder, id=bidder_id)
+        bidder = get_object_or_404(User, id=bidder_id)
         auction = get_object_or_404(Auction, id=auction_id)
 
         saved_units = SavedUnits.objects.filter(bidder_id=bidder, auction_id=auction)

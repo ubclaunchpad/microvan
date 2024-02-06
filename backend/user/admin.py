@@ -1,43 +1,29 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from .models import User
 
-from .models import Admin, Bidder
+# Define a custom UserAdmin
+class CustomUserAdmin(BaseUserAdmin):
+    model = User
 
-
-class AdminAdmin(admin.ModelAdmin):
     list_display = (
-        "id",
-        "email",
-        "first_name",
-        "last_name",
-        "permission_level",
-        "created_at",
+        'id', 'email', 'first_name', 'last_name', 'is_admin', 'permission_level', 
+        'company_name', 'bidder_number', 'is_verified', 'is_blacklisted'
     )
-    search_fields = ("email", "first_name", "last_name")
-    list_filter = ("permission_level",)
+    
+    search_fields = ('email', 'first_name', 'last_name', 'company_name', 'bidder_number')
+    
+    list_filter = ('is_admin', 'is_verified', 'is_blacklisted', 'permission_level') + BaseUserAdmin.list_filter
 
-
-class BidderAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "email",
-        "first_name",
-        "last_name",
-        "company_name",
-        "bidder_number",
-        "is_verified",
-        "is_blacklisted",
-        "created_at",
+    fieldsets = BaseUserAdmin.fieldsets + (
+        (None, {'fields': ('is_admin', 'permission_level')}),
+        ('Bidder Information', {'fields': ('company_name', 'bidder_number', 'is_verified', 'is_blacklisted')}),
     )
-    search_fields = (
-        "email",
-        "first_name",
-        "last_name",
-        "company_name",
-        "bidder_number",
+
+    add_fieldsets = BaseUserAdmin.add_fieldsets + (
+        (None, {'fields': ('is_admin', 'permission_level')}),
+        ('Bidder Information', {'fields': ('company_name', 'bidder_number', 'is_verified', 'is_blacklisted')}),
     )
-    list_filter = ("is_verified", "is_blacklisted")
 
-
-# Register your models here
-admin.site.register(Admin, AdminAdmin)
-admin.site.register(Bidder, BidderAdmin)
+# Register the User model with the customized UserAdmin
+admin.site.register(User, CustomUserAdmin)

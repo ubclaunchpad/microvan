@@ -10,6 +10,7 @@ django-environ = ">=0.11.2"
 psycopg2 = ">=2.9.9"
 boto3 = ">=1.29.6"
 django-storages = ">=1.14.2"
+djangorestframework-simplejwt = "*"
 
 [dev-packages]
 flake8 = ">=6.1.0"
