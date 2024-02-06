@@ -11,7 +11,6 @@ from vehicle.models import Vehicle, SavedUnits, ContentType
 from user.models import Bidder
 
 
-
 class AuctionListApiView(APIView):
     def get(self, request, *args, **kwargs):
         """
@@ -91,7 +90,6 @@ class AuctionDetailApiView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-
 class SaveUnitApiView(APIView):
     """
     An endpoint to handle saving a vehicle to a bidder's saved vehicle list,
@@ -169,7 +167,8 @@ class GetSavedUnitApiView(APIView):
         vehicle_data = [{"id": vehicle.id} for vehicle in vehicle_list]
 
         return Response({"vehicles": vehicle_data}, status=status.HTTP_200_OK)
-      
+
+
 class AddToAuctionApiView(APIView):
     """
     Takes in a vehicle and auction ID and associates
@@ -190,4 +189,3 @@ class AddToAuctionApiView(APIView):
             {"message": "Vehicle added to auction successfully"},
             status=status.HTTP_201_CREATED,
         )
-

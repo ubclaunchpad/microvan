@@ -10,9 +10,6 @@ from .serializers import (
     BidderSerializer,
     BidderVerifiedSerializer,
 )
-from vehicle.models import Vehicle, SavedUnits, Type, Brand
-from vehicle.serializers import VehicleSerializer
-from auction.models import Auction, AuctionItem
 
 
 class BidderListApiView(APIView):
