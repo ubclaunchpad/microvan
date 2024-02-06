@@ -3,7 +3,6 @@ import random
 from django.db import models
 
 from core.models import MainModel
-from vehicle.models import Vehicle
 
 
 # Create your models here.
