@@ -2,9 +2,16 @@ from django.contrib import admin
 from django.urls import include, path
 
 from .views import (
-    AdminDetailApiView, AdminListApiView, BidderBlacklistApiView,
-    BidderDetailApiView, BidderListApiView, BidderVerifyApiView,
-    ListBlacklisted, ListUnverified, ListVerified)
+    AdminDetailApiView,
+    AdminListApiView,
+    BidderBlacklistApiView,
+    BidderDetailApiView,
+    BidderListApiView,
+    BidderVerifyApiView,
+    ListBlacklisted,
+    ListUnverified,
+    ListVerified,
+)
 
 urlpatterns = [
     path("bidders/", BidderListApiView.as_view(), name="bidder-list"),

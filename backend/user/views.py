@@ -2,11 +2,14 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from django.contrib.contenttypes.models import ContentType
 from .models import Admin, Bidder
 from .serializers import (
-    AdminSerializer, BidderBlacklistedSerializer, BidderSerializer,
-    BidderVerifiedSerializer)
+    AdminSerializer,
+    BidderBlacklistedSerializer,
+    BidderSerializer,
+    BidderVerifiedSerializer,
+)
 
 
 class BidderListApiView(APIView):
