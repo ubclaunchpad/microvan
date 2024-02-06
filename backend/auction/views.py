@@ -5,10 +5,11 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Auction
+from .models import Auction, AuctionItem
 from .serializers import AuctionSerializer
 from vehicle.models import Vehicle, SavedUnits, ContentType
 from user.models import Bidder
+
 
 
 class AuctionListApiView(APIView):
@@ -90,6 +91,7 @@ class AuctionDetailApiView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+
 class SaveUnitApiView(APIView):
     """
     An endpoint to handle saving a vehicle to a bidder's saved vehicle list,
@@ -167,3 +169,25 @@ class GetSavedUnitApiView(APIView):
         vehicle_data = [{"id": vehicle.id} for vehicle in vehicle_list]
 
         return Response({"vehicles": vehicle_data}, status=status.HTTP_200_OK)
+      
+class AddToAuctionApiView(APIView):
+    """
+    Takes in a vehicle and auction ID and associates
+    it with an auction by creating an AuctionItem
+    """
+
+    def post(self, request, *args, **kwargs):
+        auction_id = kwargs.get("auction_id")
+        vehicle_id = kwargs.get("vehicle_id")
+
+        auction = get_object_or_404(Auction, id=auction_id)
+        vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+
+        auction_item = AuctionItem(auction_id=auction, content_object=vehicle)
+        auction_item.save()
+
+        return Response(
+            {"message": "Vehicle added to auction successfully"},
+            status=status.HTTP_201_CREATED,
+        )
+
