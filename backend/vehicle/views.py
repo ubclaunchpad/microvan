@@ -1,27 +1,26 @@
-from datetime import datetime
-
-from rest_framework import generics, status, viewsets
+from rest_framework import status
 from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.permissions import IsAdminUser
+
 from .helpers import has_more_data, infinite_filter
-from user.models import Bidder
-from .models import Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle
-from .serializers import (
-    BrandSerializer,
-    EquipmentSerializer,
-    SupplierSerializer,
-    TrailerSerializer,
-    TypeSerializer,
-    UnitImageSerializer,
-    VehicleSerializer,
-)
+from .models import Brand, Type, Vehicle
+from .serializers import VehicleSerializer
 
 
 # Create your views here.
 class VehicleListApiView(APIView):
     serializer_class = VehicleSerializer
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            self.permission_classes = [IsAdminUser]
+        else:
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()
 
     def get(self, request, *args, **kwargs):
         """
@@ -49,10 +48,18 @@ class VehicleListApiView(APIView):
 
 
 class VehicleDetailApiView(APIView):
-    serializer_class = VehicleSerializer
     """
     Retrieve, update or delete a vehicle instance.
     """
+
+    serializer_class = VehicleSerializer
+
+    def get_permissions(self):
+        if self.request.method == "PUT" or self.request.method == "DELETE":
+            self.permission_classes = [IsAdminUser]
+        else:
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()
 
     def get(self, request, vehicle_id, *args, **kwargs):
         """
@@ -68,7 +75,6 @@ class VehicleDetailApiView(APIView):
     def put(self, request, vehicle_id, format=None):
         """
         Update specific vehicle
-
         """
         vehicle = get_object_or_404(Vehicle, id=vehicle_id)
         serializer = VehicleSerializer(vehicle, data=request.data)
@@ -92,6 +98,8 @@ class VehicleFilterList(APIView):
     Takes limit + offset from url
     """
 
+    permission_classes = [IsAuthenticated]
+
     def get_queryset(self):
         queryset = infinite_filter(self.request)
         return queryset
@@ -114,6 +122,8 @@ class VehiclePriceApiView(APIView):
     """
     Update a vehicle's minimum price
     """
+
+    permission_classes = [IsAdminUser]
 
     serializer_class = VehicleSerializer
 

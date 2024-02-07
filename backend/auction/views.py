@@ -2,16 +2,26 @@ from datetime import datetime
 
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.permissions import IsAdminUser
+from user.models import User
+from vehicle.models import SavedUnits, Vehicle
+
 from .models import Auction, AuctionItem
 from .serializers import AuctionSerializer
-from vehicle.models import Vehicle, SavedUnits, ContentType
-from user.models import Bidder
 
 
 class AuctionListApiView(APIView):
+    def get_permissions(self):
+        if self.request.method == "POST":
+            self.permission_classes = [IsAdminUser]
+        else:
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()
+
     def get(self, request, *args, **kwargs):
         """
         Get all auctions
@@ -71,6 +81,13 @@ class AuctionDetailApiView(APIView):
     Retrieve, update or delete an auction instance.
     """
 
+    def get_permissions(self):
+        if self.request.method == "PUT" or self.request.method == "DELETE":
+            self.permission_classes = [IsAdminUser]
+        else:
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()
+
     def get(self, request, auction_id, format=None):
         auction = get_object_or_404(Auction, id=auction_id)
         serializer = AuctionSerializer(auction)
@@ -96,6 +113,8 @@ class SaveUnitApiView(APIView):
     as well as retrieving a list of all saved vehicles
     """
 
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, **kwargs):
         bidder_id = kwargs.get("bidder_id")
         vehicle_id = kwargs.get("vehicle_id")
@@ -105,7 +124,7 @@ class SaveUnitApiView(APIView):
         # from headers instead of body
         vehicle = get_object_or_404(Vehicle, id=vehicle_id)
         auction_for_vehicle = Auction.objects.get(id=auction_id)
-        bidder = get_object_or_404(Bidder, id=bidder_id)
+        bidder = get_object_or_404(User, id=bidder_id)
         if SavedUnits.objects.filter(
             auction_id=auction_for_vehicle, bidder_id=bidder, object_id=vehicle.id
         ):
@@ -130,7 +149,7 @@ class SaveUnitApiView(APIView):
         vehicle_id = kwargs.get("vehicle_id")
         bidder_id = kwargs.get("bidder_id")
         auction = kwargs.get("auction_id")
-        bidder = get_object_or_404(Bidder, id=bidder_id)
+        bidder = get_object_or_404(User, id=bidder_id)
 
         saved_unit = get_object_or_404(
             SavedUnits, object_id=vehicle_id, bidder_id=bidder, auction_id=auction
@@ -150,11 +169,13 @@ class GetSavedUnitApiView(APIView):
     a provided auction
     """
 
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, **kwargs):
         # Replace this line to obtain user id once authentication has been implemented
         bidder_id = kwargs.get("bidder_id")
         auction_id = kwargs.get("auction_id")
-        bidder = get_object_or_404(Bidder, id=bidder_id)
+        bidder = get_object_or_404(User, id=bidder_id)
         auction = get_object_or_404(Auction, id=auction_id)
 
         saved_units = SavedUnits.objects.filter(bidder_id=bidder, auction_id=auction)
@@ -174,6 +195,8 @@ class AddToAuctionApiView(APIView):
     Takes in a vehicle and auction ID and associates
     it with an auction by creating an AuctionItem
     """
+
+    permission_classes = [IsAdminUser]
 
     def post(self, request, *args, **kwargs):
         auction_id = kwargs.get("auction_id")
