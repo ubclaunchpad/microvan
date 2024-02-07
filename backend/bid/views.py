@@ -1,9 +1,9 @@
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 
 from auction.models import Auction
 from user.models import User
@@ -102,6 +102,7 @@ class BidDetailApiView(APIView):
     """
     Retrieve, update or delete an bid instance.
     """
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request, bid_id, format=None):

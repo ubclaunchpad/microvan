@@ -2,15 +2,16 @@ from datetime import datetime
 
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 
 from core.permissions import IsAdminUser
+from user.models import User
+from vehicle.models import SavedUnits, Vehicle
+
 from .models import Auction, AuctionItem
 from .serializers import AuctionSerializer
-from vehicle.models import Vehicle, SavedUnits
-from user.models import User
 
 
 class AuctionListApiView(APIView):
@@ -78,7 +79,8 @@ class AuctionListApiView(APIView):
 class AuctionDetailApiView(APIView):
     """
     Retrieve, update or delete an auction instance.
-    """ 
+    """
+
     def get_permissions(self):
         if self.request.method == "PUT" or self.request.method == "DELETE":
             self.permission_classes = [IsAdminUser]
@@ -110,6 +112,7 @@ class SaveUnitApiView(APIView):
     An endpoint to handle saving a vehicle to a bidder's saved vehicle list,
     as well as retrieving a list of all saved vehicles
     """
+
     permission_classes = [IsAuthenticated]
 
     def post(self, request, **kwargs):
@@ -165,6 +168,7 @@ class GetSavedUnitApiView(APIView):
     An endpoint to retrieve all of bidder's saved units associated with
     a provided auction
     """
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request, **kwargs):
@@ -191,6 +195,7 @@ class AddToAuctionApiView(APIView):
     Takes in a vehicle and auction ID and associates
     it with an auction by creating an AuctionItem
     """
+
     permission_classes = [IsAdminUser]
 
     def post(self, request, *args, **kwargs):

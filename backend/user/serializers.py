@@ -7,7 +7,16 @@ from .models import User
 class BidderSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "email", "first_name", "last_name", "company_name", "bidder_number", "is_verified", "is_blacklisted"]
+        fields = [
+            "id",
+            "email",
+            "first_name",
+            "last_name",
+            "company_name",
+            "bidder_number",
+            "is_verified",
+            "is_blacklisted",
+        ]
 
 
 class BidderVerifiedSerializer(serializers.ModelSerializer):
