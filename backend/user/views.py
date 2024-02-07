@@ -3,6 +3,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.permissions import IsAuthenticated
+
+from core.permissions import IsAdminUser
 from .models import User
 from .serializers import (
     AdminSerializer,
@@ -14,6 +17,11 @@ from .serializers import (
 
 
 class BidderListApiView(APIView):
+    def get_permissions(self):
+        if self.request.method == "GET":
+            self.permission_classes = [IsAdminUser]
+        return super().get_permissions()
+
     def get(self, request):
         """
         Return a list of all bidders.
@@ -34,6 +42,13 @@ class BidderListApiView(APIView):
 
 
 class BidderDetailApiView(APIView):
+    def get_permissions(self):
+        if self.request.method == "DELETE":
+            self.permission_classes = [IsAdminUser]
+        else:
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()
+
     def get(self, request, bidder_id):
         """
         Return a single bidder.
@@ -58,16 +73,15 @@ class BidderDetailApiView(APIView):
         """
         Delete a single bidder.
         """
-        # TODO: User JWT Token to check that admin is making this request
-
         bidder = get_object_or_404(User, id=bidder_id)
         bidder.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class BidderVerifyApiView(APIView):
+    permission_classes = [IsAdminUser]
+
     def put(self, request, bidder_id):
-        # TODO: User JWT Token to check that admin is making this request
         if "is_verified" not in request.data:
             return Response(
                 {"error": "is_verified field is required."},
@@ -84,8 +98,9 @@ class BidderVerifyApiView(APIView):
 
 
 class BidderBlacklistApiView(APIView):
+    permission_classes = [IsAdminUser]
+
     def put(self, request, bidder_id):
-        # TODO: User JWT Token to check that admin is making this request
         if "is_blacklisted" not in request.data:
             return Response(
                 {"error": "is_blacklisted field is required."},
@@ -104,6 +119,8 @@ class BidderBlacklistApiView(APIView):
 
 
 class AdminListApiView(APIView):
+    permission_classes = [IsAdminUser]
+
     def get(self, request):
         """
         Return a list of all admins.
@@ -125,6 +142,8 @@ class AdminListApiView(APIView):
 
 
 class AdminDetailApiView(APIView):
+    permission_classes = [IsAdminUser]
+
     def get(self, request, admin_id):
         """
         Return a single admin.
@@ -155,6 +174,8 @@ class AdminDetailApiView(APIView):
 
 
 class ListUnverified(APIView):
+    permission_classes = [IsAdminUser]
+
     def get(self, request):
         bidders = User.objects.all().filter(is_admin=False)
         unverifiedBidders = []
@@ -166,6 +187,8 @@ class ListUnverified(APIView):
 
 
 class ListBlacklisted(APIView):
+    permission_classes = [IsAdminUser]
+
     def get(self, request):
         bidders = User.objects.all().filter(is_admin=False)
         blacklistedBidders = []
@@ -177,6 +200,8 @@ class ListBlacklisted(APIView):
 
 
 class ListVerified(APIView):
+    permission_classes = [IsAdminUser]
+
     def get(self, request):
         bidders = User.objects.all().filter(is_admin=False)
         verifiedBidders = []

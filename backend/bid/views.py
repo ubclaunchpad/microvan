@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 from auction.models import Auction
 from user.models import User
@@ -12,6 +13,8 @@ from .serializers import BidSerializer
 
 
 class BidListApiView(APIView):
+    permission_classes = [IsAuthenticated]
+
     serializer_class = BidSerializer
 
     def get(self, request, *args, **kwargs):
@@ -99,6 +102,7 @@ class BidDetailApiView(APIView):
     """
     Retrieve, update or delete an bid instance.
     """
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, bid_id, format=None):
         bid = get_object_or_404(Bid, id=bid_id)

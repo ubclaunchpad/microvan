@@ -4,14 +4,23 @@ from rest_framework import status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
+from core.permissions import IsAdminUser
 from .models import Auction, AuctionItem
 from .serializers import AuctionSerializer
-from vehicle.models import Vehicle, SavedUnits, ContentType
+from vehicle.models import Vehicle, SavedUnits
 from user.models import User
 
 
 class AuctionListApiView(APIView):
+    def get_permissions(self):
+        if self.request.method == "POST":
+            self.permission_classes = [IsAdminUser]
+        else:
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()
+
     def get(self, request, *args, **kwargs):
         """
         Get all auctions
@@ -69,7 +78,13 @@ class AuctionListApiView(APIView):
 class AuctionDetailApiView(APIView):
     """
     Retrieve, update or delete an auction instance.
-    """
+    """ 
+    def get_permissions(self):
+        if self.request.method == "PUT" or self.request.method == "DELETE":
+            self.permission_classes = [IsAdminUser]
+        else:
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()
 
     def get(self, request, auction_id, format=None):
         auction = get_object_or_404(Auction, id=auction_id)
@@ -95,6 +110,7 @@ class SaveUnitApiView(APIView):
     An endpoint to handle saving a vehicle to a bidder's saved vehicle list,
     as well as retrieving a list of all saved vehicles
     """
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, **kwargs):
         bidder_id = kwargs.get("bidder_id")
@@ -149,6 +165,7 @@ class GetSavedUnitApiView(APIView):
     An endpoint to retrieve all of bidder's saved units associated with
     a provided auction
     """
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, **kwargs):
         # Replace this line to obtain user id once authentication has been implemented
@@ -174,6 +191,7 @@ class AddToAuctionApiView(APIView):
     Takes in a vehicle and auction ID and associates
     it with an auction by creating an AuctionItem
     """
+    permission_classes = [IsAdminUser]
 
     def post(self, request, *args, **kwargs):
         auction_id = kwargs.get("auction_id")
