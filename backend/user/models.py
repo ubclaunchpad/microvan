@@ -39,4 +39,5 @@ class User(AbstractUser):
                 return bidder_number
 
     def __str__(self):
-        return f"{'Admin' if self.is_admin else 'Bidder'}: {self.first_name} {self.last_name}"
+        user_type = "Admin" if self.is_admin else "Bidder"
+        return f"{user_type}: {self.first_name} {self.last_name}"
