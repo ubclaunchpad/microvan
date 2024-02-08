@@ -1,8 +1,8 @@
 import React from 'react';
-import Routers from './routers/Routers';
+import VehicleItemCard from './components/VehicleItemCard';
 
 function App() {
-	return <Routers />;
+	return <VehicleItemCard />;
 }
 
 export default App;
