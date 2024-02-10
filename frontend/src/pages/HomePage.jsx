@@ -1,5 +1,6 @@
 import React from 'react';
 import logo from '../assets/logo.svg';
+// import SearchBar from  '../components/ListingSearchBar.jsx'
 
 export default function HomePage() {
 	return (
