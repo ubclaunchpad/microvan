@@ -6,7 +6,7 @@ function ListingSearchBar({ setResults }) {
   const [input, setInput] = useState("");
 
   const fetchData = (value) => {
-    fetch("http://localhost:8000/vehicles?searc=${value}")
+    fetch("http://localhost:8000/vehicles?search=${value}")
       .then((response) => response.json())
       .then((json) =>
         setResults(
