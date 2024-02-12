@@ -1,11 +1,14 @@
 import random
-
+import uuid
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
 # Create your models here.
 class User(AbstractUser):
+    identifier = models.UUIDField(
+        unique=True, default=uuid.uuid4, editable=False
+    )
     is_admin = models.BooleanField(default=False)
     permission_level = models.IntegerField(
         default=0, blank=True, null=True
@@ -26,7 +29,7 @@ class User(AbstractUser):
     is_blacklisted = models.BooleanField(
         default=False, blank=True, null=True
     )  # For Bidders
-
+    
     def save(self, *args, **kwargs):
         if not self.is_admin and not self.bidder_number:
             self.bidder_number = self.generate_unique_bidder_number()

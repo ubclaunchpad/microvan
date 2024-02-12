@@ -9,7 +9,7 @@ class CustomUserAdmin(BaseUserAdmin):
     model = User
 
     list_display = (
-        "id",
+        "identifier",
         "email",
         "first_name",
         "last_name",

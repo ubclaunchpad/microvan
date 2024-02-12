@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
+from django.contrib.auth.hashers import make_password
 
 from core.permissions import IsAdminUser
 
@@ -211,3 +212,19 @@ class ListVerified(APIView):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+"""
+    def post(self, request):
+        # Create a user instance
+        user = User(
+            username="kevin222",
+            email="test2222@gmail.com",
+            first_name="123",
+            last_name="123",
+            password=make_password("123")  # Hash the password
+        )
+
+        # Save the user
+        user.save()
+
+        return Response("User created successfully.")
+"""

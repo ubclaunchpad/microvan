@@ -77,7 +77,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "core.urls"
-
+AUTHENTICATION_BACKENDS = [
+    # Application custom auth backend
+    'user.backends.EmailorUsernameModelBackend',
+]
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
