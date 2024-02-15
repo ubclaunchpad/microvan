@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+//expects type Date for startDateTime and endDateTime props, recommended maxWidth around 300px
 export default function Countdown ({
     maxWidth, startDateTime, endDateTime
 }) {
@@ -24,8 +25,8 @@ export default function Countdown ({
         return () => clearInterval(timer);
       }, [startDateTime, endDateTime]);
 
-
     
+    // used to calculate the width of the green progress bar
     const calculateProgress = () => {
         const totalDuration =  endDateTime.getTime() - startDateTime.getTime();
         const elapsedTime = Math.max(0, totalDuration - timeRemaining);
@@ -35,6 +36,7 @@ export default function Countdown ({
         return isExpired ? 0 : maxWidth - (elapsedTime / totalDuration) * maxWidth;
     };
 
+    // returns the string for the countdown label to display
     const formatTime = (milliseconds) => {
         const seconds = Math.floor(milliseconds / 1000);
         const hours = Math.floor(seconds / 3600);
