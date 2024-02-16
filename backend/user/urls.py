@@ -38,15 +38,15 @@ urlpatterns = [
     # Bidders
     path("bidders/", BidderListApiView.as_view(), name="bidder-list"),
     path(
-        "bidders/<uuid:bidder_id>/", BidderDetailApiView.as_view(), name="bidder-detail"
+        "bidders/<str:bidder_id>/", BidderDetailApiView.as_view(), name="bidder-detail"
     ),
     path(
-        "bidders/<uuid:bidder_id>/verify",
+        "bidders/<str:bidder_id>/verify",
         BidderVerifyApiView.as_view(),
         name="bidder-verify",
     ),
     path(
-        "bidders/<uuid:bidder_id>/blacklist",
+        "bidders/<str:bidder_id>/blacklist",
         BidderBlacklistApiView.as_view(),
         name="bidder-blacklist",
     ),
@@ -55,5 +55,5 @@ urlpatterns = [
     path("bidders/verified", ListVerified.as_view(), name="verified-list"),
     # Admins
     path("admins/", AdminListApiView.as_view(), name="admin-list"),
-    path("admins/<uuid:admin_id>/", AdminDetailApiView.as_view(), name="admin-detail"),
+    path("admins/<str:admin_id>/", AdminDetailApiView.as_view(), name="admin-detail"),
 ]

@@ -123,7 +123,7 @@ class SaveUnitApiView(APIView):
         # from headers instead of body
         vehicle = get_object_or_404(Vehicle, id=vehicle_id)
         auction_for_vehicle = Auction.objects.get(id=auction_id)
-        bidder = self.cognitoService.get_bidder_details(bidder_id)
+        bidder = self.cognitoService.get_user_details(bidder_id)
         if SavedUnits.objects.filter(
             auction_id=auction_for_vehicle, bidder_id=bidder, object_id=vehicle.id
         ):
@@ -148,7 +148,7 @@ class SaveUnitApiView(APIView):
         vehicle_id = kwargs.get("vehicle_id")
         bidder_id = kwargs.get("bidder_id")
         auction = kwargs.get("auction_id")
-        bidder = self.cognitoService.get_bidder_details(bidder_id)
+        bidder = self.cognitoService.get_user_details(bidder_id)
 
         saved_unit = get_object_or_404(
             SavedUnits, object_id=vehicle_id, bidder_id=bidder, auction_id=auction
@@ -173,10 +173,9 @@ class GetSavedUnitApiView(APIView):
     cognitoService = AWSCognitoService()
 
     def get(self, request, **kwargs):
-        # Replace this line to obtain user id once authentication has been implemented
         bidder_id = kwargs.get("bidder_id")
         auction_id = kwargs.get("auction_id")
-        bidder = self.cognitoService.get_bidder_details(bidder_id)
+        bidder = self.cognitoService.get_user_details(bidder_id)
         auction = get_object_or_404(Auction, id=auction_id)
 
         saved_units = SavedUnits.objects.filter(bidder_id=bidder, auction_id=auction)

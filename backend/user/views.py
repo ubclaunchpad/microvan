@@ -20,7 +20,7 @@ class BidderListApiView(APIView):
         """
         Return a list of all bidders.
         """
-        bidders = self.cognitoService.get_bidders()
+        bidders = self.cognitoService.list_users()
         return Response(bidders, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
@@ -87,7 +87,7 @@ class BidderDetailApiView(APIView):
         """
         Return a single bidder.
         """
-        bidder = self.cognitoService.get_bidder_details(bidder_id)
+        bidder = self.cognitoService.get_user_details(bidder_id)
 
         return Response(bidder, status=status.HTTP_200_OK)
 
@@ -110,7 +110,7 @@ class BidderDetailApiView(APIView):
             phone_number=phone_number,
         )
 
-        bidder = self.cognitoService.get_bidder_details(bidder_id)
+        bidder = self.cognitoService.get_user_details(bidder_id)
         if bidder:
             return Response(bidder, status=status.HTTP_200_OK)
 
@@ -183,7 +183,7 @@ class AdminListApiView(APIView):
         """
         Return a list of all admins.
         """
-        admins = self.cognitoUser.get_admins()
+        admins = self.cognitoService.list_users(is_admin=True)
         return Response(admins, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
@@ -233,7 +233,7 @@ class AdminDetailApiView(APIView):
         """
         Return a single admin.
         """
-        admin = self.cognitoService.get_admin_details(admin_id)
+        admin = self.cognitoService.get_user_details(admin_id)
         return Response(admin, status=status.HTTP_200_OK)
 
     def put(self, request, admin_id):
@@ -265,7 +265,7 @@ class ListUnverified(APIView):
     cognitoService = AWSCognitoService()
 
     def get(self, request):
-        bidders = self.cognitoService.get_bidders()
+        bidders = self.cognitoService.list_users()
         unverifiedBidders = []
         for index in range(len(bidders)):
             if bidders[index].is_verified is False:
@@ -279,7 +279,7 @@ class ListBlacklisted(APIView):
     cognitoService = AWSCognitoService()
 
     def get(self, request):
-        bidders = self.cognitoService.get_bidders()
+        bidders = self.cognitoService.list_users()
         blacklistedBidders = []
         for index in range(len(bidders)):
             if bidders[index].is_blacklisted is True:
@@ -293,7 +293,7 @@ class ListVerified(APIView):
     cognitoService = AWSCognitoService()
 
     def get(self, request):
-        bidders = self.cognitoService.get_bidders()
+        bidders = self.cognitoService.list_users()
         verifiedBidders = []
         for index in range(len(bidders)):
             if bidders[index].is_verified is True:

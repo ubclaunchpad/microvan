@@ -63,7 +63,7 @@ class BidListApiView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        bidder = self.cognitoService.get_bidder_details(bidder_id)
+        bidder = self.cognitoService.get_user_details(bidder_id)
         if not bidder:
             return Response(
                 {"error": "Invalid bidder."},

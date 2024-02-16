@@ -49,13 +49,14 @@ class AWSCognitoService:
         details = {attr["Name"]: attr["Value"] for attr in attributes}
 
         mapped = {
+            "id": details.get("sub", ""),
             "email": details.get("email", ""),
             "given_name": details.get("given_name", ""),
             "family_name": details.get("family_name", ""),
         }
 
         if is_admin:
-            mapped["permission_level"] = int(details.get("custom:permission_level", ""))
+            mapped["permission_level"] = int(details.get("custom:permission_level", -1))
         else:
             mapped["company_name"] = details.get("custom:company_name", "")
             mapped["company_address"] = details.get("custom:company_address", "")
@@ -88,7 +89,7 @@ class AWSCognitoService:
             return None
 
     def _prepare_user_attributes(
-        self, is_admin=False, given_name="", family_name="", **kwargs
+        self, is_admin=False, is_update=False, given_name="", family_name="", **kwargs
     ):
         attributes = [
             {"Name": "given_name", "Value": given_name},
@@ -103,9 +104,13 @@ class AWSCognitoService:
                     }
                 )
         else:
-            bidder_number = self._generate_unique_bidder_number()
-            if not bidder_number:
-                return None
+            if not is_update:
+                bidder_number = self._generate_unique_bidder_number()
+                if not bidder_number:
+                    return None
+                attributes.append(
+                    {"Name": "custom:bidder_number", "Value": bidder_number}
+                )
             attributes.extend(
                 [
                     {"Name": f"custom:{key}", "Value": str(value)}
@@ -114,11 +119,14 @@ class AWSCognitoService:
                     and key != "permission_level"
                     and key != "phone_number"
                 ]
-                + [
-                    {"Name": "custom:bidder_number", "Value": str(bidder_number)},
-                    {"Name": "phone_number", "Value": kwargs.get("phone_number", "")},
-                ]
             )
+            if kwargs.get("phone_number") is not None:
+                attributes.append(
+                    {
+                        "Name": "phone_number",
+                        "Value": kwargs.get("phone_number"),
+                    }
+                )
         return attributes
 
     def _add_user_to_group(self, email, group_name):
@@ -242,6 +250,20 @@ class AWSCognitoService:
             print(f"Error refreshing tokens: {e}")
             return None
 
+    def list_users(self, is_admin=False):
+        try:
+            response = self.client.list_users_in_group(
+                UserPoolId=settings.COGNITO_USER_POOL_ID,
+                GroupName="admins" if is_admin else "bidders",
+            )
+            return [
+                self._map_cognito_attributes(user["Attributes"], is_admin=is_admin)
+                for user in response["Users"]
+            ]
+        except Exception as e:
+            print(f"Error listing users: {e}")
+            return None
+
     def get_user_details(self, user_id, is_admin=False):
         try:
             response = self.client.admin_get_user(
@@ -255,7 +277,7 @@ class AWSCognitoService:
             return None
 
     def update_user(self, user_id, **kwargs):
-        attributes = self._prepare_user_attributes(**kwargs)
+        attributes = self._prepare_user_attributes(is_update=True, **kwargs)
         try:
             self.client.admin_update_user_attributes(
                 UserPoolId=settings.COGNITO_USER_POOL_ID,
