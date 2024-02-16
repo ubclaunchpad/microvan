@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { formatTime, calculateProgress } from '../../helpers/dateTime';
 
-//expects type Date for startDateTime and endDateTime props, recommended maxWidth around 300px
+// expects type Date for startDateTime and endDateTime props, recommended maxWidth around 300px
 export default function Countdown ({
     maxWidth, startDateTime, endDateTime
 }) {
@@ -25,37 +26,18 @@ export default function Countdown ({
         return () => clearInterval(timer);
       }, [startDateTime, endDateTime]);
 
-    
-    // used to calculate the width of the green progress bar
-    const calculateProgress = () => {
-        const totalDuration =  endDateTime.getTime() - startDateTime.getTime();
-        const elapsedTime = Math.max(0, totalDuration - timeRemaining);
-        if (!isActive) {
-            return 0;
-        }
-        return isExpired ? 0 : maxWidth - (elapsedTime / totalDuration) * maxWidth;
-    };
-
-    // returns the string for the countdown label to display
-    const formatTime = (milliseconds) => {
-        const seconds = Math.floor(milliseconds / 1000);
-        const hours = Math.floor(seconds / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
-        const remainingSeconds = seconds % 60;
-        const hourText = hours === 1 ? "hr" : "hrs";
-        const minsText = minutes === 1 ? "min" : "mins";
-        const secsText = seconds === 1 ? "sec" : "secs";
-        if (!isActive) {
-            return 'Auction has not started';
-        } 
-        return isExpired ? 'Auction has ended' : `${hours} ${hourText} ${minutes} ${minsText} ${remainingSeconds} ${secsText}`;
-    };
+    let statusString = formatTime(timeRemaining);
+    if (!isActive) {
+        statusString = "Auction has not started";
+    } else if (isExpired) {
+        statusString = "Auction has ended"
+    }
 
     return (           
         <div className="float-right text-right" style={{margin: 15}}>
-            <div className="mb-2">{formatTime(timeRemaining)}</div>
+            <div className="mb-2">{statusString}</div>
             <div className="h-[11px] bg-progress-bar rounded-lg overflow-hidden" style={{width: maxWidth, float: 'right'}}>
-                <div className="h-full bg-mv-green rounded-lg" style={{width: calculateProgress(), float: 'right'}}/>
+                <div className="h-full bg-mv-green rounded-lg" style={{width: (!isActive || isExpired) ? 0 : calculateProgress(endDateTime, startDateTime, maxWidth, timeRemaining), float: 'right'}}/>
             </div>
         </div>
     );
