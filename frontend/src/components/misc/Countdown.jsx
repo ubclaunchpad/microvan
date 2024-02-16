@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { formatTime, calculateProgress } from '../../helpers/dateTime';
+import { formatTime, calculateProgress } from '../../utils/dateTime';
 
 // expects type Date for startDateTime and endDateTime props, recommended maxWidth around 300px
 export default function Countdown ({
