@@ -1,20 +1,17 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from core.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
-from django.contrib.auth.hashers import make_password
 
 from core.permissions import IsAdminUser
-
-from .models import User
-from .serializers import (
-    AdminSerializer, BidderBlacklistedSerializer, BidderSerializer,
-    BidderVerifiedSerializer, MyTokenObtainPairSerializer)
+from services.AWSCognitoService import AWSCognitoService
+from util.jwt import decode_token
 
 
 class BidderListApiView(APIView):
+    cognitoService = AWSCognitoService()
+
     def get_permissions(self):
         if self.request.method == "GET":
             self.permission_classes = [IsAdminUser]
@@ -24,22 +21,53 @@ class BidderListApiView(APIView):
         """
         Return a list of all bidders.
         """
-        bidders = User.objects.all().filter(is_admin=False)
-        serializer = BidderSerializer(bidders, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        bidders = self.cognitoService.get_bidders()
+        return Response(bidders, status=status.HTTP_200_OK)
 
-    def post(self, request):
-        """
-        Create a new bidder.
-        """
-        serializer = BidderSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, *args, **kwargs):
+        email = request.data.get("email")
+        password = request.data.get("password")
+        given_name = request.data.get("given_name")
+        family_name = request.data.get("family_name")
+        company_address = request.data.get("company_address")
+        company_name = request.data.get("company_name")
+        phone_number = request.data.get("phone_number")
+
+        if not email or not password or not given_name or not family_name or not company_address or not company_name or not phone_number:
+            return Response(
+                {"error": "Missing required fields."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        response = self.cognitoService.create_user(
+            email=email,
+            password=password,
+            is_admin=False,
+            given_name=given_name,
+            family_name=family_name,
+            company_address=company_address,
+            company_name=company_name,
+            phone_number=phone_number,
+        )
+
+        if response and "UserSub" in response:
+            return Response(
+                {
+                    "message": "User created successfully. Please confirm your email to complete registration.",
+                    "userId": response["UserSub"],
+                    "email": email,
+                },
+                status=status.HTTP_201_CREATED,
+            )
+        else:
+            return Response(
+                {"error": "Failed to create user in Cognito"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class BidderDetailApiView(APIView):
+    cognitoService = AWSCognitoService()
+
     def get_permissions(self):
         if self.request.method == "DELETE":
             self.permission_classes = [IsAdminUser]
@@ -51,33 +79,50 @@ class BidderDetailApiView(APIView):
         """
         Return a single bidder.
         """
-        bidder = get_object_or_404(User, id=bidder_id)
-        serializer = BidderSerializer(bidder)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        bidder = self.cognitoService.get_bidder_details(bidder_id)
+
+        return Response(bidder, status=status.HTTP_200_OK)
 
     def put(self, request, bidder_id):
         """
         Update a single bidder.
         """
-        bidder = get_object_or_404(User, id=bidder_id)
-        serializer = BidderSerializer(bidder, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        given_name = request.data.get("given_name", None)
+        last_name = request.data.get("last_name", None)
+        company_address = request.data.get("company_address", None)
+        company_name = request.data.get("company_name", None)
+        phone_number = request.data.get("phone_number", None)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        self.cognitoService.update_user(
+            bidder_id,
+            given_name=given_name,
+            last_name=last_name,
+            company_address=company_address,
+            company_name=company_name,
+            phone_number=phone_number,
+        )
+
+        bidder = self.cognitoService.get_bidder_details(bidder_id)
+        if bidder:
+            return Response(bidder, status=status.HTTP_200_OK)
+
+        return Response(
+            {"error": "Failed to update bidder"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     def delete(self, request, bidder_id):
         """
         Delete a single bidder.
         """
-        bidder = get_object_or_404(User, id=bidder_id)
-        bidder.delete()
+        self.cognitoService.delete_user(bidder_id)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class BidderVerifyApiView(APIView):
     permission_classes = [IsAdminUser]
+
+    cognitoService = AWSCognitoService()
 
     def put(self, request, bidder_id):
         if "is_verified" not in request.data:
@@ -86,17 +131,20 @@ class BidderVerifyApiView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        bidder = get_object_or_404(User, id=bidder_id)
-
-        serializer = BidderVerifiedSerializer(bidder, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        bidder = self.cognitoService.update_user(
+            bidder_id, is_verified=request.data.get("is_verified")
+        )
+        if bidder:
+            return Response(bidder, status=status.HTTP_200_OK)
+        return Response(
+            {"error": "Failed to verify bidder"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 class BidderBlacklistApiView(APIView):
     permission_classes = [IsAdminUser]
+
+    cognitoService = AWSCognitoService()
 
     def put(self, request, bidder_id):
         if "is_blacklisted" not in request.data:
@@ -105,126 +153,317 @@ class BidderBlacklistApiView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        bidder = get_object_or_404(User, id=bidder_id)
-
-        serializer = BidderBlacklistedSerializer(
-            bidder, data=request.data, partial=True
+        bidder = self.cognitoService.update_user(
+            bidder_id, is_blacklisted=request.data.get("is_blacklisted")
         )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if bidder:
+            return Response(bidder, status=status.HTTP_200_OK)
+        return Response(
+            {"error": "Failed to blacklist bidder"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 class AdminListApiView(APIView):
-    permission_classes = [IsAdminUser]
+    cognitoService = AWSCognitoService()
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            self.permission_classes = [IsAdminUser]
+        return super().get_permissions()
 
     def get(self, request):
         """
         Return a list of all admins.
         """
-        admins = User.objects.all().filter(is_admin=True)
-        serializer = AdminSerializer(admins, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        admins = self.cognitoUser.get_admins()
+        return Response(admins, status=status.HTTP_200_OK)
 
-    def post(self, request):
-        """
-        Create a new admin.
-        """
-        serializer = AdminSerializer(data=request.data, is_admin=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def post(self, request, *args, **kwargs):
+        email = request.data.get("email")
+        password = request.data.get("password")
+        given_name = request.data.get("given_name")
+        family_name = request.data.get("family_name")
+        permission_level = request.data.get("permission_level", 0)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if not email or not password or not given_name or not family_name:
+            return Response(
+                {"error": "Missing required fields."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        response = self.cognitoService.create_user(
+            email=email,
+            password=password,
+            is_admin=True,
+            given_name=given_name,
+            family_name=family_name,
+            permission_level=permission_level,
+        )
+
+        if response and "UserSub" in response:
+            return Response(
+                {
+                    "message": "User created successfully. Please confirm your email to complete registration.",
+                    "userId": response["UserSub"],
+                    "email": email,
+                },
+                status=status.HTTP_201_CREATED,
+            )
+        else:
+            return Response(
+                {"error": "Failed to create user in Cognito"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class AdminDetailApiView(APIView):
     permission_classes = [IsAdminUser]
 
+    cognitoService = AWSCognitoService()
+
     def get(self, request, admin_id):
         """
         Return a single admin.
         """
-        admin = get_object_or_404(User, id=admin_id)
-        serializer = AdminSerializer(admin)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        admin = self.cognitoService.get_admin_details(admin_id)
+        return Response(admin, status=status.HTTP_200_OK)
 
     def put(self, request, admin_id):
         """
         Update a single admin.
         """
-        admin = get_object_or_404(User, id=admin_id)
-        serializer = AdminSerializer(admin, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        permission_level = request.data.get("permission_level", None)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        admin = self.cognitoService.update_user(
+            admin_id, permission_level=permission_level
+        )
+        if admin:
+            return Response(admin, status=status.HTTP_200_OK)
+        return Response(
+            {"error": "Failed to update admin"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     def delete(self, request, admin_id):
         """
         Delete a single admin.
         """
-        admin = get_object_or_404(User, id=admin_id)
-        admin.delete()
+        self.cognitoService.delete_user(admin_id)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ListUnverified(APIView):
     permission_classes = [IsAdminUser]
 
+    cognitoService = AWSCognitoService()
+
     def get(self, request):
-        bidders = User.objects.all().filter(is_admin=False)
+        bidders = self.cognitoService.get_bidders()
         unverifiedBidders = []
         for index in range(len(bidders)):
             if bidders[index].is_verified is False:
                 unverifiedBidders.append(bidders[index])
-        serializer = BidderSerializer(unverifiedBidders, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(unverifiedBidders, status=status.HTTP_200_OK)
 
 
 class ListBlacklisted(APIView):
     permission_classes = [IsAdminUser]
 
+    cognitoService = AWSCognitoService()
+
     def get(self, request):
-        bidders = User.objects.all().filter(is_admin=False)
+        bidders = self.cognitoService.get_bidders()
         blacklistedBidders = []
         for index in range(len(bidders)):
             if bidders[index].is_blacklisted is True:
                 blacklistedBidders.append(bidders[index])
-        serializer = BidderSerializer(blacklistedBidders, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(blacklistedBidders, status=status.HTTP_200_OK)
 
 
 class ListVerified(APIView):
     permission_classes = [IsAdminUser]
 
+    cognitoService = AWSCognitoService()
+
     def get(self, request):
-        bidders = User.objects.all().filter(is_admin=False)
+        bidders = self.cognitoService.get_bidders()
         verifiedBidders = []
         for index in range(len(bidders)):
             if bidders[index].is_verified is True:
                 verifiedBidders.append(bidders[index])
-        serializer = BidderSerializer(verifiedBidders, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(verifiedBidders, status=status.HTTP_200_OK)
 
 
-class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
-"""
-    def post(self, request):
-        # Create a user instance
-        user = User(
-            username="kevin222",
-            email="test2222@gmail.com",
-            first_name="123",
-            last_name="123",
-            password=make_password("123")  # Hash the password
+class LoginAPIView(APIView):
+    cognitoService = AWSCognitoService()
+
+    def post(self, request, *args, **kwargs):
+        email = request.data.get("email")
+        password = request.data.get("password")
+        auth_result = self.cognitoService.login_user(email, password)
+
+        if auth_result:
+            return Response(
+                {
+                    "id_token": auth_result.get("IdToken"),
+                    "access_token": auth_result.get("AccessToken"),
+                    "refresh_token": auth_result.get("RefreshToken"),
+                },
+                status=status.HTTP_200_OK,
+            )
+        else:
+            # If authentication fails, return an error response
+            return Response(
+                {"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+class PasswordResetAPIView(APIView):
+    cognitoService = AWSCognitoService()
+
+    def post(self, request, *args, **kwargs):
+        email = request.data.get("email")
+        result = self.cognitoService.initiate_password_reset(email)
+        if result:
+            return Response(status=status.HTTP_200_OK)
+        return Response(
+            {"error": "Failed to initiate password reset"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
-        # Save the user
-        user.save()
 
-        return Response("User created successfully.")
-"""
+class PasswordResetConfirmAPIView(APIView):
+    cognitoService = AWSCognitoService()
+
+    def post(self, request, *args, **kwargs):
+        email = request.data.get("email")
+        verification_code = request.data.get("verification_code")
+        new_password = request.data.get("new_password")
+        result = self.cognitoService.confirm_password_reset(
+            email, verification_code, new_password
+        )
+        if result:
+            return Response(status=status.HTTP_200_OK)
+        return Response(
+            {"error": "Failed to reset password"}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+class VerifyEmailAPIView(APIView):
+    cognitoService = AWSCognitoService()
+
+    def post(self, request, *args, **kwargs):
+        email = request.data.get("email")
+        verification_code = request.data.get("verification_code")
+
+        result = self.cognitoService.verify_email(email, verification_code)
+        if result:
+            return Response(
+                {"success": "Email verified successfully."}, status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {"error": "Failed to verify email"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+class LogoutAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    cognitoService = AWSCognitoService()
+
+    def post(self, request, *args, **kwargs):
+        access_token = request.data.get("access_token")
+
+        if not access_token:
+            return Response(
+                {"error": "Access token is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Attempt to sign out the user from all devices using the access token
+        result = self.cognitoService.logout_user(access_token)
+
+        if result:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(
+                {"error": "Failed to log out"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+class EmailChangeAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    cognitoService = AWSCognitoService()
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        new_email = request.data.get("new_email")
+
+        if not new_email:
+            return Response(
+                {"error": "New email address is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        cognito_response = self.cognitoService.change_email(
+            user.email, new_email, user.access_token
+        )
+
+        if cognito_response:
+            return Response(
+                {"success": "Email address updated successfully."},
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                {"error": "Failed to update email address in Cognito."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class RefreshTokenAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    cognitoService = AWSCognitoService()
+
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.data.get("refresh_token")
+        if not refresh_token:
+            return Response(
+                {"error": "Refresh token is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        auth_header = request.headers.get("Authorization")
+        if not auth_header:
+            return Response(
+                {"error": "Authorization header is missing"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        access_token = auth_header.split(" ")[1]
+
+        decoded_token = decode_token(access_token)
+        username = decoded_token.get("sub")
+        if not username:
+            return Response(
+                {"error": "Error decoding token"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        new_tokens = self.cognitoService.refresh_tokens(username, refresh_token)
+
+        if new_tokens:
+            return Response(
+                {
+                    "id_token": new_tokens.get("IdToken"),
+                    "access_token": new_tokens.get("AccessToken"),
+                    "refresh_token": new_tokens.get("RefreshToken") if new_tokens.get("RefreshToken") is not None else refresh_token,
+                },
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                {"error": "Failed to refresh tokens"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

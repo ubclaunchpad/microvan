@@ -53,8 +53,6 @@ INSTALLED_APPS = [
     "user",
     "vehicle",
     "bid",
-    "rest_framework_simplejwt",
-    "rest_framework_simplejwt.token_blacklist",
 ]
 
 # AWS S3 Configuration
@@ -63,6 +61,9 @@ AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME")
 AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+COGNITO_USER_POOL_ID = env("COGNITO_USER_POOL_ID")
+COGNITO_APP_CLIENT_ID = env("COGNITO_APP_CLIENT_ID")
+COGNITO_APP_CLIENT_SECRET = env("COGNITO_APP_CLIENT_SECRET")
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
@@ -77,10 +78,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "core.urls"
-AUTHENTICATION_BACKENDS = [
-    # Application custom auth backend
-    'user.backends.EmailorUsernameModelBackend',
-]
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -163,37 +161,20 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "util.authentication.AWSCognitoIDTokenAuthentication",
     ),
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=180),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=50),
-    "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True,
-    "UPDATE_LAST_LOGIN": False,
-    "ALGORITHM": "HS256",
-    "VERIFYING_KEY": None,
-    "AUDIENCE": None,
-    "ISSUER": None,
-    "JWK_URL": None,
-    "LEEWAY": 0,
-    "AUTH_HEADER_TYPES": ("Bearer",),
-    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
-    "USER_ID_FIELD": "id",
-    "USER_ID_CLAIM": "user_id",
-    "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
-    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
-    "TOKEN_TYPE_CLAIM": "token_type",
-    "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
-    "TOKEN_OBTAIN_SERIALIZER": "user.serializers.MyTokenObtainPairSerializer",
-    "JTI_CLAIM": "jti",
-    "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
-    "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
-    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
+    'ALGORITHM': 'RS256',
+    'AUDIENCE': COGNITO_APP_CLIENT_ID,
+    'ISSUER': "https://cognito-idp.{region}.amazonaws.com/{userPoolId}".format(
+        region=AWS_S3_REGION_NAME,
+        userPoolId=COGNITO_USER_POOL_ID,
+    ),
+    'JWK_URL': "https://cognito-idp.{region}.amazonaws.com/{userPoolId}/.well-known/jwks.json".format(
+        region=AWS_S3_REGION_NAME,
+        userPoolId=COGNITO_USER_POOL_ID,
+    ),
 }
-
-AUTH_USER_MODEL = "user.User"
