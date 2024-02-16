@@ -1,10 +1,9 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from core.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.permissions import IsAdminUser
+from core.permissions import IsAdminUser, IsAuthenticated
 from services.AWSCognitoService import AWSCognitoService
 from util.jwt import decode_token
 
@@ -33,9 +32,18 @@ class BidderListApiView(APIView):
         company_name = request.data.get("company_name")
         phone_number = request.data.get("phone_number")
 
-        if not email or not password or not given_name or not family_name or not company_address or not company_name or not phone_number:
+        if (
+            not email
+            or not password
+            or not given_name
+            or not family_name
+            or not company_address
+            or not company_name
+            or not phone_number
+        ):
             return Response(
-                {"error": "Missing required fields."}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Missing required fields."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         response = self.cognitoService.create_user(
@@ -187,7 +195,8 @@ class AdminListApiView(APIView):
 
         if not email or not password or not given_name or not family_name:
             return Response(
-                {"error": "Missing required fields."}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Missing required fields."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         response = self.cognitoService.create_user(
@@ -458,7 +467,9 @@ class RefreshTokenAPIView(APIView):
                 {
                     "id_token": new_tokens.get("IdToken"),
                     "access_token": new_tokens.get("AccessToken"),
-                    "refresh_token": new_tokens.get("RefreshToken") if new_tokens.get("RefreshToken") is not None else refresh_token,
+                    "refresh_token": new_tokens.get("RefreshToken")
+                    if new_tokens.get("RefreshToken") is not None
+                    else refresh_token,
                 },
                 status=status.HTTP_200_OK,
             )

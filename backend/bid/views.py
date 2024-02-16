@@ -1,11 +1,11 @@
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
-from core.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from auction.models import Auction
+from core.permissions import IsAuthenticated
 from services.AWSCognitoService import AWSCognitoService
 
 from .models import Bid

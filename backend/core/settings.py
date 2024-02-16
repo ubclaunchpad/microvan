@@ -167,13 +167,13 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ALGORITHM': 'RS256',
-    'AUDIENCE': COGNITO_APP_CLIENT_ID,
-    'ISSUER': "https://cognito-idp.{region}.amazonaws.com/{userPoolId}".format(
+    "ALGORITHM": "RS256",
+    "AUDIENCE": COGNITO_APP_CLIENT_ID,
+    "ISSUER": "https://cognito-idp.{region}.amazonaws.com/{userPoolId}".format(
         region=AWS_S3_REGION_NAME,
         userPoolId=COGNITO_USER_POOL_ID,
     ),
-    'JWK_URL': "https://cognito-idp.{region}.amazonaws.com/{userPoolId}/.well-known/jwks.json".format(
+    "JWK_URL": "https://cognito-idp.{region}.amazonaws.com/{userPoolId}/.well-known/jwks.json".format(
         region=AWS_S3_REGION_NAME,
         userPoolId=COGNITO_USER_POOL_ID,
     ),
