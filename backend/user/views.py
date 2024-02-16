@@ -60,7 +60,7 @@ class BidderListApiView(APIView):
         if response and "UserSub" in response:
             return Response(
                 {
-                    "message": "User created successfully. Please confirm your email to complete registration.",
+                    "message": "User created successfully",
                     "userId": response["UserSub"],
                     "email": email,
                 },
@@ -211,7 +211,7 @@ class AdminListApiView(APIView):
         if response and "UserSub" in response:
             return Response(
                 {
-                    "message": "User created successfully. Please confirm your email to complete registration.",
+                    "message": "User created successfully",
                     "userId": response["UserSub"],
                     "email": email,
                 },

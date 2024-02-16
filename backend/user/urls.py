@@ -1,11 +1,22 @@
 from django.urls import path
 
 from .views import (
-    AdminDetailApiView, AdminListApiView, BidderBlacklistApiView,
-    BidderDetailApiView, BidderListApiView, BidderVerifyApiView,
-    ListBlacklisted, ListUnverified, ListVerified, LoginAPIView, LogoutAPIView,
-    PasswordResetAPIView, PasswordResetConfirmAPIView, RefreshTokenAPIView,
-    VerifyEmailAPIView)
+    AdminDetailApiView,
+    AdminListApiView,
+    BidderBlacklistApiView,
+    BidderDetailApiView,
+    BidderListApiView,
+    BidderVerifyApiView,
+    ListBlacklisted,
+    ListUnverified,
+    ListVerified,
+    LoginAPIView,
+    LogoutAPIView,
+    PasswordResetAPIView,
+    PasswordResetConfirmAPIView,
+    RefreshTokenAPIView,
+    VerifyEmailAPIView,
+)
 
 urlpatterns = [
     # Authentication

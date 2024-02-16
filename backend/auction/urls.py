@@ -2,8 +2,12 @@ from django.contrib import admin
 from django.urls import include, path
 
 from .views import (
-    AddToAuctionApiView, AuctionDetailApiView, AuctionListApiView,
-    GetSavedUnitApiView, SaveUnitApiView)
+    AddToAuctionApiView,
+    AuctionDetailApiView,
+    AuctionListApiView,
+    GetSavedUnitApiView,
+    SaveUnitApiView,
+)
 
 urlpatterns = [
     path("", AuctionListApiView.as_view(), name="auction_list"),
