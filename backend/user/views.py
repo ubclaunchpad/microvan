@@ -307,9 +307,23 @@ class LoginAPIView(APIView):
     def post(self, request, *args, **kwargs):
         email = request.data.get("email")
         password = request.data.get("password")
+        is_admin = request.data.get("is_admin")
+
+        if not email or not password or is_admin is None:
+            return Response(
+                {"error": "Email, password, and is_admin fields are required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         auth_result = self.cognitoService.login_user(email, password)
 
         if auth_result:
+            user_id = decode_token(auth_result.get("AccessToken")).get("sub")
+            user_details = self.cognitoService.get_user_details(user_id=user_id, is_admin=is_admin)
+            response = Response(user_details, status=200)
+            response.set_cookie('idToken', auth_result.get("IdToken"), httponly=True, samesite='Lax')
+            response.set_cookie('accessToken', auth_result.get("AccessToken"), httponly=True, samesite='Lax')
+            response.set_cookie('refreshToken', auth_result.get("RefreshToken"), httponly=True, samesite='Lax')
             return Response(
                 {
                     "id_token": auth_result.get("IdToken"),
@@ -319,7 +333,6 @@ class LoginAPIView(APIView):
                 status=status.HTTP_200_OK,
             )
         else:
-            # If authentication fails, return an error response
             return Response(
                 {"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST
             )

@@ -54,6 +54,8 @@ class AWSCognitoIDTokenAuthentication(authentication.BaseAuthentication):
                 groups=decoded_token.get("cognito:groups", []),
             )
             return (user, None)
+        except jwt.ExpiredSignatureError:
+            raise exceptions.AuthenticationFailed("Token has expired")
         except jwt.InvalidTokenError as e:
             raise exceptions.AuthenticationFailed(
                 f"Token is invalid or expired: {str(e)}"
