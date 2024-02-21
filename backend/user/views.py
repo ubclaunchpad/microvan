@@ -318,20 +318,14 @@ class LoginAPIView(APIView):
         auth_result = self.cognitoService.login_user(email, password)
 
         if auth_result:
-            user_id = decode_token(auth_result.get("AccessToken")).get("sub")
+            user_id = decode_token(auth_result.get("IdToken")).get("sub")
             user_details = self.cognitoService.get_user_details(user_id=user_id, is_admin=is_admin)
-            response = Response(user_details, status=200)
+            response = Response(user_details, status=status.HTTP_200_OK)
             response.set_cookie('idToken', auth_result.get("IdToken"), httponly=True, samesite='Lax')
             response.set_cookie('accessToken', auth_result.get("AccessToken"), httponly=True, samesite='Lax')
             response.set_cookie('refreshToken', auth_result.get("RefreshToken"), httponly=True, samesite='Lax')
-            return Response(
-                {
-                    "id_token": auth_result.get("IdToken"),
-                    "access_token": auth_result.get("AccessToken"),
-                    "refresh_token": auth_result.get("RefreshToken"),
-                },
-                status=status.HTTP_200_OK,
-            )
+            print(response)
+            return response
         else:
             return Response(
                 {"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST

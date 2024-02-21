@@ -12,6 +12,7 @@ class RefreshTokenMiddleware(MiddlewareMixin):
         try:
             access_token = request.COOKIES.get('accessToken')
             jwt.decode(access_token, options={"verify_signature": False})
+            return self.get_response(request)
         except jwt.ExpiredSignatureError:
             cognito_service = AWSCognitoService()
             decoded_id_token = decode_token(request.COOKIES.get('idToken'))

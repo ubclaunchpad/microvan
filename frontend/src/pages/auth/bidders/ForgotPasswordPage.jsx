@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import logo from '../assets/microvan_logo.svg';
-import OnboardingInputField from '../components/inputs/OnboardingInputField';
+import logo from '../../../assets/microvan_logo.svg';
+import OnboardingInputField from '../../../components/inputs/OnboardingInputField';
 
 export default function ForgotPasswordPage() {
 	const navigate = useNavigate();
