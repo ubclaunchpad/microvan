@@ -3,7 +3,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/ubclaunchpad/microvan">
-    <img src="frontend/public/microvan_logo.svg" alt="Logo" height="100" resize>
+    <img src="frontend/src/assets/microvan_logo.svg" alt="Logo" height="100" resize>
   </a>
   <h3 align="center">Microvan Inc.</h3>
 </p>
@@ -39,8 +39,8 @@ Microvan Inc. focuses on the importation, trade and sale of second-hand construc
 
 ### Built With
 
-* Next JS - Frontend
-* Django JS - Backend
+* React, Javascript - Frontend
+* Django, Python - Backend
 * PostgreSQL - Database
 * AWS - Hosting
 
@@ -64,12 +64,15 @@ To get a local copy up and running follow these simple steps.
 3. run `pipenv install` to install dependencies
 4. run `pipenv shell` to enter virtual environment
 5. run `pipenv run start`
+6. Backend will be running on `localhost:8000`
 
-#### NextJS Frontend
+#### React Frontend
 
 1. `cd` into frontend folder
 2. run `npm install` to install dependencies
-3. run `npm start`
+3. Make a copy of sample.env, rename it to .env, and fill out the environment variables.
+4. run `npm start`
+5. Frontend will be running on `localhost:3000`
 
 <!-- DEPLOYMENT -->
 ## Deployment

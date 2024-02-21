@@ -5,11 +5,20 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Auction
+from core.permissions import IsAdminUser, IsAuthenticated
+from services.AWSCognitoService import AWSCognitoService
+from vehicle.models import SavedUnits, Vehicle
+
+from .models import Auction, AuctionItem
 from .serializers import AuctionSerializer
 
 
 class AuctionListApiView(APIView):
+    def get_permissions(self):
+        if self.request.method == "POST":
+            self.permission_classes = [IsAdminUser]
+        return super().get_permissions()
+
     def get(self, request, *args, **kwargs):
         """
         Get all auctions
@@ -38,7 +47,7 @@ class AuctionListApiView(APIView):
         end_date = datetime.strptime(request.data.get("end_date"), date_format)
 
         # Check if start date is in the past
-        if start_date < datetime.now().date():
+        if start_date.date() < datetime.now().date():
             return Response(
                 {"error": "Start date should be in the future"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -69,6 +78,13 @@ class AuctionDetailApiView(APIView):
     Retrieve, update or delete an auction instance.
     """
 
+    def get_permissions(self):
+        if self.request.method == "PUT" or self.request.method == "DELETE":
+            self.permission_classes = [IsAdminUser]
+        else:
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()
+
     def get(self, request, auction_id, format=None):
         auction = get_object_or_404(Auction, id=auction_id)
         serializer = AuctionSerializer(auction)
@@ -86,3 +102,113 @@ class AuctionDetailApiView(APIView):
         auction = get_object_or_404(Auction, id=auction_id)
         auction.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class SaveUnitApiView(APIView):
+    """
+    An endpoint to handle saving a vehicle to a bidder's saved vehicle list,
+    as well as retrieving a list of all saved vehicles
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    cognitoService = AWSCognitoService()
+
+    def post(self, request, **kwargs):
+        bidder_id = kwargs.get("bidder_id")
+        vehicle_id = kwargs.get("vehicle_id")
+        auction_id = kwargs.get("auction_id")
+
+        # Replace this later to fetch authentication details
+        # from headers instead of body
+        vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+        auction_for_vehicle = Auction.objects.get(id=auction_id)
+        bidder = self.cognitoService.get_user_details(bidder_id)
+        if SavedUnits.objects.filter(
+            auction_id=auction_for_vehicle, bidder_id=bidder, object_id=vehicle.id
+        ):
+            return Response(
+                {"message": "Vehicle already saved"},
+                status=status.HTTP_204_NO_CONTENT,
+            )
+
+        saved_unit = SavedUnits(
+            auction_id=auction_for_vehicle,
+            bidder_id=bidder,
+            object_id=vehicle.id,
+            content_object=vehicle,
+        )
+        saved_unit.save()
+        return Response(
+            {"message": "Vehicle saved successfully"},
+            status=status.HTTP_200_OK,
+        )
+
+    def delete(self, request, **kwargs):
+        vehicle_id = kwargs.get("vehicle_id")
+        bidder_id = kwargs.get("bidder_id")
+        auction = kwargs.get("auction_id")
+        bidder = self.cognitoService.get_user_details(bidder_id)
+
+        saved_unit = get_object_or_404(
+            SavedUnits, object_id=vehicle_id, bidder_id=bidder, auction_id=auction
+        )
+
+        saved_unit.delete()
+
+        return Response(
+            {"message": "Saved unit deleted successfully"},
+            status=status.HTTP_200_OK,
+        )
+
+
+class GetSavedUnitApiView(APIView):
+    """
+    An endpoint to retrieve all of bidder's saved units associated with
+    a provided auction
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    cognitoService = AWSCognitoService()
+
+    def get(self, request, **kwargs):
+        bidder_id = kwargs.get("bidder_id")
+        auction_id = kwargs.get("auction_id")
+        bidder = self.cognitoService.get_user_details(bidder_id)
+        auction = get_object_or_404(Auction, id=auction_id)
+
+        saved_units = SavedUnits.objects.filter(bidder_id=bidder, auction_id=auction)
+        vehicle_list = [
+            saved_unit.content_object
+            for saved_unit in saved_units
+            if isinstance(saved_unit.content_object, Vehicle)
+        ]
+
+        vehicle_data = [{"id": vehicle.id} for vehicle in vehicle_list]
+
+        return Response({"vehicles": vehicle_data}, status=status.HTTP_200_OK)
+
+
+class AddToAuctionApiView(APIView):
+    """
+    Takes in a vehicle and auction ID and associates
+    it with an auction by creating an AuctionItem
+    """
+
+    permission_classes = [IsAdminUser]
+
+    def post(self, request, *args, **kwargs):
+        auction_id = kwargs.get("auction_id")
+        vehicle_id = kwargs.get("vehicle_id")
+
+        auction = get_object_or_404(Auction, id=auction_id)
+        vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+
+        auction_item = AuctionItem(auction_id=auction, content_object=vehicle)
+        auction_item.save()
+
+        return Response(
+            {"message": "Vehicle added to auction successfully"},
+            status=status.HTTP_201_CREATED,
+        )

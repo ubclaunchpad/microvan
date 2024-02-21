@@ -1,10 +1,9 @@
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ValidationError
 from django.db import models
 
+from auction.models import Auction
 from core.models import MainModel
-from user.models import Bidder
 
 
 class Bid(MainModel):
@@ -13,8 +12,8 @@ class Bid(MainModel):
     """
 
     amount = models.IntegerField(null=False)
-    bidder = models.ForeignKey(Bidder, on_delete=models.PROTECT)
-    auction = models.ForeignKey("auction.Auction", on_delete=models.PROTECT)
+    bidder = models.CharField(null=False, max_length=255)
+    auction = models.ForeignKey(Auction, on_delete=models.PROTECT)
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     object_id = models.UUIDField()
     content_object = GenericForeignKey("content_type", "object_id")

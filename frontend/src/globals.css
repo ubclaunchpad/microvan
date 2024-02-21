@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+	.inactive-navbar-text {
+		@apply text-mv-black font-medium text-base hover:text-mv-green hover:cursor-pointer;
+	}
+
+	.active-navbar-text {
+		@apply text-mv-green font-medium text-base hover:cursor-pointer;
+	}
+}
+
 body {
 	margin: 0;
 	-webkit-font-smoothing: antialiased;

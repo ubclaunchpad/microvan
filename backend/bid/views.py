@@ -5,14 +5,18 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from auction.models import Auction
-from user.models import Bidder
+from core.permissions import IsAuthenticated
+from services.AWSCognitoService import AWSCognitoService
 
 from .models import Bid
 from .serializers import BidSerializer
 
 
 class BidListApiView(APIView):
+    permission_classes = [IsAuthenticated]
+
     serializer_class = BidSerializer
+    cognitoService = AWSCognitoService()
 
     def get(self, request, *args, **kwargs):
         """
@@ -52,11 +56,17 @@ class BidListApiView(APIView):
 
         # Validate bidder and auction
         try:
-            bidder = Bidder.objects.get(id=bidder_id)
             auction = Auction.objects.get(id=auction_id)
-        except (Bidder.DoesNotExist, Auction.DoesNotExist):
+        except Auction.DoesNotExist:
             return Response(
-                {"error": "Invalid bidder or auction."},
+                {"error": "Invalid auction."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        bidder = self.cognitoService.get_user_details(bidder_id)
+        if not bidder:
+            return Response(
+                {"error": "Invalid bidder."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -99,6 +109,8 @@ class BidDetailApiView(APIView):
     """
     Retrieve, update or delete an bid instance.
     """
+
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, bid_id, format=None):
         bid = get_object_or_404(Bid, id=bid_id)

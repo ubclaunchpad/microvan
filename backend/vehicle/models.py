@@ -85,14 +85,14 @@ class UnitImage(MainModel):
 
 
 class SavedUnits(MainModel):
-    bidder_id = models.ForeignKey("user.Bidder", on_delete=models.PROTECT)
+    bidder_id = (models.CharField(null=False, max_length=255),)
     auction_id = models.ForeignKey("auction.Auction", on_delete=models.PROTECT)
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     object_id = models.UUIDField()
     content_object = GenericForeignKey("content_type", "object_id")
 
     class Meta:
-        unique_together = ("auction_id", "bidder_id", "object_id")
+        unique_together = ("auction_id", "object_id")
 
     def save(self, *args, **kwargs):
         self.clean()
