@@ -2,12 +2,11 @@ from datetime import datetime
 
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.permissions import IsAdminUser
-from user.models import User
+from core.permissions import IsAdminUser, IsAuthenticated
+from services.AWSCognitoService import AWSCognitoService
 from vehicle.models import SavedUnits, Vehicle
 
 from .models import Auction, AuctionItem
@@ -18,8 +17,6 @@ class AuctionListApiView(APIView):
     def get_permissions(self):
         if self.request.method == "POST":
             self.permission_classes = [IsAdminUser]
-        else:
-            self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
 
     def get(self, request, *args, **kwargs):
@@ -115,6 +112,8 @@ class SaveUnitApiView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    cognitoService = AWSCognitoService()
+
     def post(self, request, **kwargs):
         bidder_id = kwargs.get("bidder_id")
         vehicle_id = kwargs.get("vehicle_id")
@@ -124,7 +123,7 @@ class SaveUnitApiView(APIView):
         # from headers instead of body
         vehicle = get_object_or_404(Vehicle, id=vehicle_id)
         auction_for_vehicle = Auction.objects.get(id=auction_id)
-        bidder = get_object_or_404(User, id=bidder_id)
+        bidder = self.cognitoService.get_user_details(bidder_id)
         if SavedUnits.objects.filter(
             auction_id=auction_for_vehicle, bidder_id=bidder, object_id=vehicle.id
         ):
@@ -149,7 +148,7 @@ class SaveUnitApiView(APIView):
         vehicle_id = kwargs.get("vehicle_id")
         bidder_id = kwargs.get("bidder_id")
         auction = kwargs.get("auction_id")
-        bidder = get_object_or_404(User, id=bidder_id)
+        bidder = self.cognitoService.get_user_details(bidder_id)
 
         saved_unit = get_object_or_404(
             SavedUnits, object_id=vehicle_id, bidder_id=bidder, auction_id=auction
@@ -171,11 +170,12 @@ class GetSavedUnitApiView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    cognitoService = AWSCognitoService()
+
     def get(self, request, **kwargs):
-        # Replace this line to obtain user id once authentication has been implemented
         bidder_id = kwargs.get("bidder_id")
         auction_id = kwargs.get("auction_id")
-        bidder = get_object_or_404(User, id=bidder_id)
+        bidder = self.cognitoService.get_user_details(bidder_id)
         auction = get_object_or_404(Auction, id=auction_id)
 
         saved_units = SavedUnits.objects.filter(bidder_id=bidder, auction_id=auction)
