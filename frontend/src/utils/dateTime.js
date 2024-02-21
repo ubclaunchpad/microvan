@@ -24,4 +24,10 @@ const formatTime = (milliseconds) => {
 	return `${hours} ${hourText} ${minutes} ${minsText} ${remainingSeconds} ${secsText}`;
 };
 
-export { formatTime, calculateProgress };
+// returns a short hand string of DateTime (e.g. Nov 4, 2023)
+const formatShortDate = (date) => {
+	const options = { year: 'numeric', month: 'short', day: 'numeric' };
+	return date.toLocaleDateString('en-US', options);
+};
+
+export { formatTime, calculateProgress, formatShortDate };
