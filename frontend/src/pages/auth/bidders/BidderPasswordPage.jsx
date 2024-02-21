@@ -8,10 +8,11 @@ import useAxios from '../../../hooks/useAxios';
 
 export default function BidderRegisterPage() {
 	const navigate = useNavigate();
-  const { fetchData } = useAxios();
+	const { fetchData } = useAxios();
 
-  const location = useLocation();
-  const { firstName, surname, email, phoneNumber, company, companyAddress } = location.state || {};
+	const location = useLocation();
+	const { firstName, surname, email, phoneNumber, company, companyAddress } =
+		location.state || {};
 
 	const [password, setPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
@@ -25,30 +26,34 @@ export default function BidderRegisterPage() {
 	};
 
 	const handleRegister = async () => {
-    if (!email || !password || !confirmPassword) {
-      console.error('Required fields are missing');
-      return;
-    }
-  
-    try {
-      await fetchData({
-        url: 'bidders/',
-        method: 'POST',
-        data: {
-          email,
-          password,
-          given_name: firstName,
-          family_name: surname,
-          phone_number: phoneNumber,
-          company_name: company,
-          company_address: companyAddress,
-        },
-      });
-      navigate('/register/email');
-    } catch (err) {
-      console.error(err.response ? err.response.data.error : 'An unknown error occurred');
-    }
-  };
+		if (!email || !password || !confirmPassword) {
+			// eslint-disable-next-line no-console
+			console.error('Required fields are missing');
+			return;
+		}
+
+		try {
+			await fetchData({
+				url: 'bidders/',
+				method: 'POST',
+				data: {
+					email,
+					password,
+					given_name: firstName,
+					family_name: surname,
+					phone_number: phoneNumber,
+					company_name: company,
+					company_address: companyAddress,
+				},
+			});
+			navigate('/register/email');
+		} catch (err) {
+			// eslint-disable-next-line no-console
+			console.error(
+				err.response ? err.response.data.error : 'An unknown error occurred'
+			);
+		}
+	};
 
 	return (
 		<div className="flex flex-col items-center justify-between min-h-screen min-w-screen bg-mv-green">

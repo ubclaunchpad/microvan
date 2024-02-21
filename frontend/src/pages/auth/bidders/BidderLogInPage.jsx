@@ -16,18 +16,21 @@ export default function BidderLogInPage() {
 	const handlePasswordChange = (event) => setPassword(event.target.value);
 
 	const handleLogIn = async () => {
-    try {
-      const result = await fetchData({
-        url: 'auth/login/',
-        method: 'POST',
-        data: { email, password, is_admin: true },
-      });
-      localStorage.setItem('userInfo', JSON.stringify(result.data));
-      navigate('/');
-    } catch (err) {
-      console.error(err.response ? err.response.data.error : 'An unknown error occurred');
-    }
-  };
+		try {
+			const result = await fetchData({
+				url: 'auth/login/',
+				method: 'POST',
+				data: { email, password, is_admin: true },
+			});
+			localStorage.setItem('userInfo', JSON.stringify(result.data));
+			navigate('/');
+		} catch (err) {
+			// eslint-disable-next-line no-console
+			console.error(
+				err.response ? err.response.data.error : 'An unknown error occurred'
+			);
+		}
+	};
 
 	return (
 		<div className="flex flex-col items-center justify-between min-h-screen min-w-screen bg-mv-white">

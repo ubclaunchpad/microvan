@@ -319,12 +319,25 @@ class LoginAPIView(APIView):
 
         if auth_result:
             user_id = decode_token(auth_result.get("IdToken")).get("sub")
-            user_details = self.cognitoService.get_user_details(user_id=user_id, is_admin=is_admin)
+            user_details = self.cognitoService.get_user_details(
+                user_id=user_id, is_admin=is_admin
+            )
             response = Response(user_details, status=status.HTTP_200_OK)
-            response.set_cookie('idToken', auth_result.get("IdToken"), httponly=True, samesite='Lax')
-            response.set_cookie('accessToken', auth_result.get("AccessToken"), httponly=True, samesite='Lax')
-            response.set_cookie('refreshToken', auth_result.get("RefreshToken"), httponly=True, samesite='Lax')
-            print(response)
+            response.set_cookie(
+                "idToken", auth_result.get("IdToken"), httponly=True, samesite="Lax"
+            )
+            response.set_cookie(
+                "accessToken",
+                auth_result.get("AccessToken"),
+                httponly=True,
+                samesite="Lax",
+            )
+            response.set_cookie(
+                "refreshToken",
+                auth_result.get("RefreshToken"),
+                httponly=True,
+                samesite="Lax",
+            )
             return response
         else:
             return Response(

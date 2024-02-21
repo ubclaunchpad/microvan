@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import altlogo from '../../../assets/alt-microvan-logo.svg';
 import OnboardingInputField from '../../../components/inputs/OnboardingInputField';
-import NextButton from "../../../components/buttons/NextButton";
+import NextButton from '../../../components/buttons/NextButton';
 
 export default function BidderRegisterPage() {
 	const navigate = useNavigate();
@@ -22,9 +22,18 @@ export default function BidderRegisterPage() {
 	const handleCompanyAddressChange = (event) =>
 		setCompanyAddress(event.target.value);
 
-		const handleNextStep = () => {
-			navigate('/register/password', { state: { firstName, surname, email, phoneNumber, company, companyAddress } });
-		};
+	const handleNextStep = () => {
+		navigate('/register/password', {
+			state: {
+				firstName,
+				surname,
+				email,
+				phoneNumber,
+				company,
+				companyAddress,
+			},
+		});
+	};
 
 	return (
 		<div className="flex flex-col items-center justify-between min-h-screen min-w-screen bg-mv-green">
