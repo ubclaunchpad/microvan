@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import NavBar from '../components/nav-bar/NavBar';
+import NavBar from '../components/navBars/NavBar';
 import CoverImage from '../assets/cover-image.png';
 import AboutMeImage from '../assets/about-me-logo.png';
+import AuctionsSearchBar from "../components/searchBars/AuctionsSearchBar";
 
 export default function HomePage() {
+	const [searchedAuctions, setSearchedAuctions] = useState([]);
+
 	return (
 		<div>
 			<div className="relative min-h-screen">
@@ -73,6 +76,7 @@ export default function HomePage() {
 					<h2 className="text-mv-black text-4xl font-semibold">
 						Search Auctions
 					</h2>
+					<AuctionsSearchBar setResults={setSearchedAuctions}/>
 				</div>
 				<div>
 					<h2 className="text-mv-black text-4xl font-semibold">
