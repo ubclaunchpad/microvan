@@ -2,7 +2,15 @@ from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
 
 from .models import (
-    Brand, Equipment, SavedUnits, Supplier, Trailer, Type, UnitImage, Vehicle)
+    Brand,
+    Equipment,
+    SavedUnits,
+    Supplier,
+    Trailer,
+    Type,
+    UnitImage,
+    Vehicle,
+)
 
 
 class BrandAdmin(admin.ModelAdmin):
@@ -96,8 +104,8 @@ class SavedUnitsAdmin(admin.ModelAdmin):
         "object_id",
         "created_at",
     )
-    search_fields = ("bidder_id__first_name", "auction_id__name", "content_type__model")
-    list_filter = ("auction_id", "bidder_id", "content_type")
+    search_fields = ("auction_id__name", "content_type__model")
+    list_filter = ("auction_id", "content_type")
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "content_type":

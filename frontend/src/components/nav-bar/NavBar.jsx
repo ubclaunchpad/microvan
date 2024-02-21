@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate, NavLink } from 'react-router-dom';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import PersonIcon from '@mui/icons-material/Person';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import logo from '../../assets/microvan_logo.svg';
+import useAuth from '../../hooks/useAuth';
 
 export default function NavBar() {
 	const [notificationHover, setNotificationHover] = useState(false);
 	const [personHover, setPersonHover] = useState(false);
+	const [routeToNavigate, setRouteToNavigate] = useState('');
+
+	const { isAuthenticated } = useAuth();
+	const navigate = useNavigate();
 
 	const location = useLocation();
 	const isHomePage = location.pathname === '/';
@@ -16,33 +21,49 @@ export default function NavBar() {
 	const isTutorialPage = location.pathname === '/tutorial';
 	const isContactUsPage = location.pathname === '/contact';
 
+	useEffect(() => {
+		if (routeToNavigate) {
+			navigate(routeToNavigate);
+			setRouteToNavigate('');
+		}
+	}, [routeToNavigate, navigate]);
+
+	const handleAuthenticationClick = (route) => () => {
+		if (!isAuthenticated) {
+			setRouteToNavigate('/onboard');
+		} else {
+			setRouteToNavigate(route);
+		}
+	};
+
 	return (
 		<div className="w-full h-[85px] flex justify-between items-start shadow-navBarShadow py-[10px] pl-[26px] pr-[34px] gap-[10px] bg-mv-white">
 			<img src={logo} alt="logo" className="w-[60px] h-[60px]" />
 			<div className="h-full flex items-center gap-[43px]">
 				<NavLink
-					exact="true"
 					to="/"
 					className={isHomePage ? 'active-navbar-text' : 'inactive-navbar-text'}
 				>
 					Home
 				</NavLink>
-				<NavLink
-					to="/listings"
+				<div
+					role="presentation"
+					onClick={handleAuthenticationClick('/listings')}
 					className={
 						isListingsPage ? 'active-navbar-text' : 'inactive-navbar-text'
 					}
 				>
 					Listings
-				</NavLink>
-				<NavLink
-					to="/tutorial"
+				</div>
+				<div
+					role="presentation"
+					onClick={handleAuthenticationClick('/tutorial')}
 					className={
 						isTutorialPage ? 'active-navbar-text' : 'inactive-navbar-text'
 					}
 				>
 					Tutorial
-				</NavLink>
+				</div>
 				<NavLink
 					to="/contact"
 					className={
@@ -62,8 +83,10 @@ export default function NavBar() {
 					)}
 				</div>
 				<div
+					role="presentation"
 					onMouseEnter={() => setPersonHover(true)}
 					onMouseLeave={() => setPersonHover(false)}
+					onClick={handleAuthenticationClick('/profile')}
 				>
 					{personHover ? (
 						<PersonIcon className="w-[35px] h-[35px] text-mv-green hover:cursor-pointer" />

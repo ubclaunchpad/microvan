@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import logo from '../assets/microvan_logo.svg';
-import OnboardingInputField from '../components/inputs/OnboardingInputField';
-import LogInButton from '../components/buttons/LogInButton';
+import logo from '../../../assets/microvan_logo.svg';
+import OnboardingInputField from '../../../components/inputs/OnboardingInputField';
+import LogInButton from '../../../components/buttons/LogInButton';
+import useAxios from '../../../hooks/useAxios';
 
 export default function BidderLogInPage() {
 	const navigate = useNavigate();
+	const { fetchData } = useAxios();
 
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -13,8 +15,21 @@ export default function BidderLogInPage() {
 	const handleEmailChange = (event) => setEmail(event.target.value);
 	const handlePasswordChange = (event) => setPassword(event.target.value);
 
-	const handleLogIn = () => {
-		console.log(`Email: ${email}, Password: ${password}`); // eslint-disable-line no-console
+	const handleLogIn = async () => {
+		try {
+			const result = await fetchData({
+				url: 'auth/login/',
+				method: 'POST',
+				data: { email, password, is_admin: true },
+			});
+			localStorage.setItem('userInfo', JSON.stringify(result.data));
+			navigate('/');
+		} catch (err) {
+			// eslint-disable-next-line no-console
+			console.error(
+				err.response ? err.response.data.error : 'An unknown error occurred'
+			);
+		}
 	};
 
 	return (

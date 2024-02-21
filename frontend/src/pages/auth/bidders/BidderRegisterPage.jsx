@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import altlogo from '../assets/alt-microvan-logo.svg';
-import OnboardingInputField from '../components/inputs/OnboardingInputField';
-import RegisterButton from '../components/buttons/RegisterButton';
+import altlogo from '../../../assets/alt-microvan-logo.svg';
+import OnboardingInputField from '../../../components/inputs/OnboardingInputField';
+import NextButton from '../../../components/buttons/NextButton';
 
 export default function BidderRegisterPage() {
 	const navigate = useNavigate();
@@ -22,8 +22,17 @@ export default function BidderRegisterPage() {
 	const handleCompanyAddressChange = (event) =>
 		setCompanyAddress(event.target.value);
 
-	const handleRegister = () => {
-		console.log(`Email: ${email}`); // eslint-disable-line no-console
+	const handleNextStep = () => {
+		navigate('/register/password', {
+			state: {
+				firstName,
+				surname,
+				email,
+				phoneNumber,
+				company,
+				companyAddress,
+			},
+		});
 	};
 
 	return (
@@ -51,7 +60,7 @@ export default function BidderRegisterPage() {
 						REGISTER AS A NEW BIDDER
 					</h1>
 				</div>
-				<div className="flex flex-col w-[60%] space-y-[18px] items-center justify-center">
+				<div className="flex flex-col w-[50%] space-y-[18px] items-center justify-center">
 					<div className="flex flex-col w-full items-start space-y-[5px]">
 						<p className="text-mv-white text-xl font-normal">First Name</p>
 						<OnboardingInputField
@@ -113,7 +122,7 @@ export default function BidderRegisterPage() {
 						/>
 					</div>
 					<div className="w-[70%] flex items-center justify-center">
-						<RegisterButton onClick={handleRegister} />
+						<NextButton onClick={handleNextStep} />
 					</div>
 				</div>
 			</div>
