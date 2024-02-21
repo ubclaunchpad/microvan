@@ -29,20 +29,9 @@ class GenericAuthenticatedUser(AnonymousUser):
 
 class AWSCognitoIDTokenAuthentication(authentication.BaseAuthentication):
     def authenticate(self, request):
-        auth_header = request.headers.get("Authorization")
-        if not auth_header:
+        token = request.COOKIES.get("idToken")
+        if not token:
             return None
-
-        try:
-            token_type, token = auth_header.split(" ")
-            if token_type.lower() != "bearer":
-                raise exceptions.AuthenticationFailed(
-                    "Invalid token header. Token should start with Bearer"
-                )
-        except ValueError:
-            raise exceptions.AuthenticationFailed(
-                "Invalid token header. No credentials provided."
-            )
 
         try:
             decoded_token = self.verify_jwt_token(token)

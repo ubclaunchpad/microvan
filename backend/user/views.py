@@ -87,6 +87,7 @@ class BidderDetailApiView(APIView):
         """
         Return a single bidder.
         """
+        print("HERE")
         bidder = self.cognitoService.get_user_details(bidder_id)
 
         return Response(bidder, status=status.HTTP_200_OK)
