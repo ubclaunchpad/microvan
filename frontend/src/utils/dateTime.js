@@ -30,4 +30,46 @@ const formatShortDate = (date) => {
 	return date.toLocaleDateString('en-US', options);
 };
 
-export { formatTime, calculateProgress, formatShortDate };
+const formatDateAuctionCard = (date) =>
+	date.toLocaleDateString('en-US', {
+		month: 'short',
+		day: '2-digit',
+		year: 'numeric',
+	});
+
+// returns the remaining time from current time to endDate
+function getTimeToEndDate(endDate) {
+	// Philippines time is UTC+8
+	const PHILIPPINES_TIME_OFFSET = 8;
+
+	function pad(number) {
+		return number < 10 ? `0${number}` : number;
+	}
+
+	const now = new Date();
+	const nowUtc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+	const nowPhilippines = new Date(
+		nowUtc.getTime() + PHILIPPINES_TIME_OFFSET * 60 * 60000
+	);
+	const endTime = new Date(endDate);
+	const difference = endTime - nowPhilippines;
+
+	if (difference < 0) {
+		return '00d : 00h : 00m : 00s';
+	}
+
+	const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+	const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+	const minutes = Math.floor((difference / (1000 * 60)) % 60);
+	const seconds = Math.floor((difference / 1000) % 60);
+
+	return `${pad(days)}d : ${pad(hours)}h : ${pad(minutes)}m : ${pad(seconds)}s`;
+}
+
+export {
+	formatTime,
+	calculateProgress,
+	formatShortDate,
+	formatDateAuctionCard,
+	getTimeToEndDate,
+};

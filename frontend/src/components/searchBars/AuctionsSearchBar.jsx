@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import useAxios from '../../hooks/useAxios';
 
-export default function ListingSearchBar({ setResults }) {
+export default function AuctionsSearchBar({ setResults }) {
 	const { fetchData } = useAxios();
 
 	const [input, setInput] = useState('');
 
-	const handleFetchVehicles = async () => {
+	const handleFetchAuctions = async () => {
 		if (!input.trim()) return;
 
 		try {
 			const response = await fetchData({
-				url: `vehicles?search=${input}`,
+				url: `auctions?search=${input}`,
 				method: 'GET',
 			});
 			setResults(response.data);
@@ -25,7 +25,7 @@ export default function ListingSearchBar({ setResults }) {
 	useEffect(() => {
 		const delayDebounceFn = setTimeout(() => {
 			if (input) {
-				handleFetchVehicles();
+				handleFetchAuctions();
 			}
 		}, 500);
 
