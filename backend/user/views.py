@@ -45,7 +45,7 @@ class BidderListApiView(APIView):
                 {"error": "Missing required fields."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
+    
         response = self.cognitoService.create_user(
             email=email,
             password=password,
@@ -68,7 +68,7 @@ class BidderListApiView(APIView):
             )
         else:
             return Response(
-                {"error": "Failed to create user in Cognito"},
+                {"error": response},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

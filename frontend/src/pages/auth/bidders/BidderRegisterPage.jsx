@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
+
 import altlogo from '../../../assets/alt-microvan-logo.svg';
 import OnboardingInputField from '../../../components/inputs/OnboardingInputField';
 import NextButton from '../../../components/buttons/NextButton';
@@ -21,19 +22,24 @@ export default function BidderRegisterPage() {
 	const handleCompanyChange = (event) => setCompany(event.target.value);
 	const handleCompanyAddressChange = (event) =>
 		setCompanyAddress(event.target.value);
-
+	const location = useLocation();
 	const handleNextStep = () => {
+		const nextState = {
+		  firstName: firstName !== '' ? firstName : location.state?.firstName || '',
+		  surname: surname !== '' ? surname : location.state?.surname || '',
+		  email: email !== '' ? email : location.state?.email || '',
+		  phoneNumber: phoneNumber !== '' ? phoneNumber : location.state?.phoneNumber || '',
+		  company: company !== '' ? company : location.state?.company || '',
+		  companyAddress: companyAddress !== '' ? companyAddress : location.state?.companyAddress || '',
+		};
+	  
+		console.log(nextState);
+		
 		navigate('/register/password', {
-			state: {
-				firstName,
-				surname,
-				email,
-				phoneNumber,
-				company,
-				companyAddress,
-			},
+		  state: nextState,
 		});
-	};
+	  };
+	  
 
 	return (
 		<div className="flex flex-col items-center justify-between min-h-screen min-w-screen bg-mv-green">
@@ -67,7 +73,7 @@ export default function BidderRegisterPage() {
 							placeholder="John"
 							className="w-full h-[50px]"
 							type="text"
-							value={firstName}
+							value={firstName !== '' ? firstName : location.state?.firstName || ''}
 							onChange={handleFirstNameChange}
 						/>
 					</div>
@@ -77,7 +83,7 @@ export default function BidderRegisterPage() {
 							placeholder="Doe"
 							className="w-full h-[50px]"
 							type="text"
-							value={surname}
+							value={surname !== '' ? surname : location.state?.surname || ''}
 							onChange={handleSurnameChange}
 						/>
 					</div>
@@ -87,7 +93,7 @@ export default function BidderRegisterPage() {
 							placeholder="johndoe@gmail.com"
 							className="w-full h-[50px]"
 							type="email"
-							value={email}
+							value={email !== '' ? email : location.state?.email || ''}
 							onChange={handleEmailChange}
 						/>
 					</div>
@@ -97,7 +103,7 @@ export default function BidderRegisterPage() {
 							placeholder="+1 111 111 1111"
 							className="w-full h-[50px]"
 							type="tel"
-							value={phoneNumber}
+							value={phoneNumber !== '' ? phoneNumber : location.state?.phoneNumber || ''}
 							onChange={handlePhoneNumberChange}
 						/>
 					</div>
@@ -107,7 +113,7 @@ export default function BidderRegisterPage() {
 							placeholder="Bank of Manila"
 							className="w-full h-[50px]"
 							type="text"
-							value={company}
+							value={company !== '' ? company : location.state?.company || ''}
 							onChange={handleCompanyChange}
 						/>
 					</div>
@@ -117,7 +123,7 @@ export default function BidderRegisterPage() {
 							placeholder="1234 Manila Street, Manila, Philippines"
 							className="w-full h-[50px]"
 							type="text"
-							value={companyAddress}
+							value={companyAddress !== '' ? companyAddress : location.state?.companyAddress || ''}
 							onChange={handleCompanyAddressChange}
 						/>
 					</div>
