@@ -30,6 +30,7 @@ export default function BidderRegisterPage() {
 
 	const handleRegister = async () => {
 		if (!email || !password || !confirmPassword) {
+			//eslint-disable-next-line no-console
 			console.error('Required fields are missing');
 			return;
 		}
@@ -51,6 +52,7 @@ export default function BidderRegisterPage() {
 			navigate('/register/email');
 		} catch (err) {
 			const errorMessage = err.response ? err.response.data.error : 'An unknown error occurred';
+			// eslint-disable-next-line no-console
 			console.error(err);
 			setRegistrationError(errorMessage);
 		}

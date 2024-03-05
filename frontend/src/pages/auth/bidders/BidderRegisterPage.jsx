@@ -33,7 +33,6 @@ export default function BidderRegisterPage() {
 		  companyAddress: companyAddress !== '' ? companyAddress : location.state?.companyAddress || '',
 		};
 	  
-		console.log(nextState);
 		
 		navigate('/register/password', {
 		  state: nextState,
