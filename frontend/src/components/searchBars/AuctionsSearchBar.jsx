@@ -12,7 +12,7 @@ export default function AuctionsSearchBar({ setResults }) {
 
 		try {
 			const response = await fetchData({
-				url: `auctions?search=${input}`,
+				endpoint: `auctions?search=${input}`,
 				method: 'GET',
 			});
 			setResults(response.data);
