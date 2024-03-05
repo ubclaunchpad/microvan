@@ -30,7 +30,7 @@ export default function BidderRegisterPage() {
 
 	const handleRegister = async () => {
 		if (!email || !password || !confirmPassword) {
-			//eslint-disable-next-line no-console
+			// eslint-disable-next-line no-console
 			console.error('Required fields are missing');
 			return;
 		}
