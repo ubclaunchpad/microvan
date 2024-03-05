@@ -16,13 +16,16 @@ export default function BidderRegisterPage() {
 
 	const [password, setPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
+	const [registrationError, setRegistrationError] = useState('');
 
 	const handlePasswordChange = (event) => setPassword(event.target.value);
 	const handleConfirmPasswordChange = (event) =>
 		setConfirmPassword(event.target.value);
 
 	const handleBackStep = () => {
-		navigate('/register');
+		navigate('/register', {
+			state: location.state,
+		});
 	};
 
 	const handleRegister = async () => {
@@ -34,7 +37,7 @@ export default function BidderRegisterPage() {
 
 		try {
 			await fetchData({
-				url: 'bidders/',
+				endpoint: 'bidders/',
 				method: 'POST',
 				data: {
 					email,
@@ -48,10 +51,10 @@ export default function BidderRegisterPage() {
 			});
 			navigate('/register/email');
 		} catch (err) {
+			const errorMessage = err.response ? err.response.data.error : 'An unknown error occurred';
 			// eslint-disable-next-line no-console
-			console.error(
-				err.response ? err.response.data.error : 'An unknown error occurred'
-			);
+			console.error(err);
+			setRegistrationError(errorMessage);
 		}
 	};
 
@@ -103,6 +106,10 @@ export default function BidderRegisterPage() {
 							onChange={handleConfirmPasswordChange}
 						/>
 					</div>
+					{registrationError && (
+						<p style={{ color: 'red', marginTop: '2rem' }}>{registrationError}</p>
+					)}
+
 					<div className="w-[70%] flex items-center justify-center">
 						<RegisterButton onClick={handleRegister} />
 					</div>

@@ -86,7 +86,7 @@ class AWSCognitoService:
             return response
         except self.client.exceptions.ClientError as e:
             print(f'Error creating user: {e.response["Error"]["Message"]}')
-            return None
+            return e.response["Error"]["Message"]
 
     def _prepare_user_attributes(
         self, is_admin=False, is_update=False, given_name="", family_name="", **kwargs
