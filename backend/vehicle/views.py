@@ -150,18 +150,24 @@ class VehiclePriceApiView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class UploadFileView(APIView):
     permission_classes = [permissions.AllowAny]
     parser_classes = [FileUploadParser]
     serializer_class = VehicleSerializer
+    """
+        Endpoint for parsing xlsx files and creating vehicles
+        To use the endpoint, you must add the following to the header:
+        "Content-Disposition" : "attachment; filename="your_file_name_here.xlsx"
+        along with "file" as key
+    """
 
     def post(self, request):
         try:
-            file_obj = request.data['file']
+            file_obj = request.data["file"]
             file_content = file_obj.read()
             data = parse_excel_to_vehicle(file_content)
-            return Response({'status': 'success', 'message': data})
+            return Response({"status": "success", "message": data})
         except Exception as e:
             error_message = str(e)
-            return Response({'status': 'error', 'message': error_message})
-        
+            return Response({"status": "error", "message": error_message})

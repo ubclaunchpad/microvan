@@ -3,6 +3,8 @@ from django.shortcuts import get_object_or_404
 import pandas as pd
 import requests
 from .serializers import VehicleSerializer
+
+
 def infinite_filter(request):
     url_parameter = request.GET.get("search")
     if url_parameter:
@@ -31,18 +33,16 @@ def has_more_data(request):
         return Vehicle.objects.all().count() > int(limit)
     else:
         return False
-        
+
 
 def parse_excel_to_vehicle(excel_file):
-    df0 = pd.read_excel(excel_file, sheet_name=0, engine='openpyxl')
+    df0 = pd.read_excel(excel_file, sheet_name=0, engine="openpyxl")
 
     # empty list to store Vehicle object
     vehicles = []
 
     # iterate through rows in dataframe
     for index, row in df0.iterrows():
-        
-        print(row)
         if pd.isna(row.iloc[2]) or pd.isna(row.iloc[19]) or pd.isna(row.iloc[1]):
             continue  # exit the loop if an empty cell is encountered
 
@@ -54,7 +54,7 @@ def parse_excel_to_vehicle(excel_file):
             "brand": row["BRAND"],
             "vehicle_type": row["TYPE"],
             "minimum_price": row["SALE PRICE (PhP)"],
-            #"is_sold": row[""], 
+            # "is_sold": row[""],
             "remarks": row["REMARKS"],
             "classification_type": row["CLASSIFICATION TYPE"],
             "engine_condition": row["ENGINE"],
@@ -66,17 +66,23 @@ def parse_excel_to_vehicle(excel_file):
                 "Operating System (i.e. Dumping System, Manlift System, etc.)"
             ],
             "chassis_condition": row["Chassis"],
-            "body_condition": row["Body"]
+            "body_condition": row["Body"],
         }
 
         brand_id = vehicle_data.pop("brand", None)
         type_id = vehicle_data.pop("vehicle_type", None)
         Brand.objects.get_or_create(name=brand_id)
-        Type.objects.get_or_create(name=type_id) 
-        brand = get_object_or_404(Brand, name=brand_id) if brand_id is not None else None
-        vehicle_type = get_object_or_404(Type, name=type_id) if type_id is not None else None
+        Type.objects.get_or_create(name=type_id)
+        brand = (
+            get_object_or_404(Brand, name=brand_id) if brand_id is not None else None
+        )
+        vehicle_type = (
+            get_object_or_404(Type, name=type_id) if type_id is not None else None
+        )
 
-        vehicle = Vehicle.objects.get_or_create(brand=brand, vehicle_type=vehicle_type, **vehicle_data)
+        vehicle, created = Vehicle.objects.get_or_create(
+            brand=brand, vehicle_type=vehicle_type, **vehicle_data
+        )
         vehicles.append(vehicle)
 
     serialized_data = VehicleSerializer(vehicles, many=True).data
@@ -102,9 +108,7 @@ def parse_excel_to_equipment(excel_file):
                 break  # exit the for loop
 
             # create an equipment object for each row and append it to the list
-            equipment_data = {
-z
-            }
+            equipment_data = {z}
             # figure out the api endpoint url
             response = requests.post("your_api_endpoint_url_here", json=equipment_data)
             if response.status_code == 201:

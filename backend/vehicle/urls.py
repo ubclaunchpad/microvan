@@ -6,7 +6,7 @@ from .views import (
     VehicleFilterList,
     VehicleListApiView,
     VehiclePriceApiView,
-    UploadFileView
+    UploadFileView,
 )
 
 urlpatterns = [
@@ -18,6 +18,5 @@ urlpatterns = [
         VehiclePriceApiView.as_view(),
         name="vehicle_price",
     ),
-    path('upload-file/', UploadFileView.as_view(), name='upload_file'),
-
+    path("upload-file/", UploadFileView.as_view(), name="upload_file"),
 ]
