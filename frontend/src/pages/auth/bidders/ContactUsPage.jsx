@@ -2,7 +2,6 @@ import React from 'react';
 import NavBar from '../../../components/navBars/NavBar';
 import Footer from '../../../components/footers/Footer';
 import SubmitContactFormButton from '../../../components/buttons/SubmitContactFormButton';
-import ProfilePopUpCard from '../../../components/cards/ProfilePopUpCard';
 
 export default function ContactUsPage() {
 	return (
@@ -61,7 +60,6 @@ export default function ContactUsPage() {
 	<div className="mt-[3%] w-[315px] items-center justify-center">
 		<SubmitContactFormButton/>
 	</div>
-	<ProfilePopUpCard/>
 </div>
 
 <div className="flex-grow" />

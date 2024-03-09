@@ -21,7 +21,7 @@ export default function ProfilePopUpCard({
 		}
 	};
 	return (
-		<div className="flex w-[362px] h-[409px] rounded-2xl shadow-2xl m-5 overflow-hidden relative">
+		<div className="flex w-[362px] h-[409px] rounded-2xl shadow-2xl m-5 overflow-hidden relative bg-mv-white">
 			<div className="w-full flex">
 				<div className="w-full px-9 py-7">
 					<div className="flex flex-col text-gray-700 text-base text-xxs">
@@ -45,7 +45,7 @@ export default function ProfilePopUpCard({
 									/>
 									<div className="flex flex-col justify-between px-6">
 										<span className="font-poppins text-base font-medium leading-6 text-left">User Profile</span>
-										<a href="/" className="font-poppins text-xs font-normal leading-5 text-left text-blue-600 underline hover:text-blue-800">Click to see your user details, notification settings, and watchlist</a>
+										<a href="/onboard" className="font-poppins text-xs font-normal leading-5 text-left text-blue-600 underline hover:text-blue-800">Click to see your user details, notification settings, and watchlist</a>
 									</div>
 								</div>
 							</div>
@@ -56,7 +56,7 @@ export default function ProfilePopUpCard({
 									<HistoryIcon style={{ fontSize: '39px' }} className="mr-2" />
 									<div className="flex flex-col justify-between px-6 py-4">
 									<span className="font-poppins text-base font-medium leading-6 text-left">Bid History</span>
-									<a href="/" className="font-poppins text-xs font-normal leading-5 text-left text-blue-600 underline hover:text-blue-800">Click to see your current and past bids</a>
+									<a href="/onboard" className="font-poppins text-xs font-normal leading-5 text-left text-blue-600 underline hover:text-blue-800">Click to see your current and past bids</a>
 									</div>
 								</div>
 							</div>
