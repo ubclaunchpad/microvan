@@ -108,7 +108,7 @@ def parse_excel_to_equipment(excel_file):
                 break  # exit the for loop
 
             # create an equipment object for each row and append it to the list
-            equipment_data = {z}
+            equipment_data = {}
             # figure out the api endpoint url
             response = requests.post("your_api_endpoint_url_here", json=equipment_data)
             if response.status_code == 201:
