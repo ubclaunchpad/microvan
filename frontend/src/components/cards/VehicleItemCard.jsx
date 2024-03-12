@@ -1,85 +1,80 @@
 import React from 'react';
-import ContentPasteIcon from '@mui/icons-material/ContentPaste';
-import DirectionsBusFilledIcon from '@mui/icons-material/DirectionsBusFilled';
-import TodayIcon from '@mui/icons-material/Today';
-import SellIcon from '@mui/icons-material/Sell';
+import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
+import AgricultureIcon from '@mui/icons-material/Agriculture';
+import StarsOutlinedIcon from '@mui/icons-material/StarsOutlined';
 import AddToListButton from '../buttons/AddToListButton';
 import ViewModelButton from '../buttons/ViewModelButton';
 import QuickViewButton from '../buttons/QuickViewButton';
-import { formatShortDate } from '../../utils/dateTime';
 
 export default function VehicleItemCard({
 	description,
 	modelNumber,
-	type,
-	brand,
-	saleDate,
+	engineNumber,
+	chassisNumber,
 	price,
 	imageUrl,
 }) {
 	return (
-		<div className="flex w-[550px] h-[189px] rounded-2xl shadow-2xl m-5 overflow-hidden relative">
-			<div className="w-1/3">
+		<div className="flex w-full h-[314px] rounded-[20px] shadow-searchBarShadow">
+			<div className="w-1/3 relative rounded-l-[20px]">
 				<img
-					className="w-full h-full object-cover"
+					className="w-full h-full rounded-l-[20px] object-cover object-center"
 					src={imageUrl}
 					alt={description}
 				/>
-				<QuickViewButton />
+				<div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+					<QuickViewButton />
+				</div>
 			</div>
-			<div className="w-2/3 flex">
-				<div className="w-3/4 mx-9 my-5">
-					<div className="font-bold text-s mb-2 tracking-wide">
+			<div className="w-2/3 flex pl-[46px] pt-[42px] pb-[30px] pr-[36px]">
+				<div className="w-[70%] flex flex-col gap-y-[21px]">
+					<div className="font-semibold text-xl text-mv-black tracking-[0.5px] leading-7">
 						{description}
 					</div>
-					<div className="flex flex-col text-gray-700 text-base text-xxs">
+
+					<div className="flex flex-col text-mv-black text-base mr-[50px] gap-y-[20px]">
 						<div className="flex flex-row justify-between">
-							<div>
-								<div className="flex flex-row items-center">
-									<ContentPasteIcon
-										style={{ fontSize: '13px' }}
-										className="mr-2"
-									/>
-									<div className="flex flex-col justify-between">
-										<span className="font-medium mb-[-7px]">Model</span>
-										<span>{modelNumber}</span>
-									</div>
-								</div>
-								<div className="flex flex-row items-center">
-									<DirectionsBusFilledIcon
-										style={{ fontSize: '13px' }}
-										className="mr-2"
-									/>
-									<div className="flex flex-col justify-between">
-										<span className="font-medium mb-[-7px]">Type</span>
-										<span>{type}</span>
-									</div>
+							<div className="flex flex-row items-center justify-center gap-x-[19px]">
+								<DirectionsBusIcon className="text-dark-grey w-[25px] h-[25px]"/>
+								<div className="flex flex-col leading-6 tracking-[0.5px]">
+									<p className="font-medium">Model</p>
+									<p className="font-normal">{modelNumber}</p>
 								</div>
 							</div>
-							<div>
-								<div className="flex flex-row items-center">
-									<SellIcon style={{ fontSize: '13px' }} className="mr-2" />
-									<div className="flex flex-col justify-between">
-										<span className="font-medium mb-[-7px]">Brand</span>
-										<span>{brand}</span>
-									</div>
+							<div className="flex flex-row items-center justify-center gap-x-[19px]">
+								<StarsOutlinedIcon className="text-dark-grey w-[25px] h-[25px]"/>
+								<div className="flex flex-col leading-6 tracking-[0.5px]">
+									<p className="font-medium">Engine no.</p>
+									<p className="font-normal">{engineNumber}</p>
 								</div>
-								<div className="flex flex-row items-center">
-									<TodayIcon style={{ fontSize: '13px' }} className="mr-2" />
-									<div className="flex flex-col justify-between">
-										<span className="font-medium mb-[-7px]">Sale Date</span>
-										<span>{formatShortDate(saleDate)}</span>
-									</div>
+							</div>
+						</div>
+						<div className="flex flex-row justify-between">
+							<div className="flex flex-row items-center justify-center gap-x-[19px]">
+								<AgricultureIcon className="text-dark-grey w-[25px] h-[25px]"/>
+								<div className="flex flex-col leading-6 tracking-[0.5px]">
+									<p className="font-medium">Chassis</p>
+									<p className="font-normal">{chassisNumber}</p>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div className="w-[35%] my-7 mr-5 flex flex-col items-center justify-between">
-					<span className="text-xxs text-gray-700">Current bid</span>
-					<span className="font-medium text-l">{`₱${price}}`}</span>
+				<div className="w-[30%] flex flex-col items-center justify-between gap-y-[13px]">
+					<span>
+						<p className="text-mv-black text-base font-normal leading-5 tracking-[0.1px]">
+							Current bid
+						</p>
+					</span>
+					<span className="mb-[5px]">
+						<p className="text-mv-black text-[28px] font-medium leading-5 tracking-[0.1px]">{`₱${price}`}</p>
+					</span>
 					<ViewModelButton />
-					<span className="text-xxs text-gray-700">or</span>
+					<span className="mb-[2px]">
+						<p className="text-base text-mv-black font-medium leading-5 tracking-[0.1px]">
+							or
+						</p>
+					</span>
 					<AddToListButton />
 				</div>
 			</div>

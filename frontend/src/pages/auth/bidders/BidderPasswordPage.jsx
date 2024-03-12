@@ -72,8 +72,8 @@ export default function BidderRegisterPage() {
 
 			<div className="flex-grow" />
 
-			<div className="flex flex-col w-full items-center justify-center space-y-[18px]">
-				<div className="flex w-full items-center justify-center space-x-[16px] mb-[44px]">
+			<div className="flex flex-col w-full items-center justify-center gap-y-[18px]">
+				<div className="flex w-full items-center justify-center gap-x-[16px] mb-[44px]">
 					<img
 						src={altlogo}
 						alt="logo"
@@ -83,8 +83,8 @@ export default function BidderRegisterPage() {
 						REGISTER AS A NEW BIDDER
 					</h1>
 				</div>
-				<div className="flex flex-col w-[50%] space-y-[18px] items-center justify-center">
-					<div className="flex flex-col w-full items-start space-y-[5px]">
+				<div className="flex flex-col w-[50%] gap-y-[18px] items-center justify-center">
+					<div className="flex flex-col w-full items-start gap-y-[5px]">
 						<p className="text-mv-white text-xl font-normal">Input Password</p>
 						<OnboardingInputField
 							placeholder=""
@@ -94,7 +94,7 @@ export default function BidderRegisterPage() {
 							onChange={handlePasswordChange}
 						/>
 					</div>
-					<div className="flex flex-col w-full items-start space-y-[5px]">
+					<div className="flex flex-col w-full items-start gap-y-[5px]">
 						<p className="text-mv-white text-xl font-normal">
 							Confirm Password
 						</p>

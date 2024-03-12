@@ -13,7 +13,7 @@ export default function ContactUsPage() {
 					<h1 className="text-4xl pb-[1%] font-semibold text-mv-black">
 						Contact Us
 					</h1>
-					<div className="flex flex-col items-start w-[60%] mt-[22px] space-y-[5px]">
+					<div className="flex flex-col items-start w-[60%] mt-[22px] gap-y-[5px]">
 						<p className="font-poppins text-2xl font-normal leading-9 tracking-normal text-left">
 							Name
 						</p>
@@ -24,7 +24,7 @@ export default function ContactUsPage() {
 							/>
 						</div>
 					</div>
-					<div className="flex flex-col items-start w-[60%] mt-[22px] space-y-[5px]">
+					<div className="flex flex-col items-start w-[60%] mt-[22px] gap-y-[5px]">
 						<p className="font-poppins text-2xl font-normal leading-9 tracking-normal text-left">
 							Email
 						</p>
@@ -35,7 +35,7 @@ export default function ContactUsPage() {
 							/>
 						</div>
 					</div>
-					<div className="flex flex-col items-start w-[60%] mt-[22px] space-y-[5px]">
+					<div className="flex flex-col items-start w-[60%] mt-[22px] gap-y-[5px]">
 						<p className="font-poppins text-2xl font-normal leading-9 tracking-normal text-left">
 							Phone Number
 						</p>
@@ -46,7 +46,7 @@ export default function ContactUsPage() {
 							/>
 						</div>
 					</div>
-					<div className="flex flex-col items-start w-[60%] mt-[22px] space-y-[5px]">
+					<div className="flex flex-col items-start w-[60%] mt-[22px] gap-y-[5px]">
 						<p className="font-poppins text-2xl font-normal leading-9 tracking-normal text-left">
 							Bidder Number (If you have one)
 						</p>
@@ -57,7 +57,7 @@ export default function ContactUsPage() {
 							/>
 						</div>
 					</div>
-					<div className="flex flex-col items-start w-[60%] mt-[22px] space-y-[5px]">
+					<div className="flex flex-col items-start w-[60%] mt-[22px] gap-y-[5px]">
 						<p className="font-poppins text-2xl font-normal leading-9 tracking-normal text-left">
 							Message
 						</p>

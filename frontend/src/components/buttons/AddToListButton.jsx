@@ -5,12 +5,12 @@ export default function AddToListButton({ onClick }) {
 	return (
 		<button
 			type="button"
-			className="bg-transparent border-solid border-mv-green border rounded-[5px] w-full h-[30px]"
+			className="bg-mv-white border-mv-green border-solid border rounded-[5px] shadow-searchBarShadow w-full px-5 py-3 flex items-center justify-center"
 			onClick={onClick}
 		>
-			<div className="text-mv-black text-xxs font-medium">
-				<AddIcon style={{ fontSize: '13px' }} className="mr-1" />
-				Add to List
+			<div className="flex items-center justify-center">
+				<AddIcon className="w-[20px] h-[20px]" />
+				<p className="text-mv-black text-sm font-medium leading-5 tracking-[0.1px]">Add to List</p>
 			</div>
 		</button>
 	);

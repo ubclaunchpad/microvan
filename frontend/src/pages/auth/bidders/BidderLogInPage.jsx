@@ -54,7 +54,7 @@ export default function BidderLogInPage() {
           Microvan Inc.
         </h1>
         <h2 className="text-mv-green text-3xl font-normal">Virtual Auctions</h2>
-        <div className="flex flex-col items-start w-[60%] mt-[22px] space-y-[5px]">
+        <div className="flex flex-col items-start w-[60%] mt-[22px] gap-y-[5px]">
           <p className="text-dark-grey text-xl font-normal">Email</p>
           <OnboardingInputField
             placeholder="johndoe@gmail.com"
@@ -64,7 +64,7 @@ export default function BidderLogInPage() {
             onChange={handleEmailChange}
           />
         </div>
-        <div className="flex flex-col items-start w-[60%] mt-[22px] space-y-[5px]">
+        <div className="flex flex-col items-start w-[60%] mt-[22px] gap-y-[5px]">
           <p className="text-dark-grey text-xl font-normal">Password</p>
           <OnboardingInputField
             placeholder="**********"
