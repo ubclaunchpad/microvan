@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from '../pages/HomePage';
 import ListingsPage from '../pages/ListingsPage';
-import ContactUsPage from '../pages/auth/bidders/ContactUsPage';
+import ContactUsPage from '../pages/ContactUsPage';
 import OnboardPage from '../pages/OnboardingPage';
 import BidderLogInPage from '../pages/auth/bidders/BidderLogInPage';
 import BidderRegisterPage from '../pages/auth/bidders/BidderRegisterPage';
