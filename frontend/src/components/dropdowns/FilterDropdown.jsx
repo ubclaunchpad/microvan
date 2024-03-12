@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
-export default function Dropdown({ title, items, onValueChange }) {
+export default function FilterDropdown({ title, items, onValueChange }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedValue, setSelectedValue] = useState(title);
 	const dropdownRef = useRef(null);
@@ -35,12 +35,12 @@ export default function Dropdown({ title, items, onValueChange }) {
 		>
 			<button
 				type="button"
-				className={`whitespace-nowrap py-2.5 px-3.5 rounded-[5px] bg-light-grey flex justify-between items-center text-left ${
+				className={`whitespace-nowrap py-[9px] pl-[18px] pr-[12px] rounded-[5px] bg-mv-white flex justify-between items-center text-left ${
 					isOpen ? 'shadow-xl' : ''
 				}`}
 				onClick={() => setIsOpen(!isOpen)}
 			>
-				<span className="text-mv-black text-xl leading-normal font-normal">
+				<span className="text-mv-black text-base leading-normal font-normal overflow-ellipsis">
 					{selectedValue}
 				</span>
 				<KeyboardArrowDownIcon
@@ -51,7 +51,7 @@ export default function Dropdown({ title, items, onValueChange }) {
 
 			{isOpen && (
 				<div
-					className="absolute z-10 mt-[60px] py-5 px-5 bg-mv-white border border-mv-grey border-solid rounded-[10px] w-full"
+					className="absolute z-10 mt-[45px] py-5 px-5 bg-mv-white border border-mv-grey border-solid rounded-[10px] w-full"
 					role="menu"
 					aria-orientation="vertical"
 					aria-labelledby="menu-button"
@@ -61,7 +61,7 @@ export default function Dropdown({ title, items, onValueChange }) {
 						<button
 							type="button"
 							key={value}
-							className="text-left w-full text-xl text-mv-black font-normal"
+							className="text-left w-full text-base text-mv-black font-normal overflow-ellipsis"
 							style={{ marginTop: index === 0 ? 0 : 20 }}
 							role="menuitem"
 							tabIndex="-1"

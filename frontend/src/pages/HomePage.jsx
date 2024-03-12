@@ -64,7 +64,7 @@ export default function HomePage() {
 				</div>
 			</div>
 			<div className="flex justify-center items-center min-h-screen w-full max-w-full text-center z-10">
-				<div className="flex items-center justify-between w-[80%] space-x-4">
+				<div className="flex items-center justify-between w-[80%] gap-x-4">
 					<div className="w-[80%]">
 						<h2 className="text-mv-black text-4xl font-semibold mb-7">
 							About Us
