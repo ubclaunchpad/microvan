@@ -15,6 +15,7 @@ cryptography = ">=42.0.2"
 requests = ">=2.31.0"
 pyjwt = ">=2.8.0"
 django-cors-headers = "*"
+pandas = "*"
 
 [dev-packages]
 flake8 = ">=6.1.0"

@@ -2,10 +2,13 @@ from rest_framework import status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
+import pandas as pd
+from rest_framework.parsers import FileUploadParser
+from rest_framework import permissions
 
 from core.permissions import IsAdminUser, IsAuthenticated
 
-from .helpers import has_more_data, infinite_filter
+from .helpers import has_more_data, infinite_filter, parse_excel_to_vehicle
 from .models import Brand, Type, Vehicle
 from .serializers import VehicleSerializer
 
@@ -146,3 +149,25 @@ class VehiclePriceApiView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UploadFileView(APIView):
+    permission_classes = [permissions.AllowAny]
+    parser_classes = [FileUploadParser]
+    serializer_class = VehicleSerializer
+    """
+        Endpoint for parsing xlsx files and creating vehicles
+        To use the endpoint, you must add the following to the header:
+        "Content-Disposition" : "attachment; filename="your_file_name_here.xlsx"
+        along with "file" as key
+    """
+
+    def post(self, request):
+        try:
+            file_obj = request.data["file"]
+            file_content = file_obj.read()
+            data = parse_excel_to_vehicle(file_content)
+            return Response({"status": "success", "message": data})
+        except Exception as e:
+            error_message = str(e)
+            return Response({"status": "error", "message": error_message})
