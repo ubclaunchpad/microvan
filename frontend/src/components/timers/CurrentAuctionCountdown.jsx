@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { formatTime, calculateProgress } from '../../utils/dateTime';
 
 // expects type Date for startDateTime and endDateTime props, recommended maxWidth around 300px
-export default function CurrentAuctionCountdown({ maxWidth="60%", startDateTime, endDateTime }) {
+export default function CurrentAuctionCountdown({
+	maxWidth = '60%',
+	startDateTime,
+	endDateTime,
+}) {
 	const [timeRemaining, setTimeRemaining] = useState(0);
 	const [isExpired, setIsExpired] = useState(false);
 	const [isActive, setIsActive] = useState(true);
@@ -33,7 +37,9 @@ export default function CurrentAuctionCountdown({ maxWidth="60%", startDateTime,
 
 	return (
 		<div className="float-right text-right" style={{ width: maxWidth }}>
-			<div className="mb-2 text-mv-black text-xl font-medium">{statusString}</div>
+			<div className="mb-2 text-mv-black text-xl font-medium">
+				{statusString}
+			</div>
 			<div
 				className="h-[11px] bg-progress-bar rounded-lg overflow-hidden"
 				style={{ width: maxWidth, float: 'right' }}
@@ -43,7 +49,7 @@ export default function CurrentAuctionCountdown({ maxWidth="60%", startDateTime,
 					style={{
 						width:
 							!isActive || isExpired
-								? "0px"
+								? '0px'
 								: `${calculateProgress(
 										endDateTime,
 										startDateTime,

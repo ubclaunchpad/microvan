@@ -51,7 +51,9 @@ export default function BidderRegisterPage() {
 			});
 			navigate('/register/email');
 		} catch (err) {
-			const errorMessage = err.response ? err.response.data.error : 'An unknown error occurred';
+			const errorMessage = err.response
+				? err.response.data.error
+				: 'An unknown error occurred';
 			// eslint-disable-next-line no-console
 			console.error(err);
 			setRegistrationError(errorMessage);
@@ -107,7 +109,9 @@ export default function BidderRegisterPage() {
 						/>
 					</div>
 					{registrationError && (
-						<p style={{ color: 'red', marginTop: '2rem' }}>{registrationError}</p>
+						<p style={{ color: 'red', marginTop: '2rem' }}>
+							{registrationError}
+						</p>
 					)}
 
 					<div className="w-[70%] flex items-center justify-center">

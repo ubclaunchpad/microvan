@@ -10,7 +10,9 @@ export default function AddToListButton({ onClick }) {
 		>
 			<div className="flex items-center justify-center">
 				<AddIcon className="w-[20px] h-[20px]" />
-				<p className="text-mv-black text-sm font-medium leading-5 tracking-[0.1px]">Add to List</p>
+				<p className="text-mv-black text-sm font-medium leading-5 tracking-[0.1px]">
+					Add to List
+				</p>
 			</div>
 		</button>
 	);

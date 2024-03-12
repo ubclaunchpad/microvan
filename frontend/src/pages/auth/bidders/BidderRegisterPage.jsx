@@ -25,20 +25,22 @@ export default function BidderRegisterPage() {
 	const location = useLocation();
 	const handleNextStep = () => {
 		const nextState = {
-		  firstName: firstName !== '' ? firstName : location.state?.firstName || '',
-		  surname: surname !== '' ? surname : location.state?.surname || '',
-		  email: email !== '' ? email : location.state?.email || '',
-		  phoneNumber: phoneNumber !== '' ? phoneNumber : location.state?.phoneNumber || '',
-		  company: company !== '' ? company : location.state?.company || '',
-		  companyAddress: companyAddress !== '' ? companyAddress : location.state?.companyAddress || '',
+			firstName: firstName !== '' ? firstName : location.state?.firstName || '',
+			surname: surname !== '' ? surname : location.state?.surname || '',
+			email: email !== '' ? email : location.state?.email || '',
+			phoneNumber:
+				phoneNumber !== '' ? phoneNumber : location.state?.phoneNumber || '',
+			company: company !== '' ? company : location.state?.company || '',
+			companyAddress:
+				companyAddress !== ''
+					? companyAddress
+					: location.state?.companyAddress || '',
 		};
-	  
-		
+
 		navigate('/register/password', {
-		  state: nextState,
+			state: nextState,
 		});
-	  };
-	  
+	};
 
 	return (
 		<div className="flex flex-col items-center justify-between min-h-screen min-w-screen bg-mv-green">
@@ -72,7 +74,9 @@ export default function BidderRegisterPage() {
 							placeholder="John"
 							className="w-full h-[50px]"
 							type="text"
-							value={firstName !== '' ? firstName : location.state?.firstName || ''}
+							value={
+								firstName !== '' ? firstName : location.state?.firstName || ''
+							}
 							onChange={handleFirstNameChange}
 						/>
 					</div>
@@ -102,7 +106,11 @@ export default function BidderRegisterPage() {
 							placeholder="+1 111 111 1111"
 							className="w-full h-[50px]"
 							type="tel"
-							value={phoneNumber !== '' ? phoneNumber : location.state?.phoneNumber || ''}
+							value={
+								phoneNumber !== ''
+									? phoneNumber
+									: location.state?.phoneNumber || ''
+							}
 							onChange={handlePhoneNumberChange}
 						/>
 					</div>
@@ -122,7 +130,11 @@ export default function BidderRegisterPage() {
 							placeholder="1234 Manila Street, Manila, Philippines"
 							className="w-full h-[50px]"
 							type="text"
-							value={companyAddress !== '' ? companyAddress : location.state?.companyAddress || ''}
+							value={
+								companyAddress !== ''
+									? companyAddress
+									: location.state?.companyAddress || ''
+							}
 							onChange={handleCompanyAddressChange}
 						/>
 					</div>
