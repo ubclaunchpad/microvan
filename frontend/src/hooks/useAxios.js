@@ -11,7 +11,7 @@ export default function useAxios() {
 	});
 
 	const fetchData = async ({
-		url,
+		endpoint,
 		method = 'POST',
 		data = null,
 		headers = {},
@@ -19,7 +19,7 @@ export default function useAxios() {
 		setLoading(true);
 		try {
 			const result = await axiosInstance({
-				url,
+				url: endpoint,
 				method,
 				data,
 				headers: {

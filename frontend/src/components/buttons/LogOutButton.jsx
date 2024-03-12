@@ -7,7 +7,9 @@ export default function LogOutButton({ onClick }) {
 			className="bg-mv-white w-100% h-100% items-center justify-center"
 			onClick={onClick}
 		>
-			<div className="font-poppins text-base font-medium leading-6 text-center">Log Out</div>
+			<div className="font-poppins text-base font-medium leading-6 text-center">
+				Log Out
+			</div>
 		</button>
 	);
 }

@@ -94,11 +94,18 @@ export default function NavBar() {
 					) : (
 						<PersonOutlinedIcon className="w-[35px] h-[35px] text-mv-black hover:cursor-pointer" />
 					)}
-      					{personHover && (
-        					<div style={{ position: 'fixed', bottom: '230', right: '10px', zIndex: 100 }}>
-          						<ProfilePopUpCard />
-        					</div>
-      					)}
+					{personHover && (
+						<div
+							style={{
+								position: 'fixed',
+								bottom: '230',
+								right: '10px',
+								zIndex: 100,
+							}}
+						>
+							<ProfilePopUpCard />
+						</div>
+					)}
 				</div>
 			</div>
 		</div>

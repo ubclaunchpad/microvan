@@ -19,8 +19,8 @@ export default function BidderRegisterPage() {
 
 			<div className="flex-grow" />
 
-			<div className="flex flex-col w-full items-center justify-center space-y-[27px]">
-				<div className="flex w-full items-center justify-center space-x-[16px]">
+			<div className="flex flex-col w-full items-center justify-center gap-y-[27px]">
+				<div className="flex w-full items-center justify-center gap-x-[16px]">
 					<img
 						src={altlogo}
 						alt="logo"

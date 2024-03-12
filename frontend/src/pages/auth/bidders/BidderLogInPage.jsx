@@ -11,6 +11,7 @@ export default function BidderLogInPage() {
 
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [loginError, setLoginError] = useState(null);
 
 	const handleEmailChange = (event) => setEmail(event.target.value);
 	const handlePasswordChange = (event) => setPassword(event.target.value);
@@ -18,15 +19,14 @@ export default function BidderLogInPage() {
 	const handleLogIn = async () => {
 		try {
 			const result = await fetchData({
-				url: 'auth/login/',
+				endpoint: 'auth/login/',
 				method: 'POST',
 				data: { email, password, is_admin: true },
 			});
 			localStorage.setItem('userInfo', JSON.stringify(result.data));
 			navigate('/');
 		} catch (err) {
-			// eslint-disable-next-line no-console
-			console.error(
+			setLoginError(
 				err.response ? err.response.data.error : 'An unknown error occurred'
 			);
 		}
@@ -56,7 +56,7 @@ export default function BidderLogInPage() {
 					Microvan Inc.
 				</h1>
 				<h2 className="text-mv-green text-3xl font-normal">Virtual Auctions</h2>
-				<div className="flex flex-col items-start w-[60%] mt-[22px] space-y-[5px]">
+				<div className="flex flex-col items-start w-[60%] mt-[22px] gap-y-[5px]">
 					<p className="text-dark-grey text-xl font-normal">Email</p>
 					<OnboardingInputField
 						placeholder="johndoe@gmail.com"
@@ -66,7 +66,7 @@ export default function BidderLogInPage() {
 						onChange={handleEmailChange}
 					/>
 				</div>
-				<div className="flex flex-col items-start w-[60%] mt-[22px] space-y-[5px]">
+				<div className="flex flex-col items-start w-[60%] mt-[22px] gap-y-[5px]">
 					<p className="text-dark-grey text-xl font-normal">Password</p>
 					<OnboardingInputField
 						placeholder="**********"
@@ -76,6 +76,12 @@ export default function BidderLogInPage() {
 						onChange={handlePasswordChange}
 					/>
 				</div>
+				{loginError && (
+					<p style={{ color: 'red' }} className="text-sm mt-2">
+						{loginError}
+					</p>
+				)}
+
 				<div className="mt-[49px] w-full flex items-center justify-center">
 					<LogInButton onClick={handleLogIn} />
 				</div>

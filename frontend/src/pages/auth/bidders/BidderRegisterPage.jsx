@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
+
 import altlogo from '../../../assets/alt-microvan-logo.svg';
 import OnboardingInputField from '../../../components/inputs/OnboardingInputField';
 import NextButton from '../../../components/buttons/NextButton';
@@ -21,17 +22,23 @@ export default function BidderRegisterPage() {
 	const handleCompanyChange = (event) => setCompany(event.target.value);
 	const handleCompanyAddressChange = (event) =>
 		setCompanyAddress(event.target.value);
-
+	const location = useLocation();
 	const handleNextStep = () => {
+		const nextState = {
+			firstName: firstName !== '' ? firstName : location.state?.firstName || '',
+			surname: surname !== '' ? surname : location.state?.surname || '',
+			email: email !== '' ? email : location.state?.email || '',
+			phoneNumber:
+				phoneNumber !== '' ? phoneNumber : location.state?.phoneNumber || '',
+			company: company !== '' ? company : location.state?.company || '',
+			companyAddress:
+				companyAddress !== ''
+					? companyAddress
+					: location.state?.companyAddress || '',
+		};
+
 		navigate('/register/password', {
-			state: {
-				firstName,
-				surname,
-				email,
-				phoneNumber,
-				company,
-				companyAddress,
-			},
+			state: nextState,
 		});
 	};
 
@@ -49,8 +56,8 @@ export default function BidderRegisterPage() {
 
 			<div className="flex-grow" />
 
-			<div className="flex flex-col w-full items-center justify-center space-y-[27px]">
-				<div className="flex w-full items-center justify-center space-x-[16px]">
+			<div className="flex flex-col w-full items-center justify-center gap-y-[27px]">
+				<div className="flex w-full items-center justify-center gap-x-[16px]">
 					<img
 						src={altlogo}
 						alt="logo"
@@ -60,64 +67,74 @@ export default function BidderRegisterPage() {
 						REGISTER AS A NEW BIDDER
 					</h1>
 				</div>
-				<div className="flex flex-col w-[50%] space-y-[18px] items-center justify-center">
-					<div className="flex flex-col w-full items-start space-y-[5px]">
+				<div className="flex flex-col w-[50%] gap-y-[18px] items-center justify-center">
+					<div className="flex flex-col w-full items-start gap-y-[5px]">
 						<p className="text-mv-white text-xl font-normal">First Name</p>
 						<OnboardingInputField
 							placeholder="John"
 							className="w-full h-[50px]"
 							type="text"
-							value={firstName}
+							value={
+								firstName !== '' ? firstName : location.state?.firstName || ''
+							}
 							onChange={handleFirstNameChange}
 						/>
 					</div>
-					<div className="flex flex-col w-full items-start space-y-[5px]">
+					<div className="flex flex-col w-full items-start gap-y-[5px]">
 						<p className="text-mv-white text-xl font-normal">Surname</p>
 						<OnboardingInputField
 							placeholder="Doe"
 							className="w-full h-[50px]"
 							type="text"
-							value={surname}
+							value={surname !== '' ? surname : location.state?.surname || ''}
 							onChange={handleSurnameChange}
 						/>
 					</div>
-					<div className="flex flex-col w-full items-start space-y-[5px]">
+					<div className="flex flex-col w-full items-start gap-y-[5px]">
 						<p className="text-mv-white text-xl font-normal">Email</p>
 						<OnboardingInputField
 							placeholder="johndoe@gmail.com"
 							className="w-full h-[50px]"
 							type="email"
-							value={email}
+							value={email !== '' ? email : location.state?.email || ''}
 							onChange={handleEmailChange}
 						/>
 					</div>
-					<div className="flex flex-col w-full items-start space-y-[5px]">
+					<div className="flex flex-col w-full items-start gap-y-[5px]">
 						<p className="text-mv-white text-xl font-normal">Phone Number</p>
 						<OnboardingInputField
 							placeholder="+1 111 111 1111"
 							className="w-full h-[50px]"
 							type="tel"
-							value={phoneNumber}
+							value={
+								phoneNumber !== ''
+									? phoneNumber
+									: location.state?.phoneNumber || ''
+							}
 							onChange={handlePhoneNumberChange}
 						/>
 					</div>
-					<div className="flex flex-col w-full items-start space-y-[5px]">
+					<div className="flex flex-col w-full items-start gap-y-[5px]">
 						<p className="text-mv-white text-xl font-normal">Company</p>
 						<OnboardingInputField
 							placeholder="Bank of Manila"
 							className="w-full h-[50px]"
 							type="text"
-							value={company}
+							value={company !== '' ? company : location.state?.company || ''}
 							onChange={handleCompanyChange}
 						/>
 					</div>
-					<div className="flex flex-col w-full items-start space-y-[5px]">
+					<div className="flex flex-col w-full items-start gap-y-[5px]">
 						<p className="text-mv-white text-xl font-normal">Company Address</p>
 						<OnboardingInputField
 							placeholder="1234 Manila Street, Manila, Philippines"
 							className="w-full h-[50px]"
 							type="text"
-							value={companyAddress}
+							value={
+								companyAddress !== ''
+									? companyAddress
+									: location.state?.companyAddress || ''
+							}
 							onChange={handleCompanyAddressChange}
 						/>
 					</div>

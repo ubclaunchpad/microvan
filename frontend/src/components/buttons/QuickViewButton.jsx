@@ -4,10 +4,12 @@ export default function QuickViewButton({ onClick }) {
 	return (
 		<button
 			type="button"
-			className="bg-mv-green rounded-full px-5 py-2 absolute top-20 mx-11"
+			className="bg-mv-green rounded-[20px] px-6 py-2.5 flex justify-center items-center gap-2.5 shadow-searchBarShadow"
 			onClick={onClick}
 		>
-			<div className="text-mv-white text-xxs font-semibold">Quick view</div>
+			<h3 className="text-mv-white text-sm leading-5 tracking-[0.1px] font-semibold">
+				Quick view
+			</h3>
 		</button>
 	);
 }

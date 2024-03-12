@@ -35,7 +35,7 @@ export default function OnboardPage() {
 					Log in or register first to{' '}
 					<span className="font-bold">start bidding at auctions!</span>
 				</p>
-				<div className="flex flex-col mt-[36px] mb-[18px] space-y-[25px]">
+				<div className="flex flex-col mt-[36px] mb-[18px] gap-y-[25px]">
 					<ToRegisterPageButton />
 					<ToLogInPageButton />
 				</div>

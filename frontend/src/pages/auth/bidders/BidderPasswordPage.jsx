@@ -16,13 +16,16 @@ export default function BidderRegisterPage() {
 
 	const [password, setPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
+	const [registrationError, setRegistrationError] = useState('');
 
 	const handlePasswordChange = (event) => setPassword(event.target.value);
 	const handleConfirmPasswordChange = (event) =>
 		setConfirmPassword(event.target.value);
 
 	const handleBackStep = () => {
-		navigate('/register');
+		navigate('/register', {
+			state: location.state,
+		});
 	};
 
 	const handleRegister = async () => {
@@ -34,7 +37,7 @@ export default function BidderRegisterPage() {
 
 		try {
 			await fetchData({
-				url: 'bidders/',
+				endpoint: 'bidders/',
 				method: 'POST',
 				data: {
 					email,
@@ -48,10 +51,12 @@ export default function BidderRegisterPage() {
 			});
 			navigate('/register/email');
 		} catch (err) {
+			const errorMessage = err.response
+				? err.response.data.error
+				: 'An unknown error occurred';
 			// eslint-disable-next-line no-console
-			console.error(
-				err.response ? err.response.data.error : 'An unknown error occurred'
-			);
+			console.error(err);
+			setRegistrationError(errorMessage);
 		}
 	};
 
@@ -69,8 +74,8 @@ export default function BidderRegisterPage() {
 
 			<div className="flex-grow" />
 
-			<div className="flex flex-col w-full items-center justify-center space-y-[18px]">
-				<div className="flex w-full items-center justify-center space-x-[16px] mb-[44px]">
+			<div className="flex flex-col w-full items-center justify-center gap-y-[18px]">
+				<div className="flex w-full items-center justify-center gap-x-[16px] mb-[44px]">
 					<img
 						src={altlogo}
 						alt="logo"
@@ -80,8 +85,8 @@ export default function BidderRegisterPage() {
 						REGISTER AS A NEW BIDDER
 					</h1>
 				</div>
-				<div className="flex flex-col w-[50%] space-y-[18px] items-center justify-center">
-					<div className="flex flex-col w-full items-start space-y-[5px]">
+				<div className="flex flex-col w-[50%] gap-y-[18px] items-center justify-center">
+					<div className="flex flex-col w-full items-start gap-y-[5px]">
 						<p className="text-mv-white text-xl font-normal">Input Password</p>
 						<OnboardingInputField
 							placeholder=""
@@ -91,7 +96,7 @@ export default function BidderRegisterPage() {
 							onChange={handlePasswordChange}
 						/>
 					</div>
-					<div className="flex flex-col w-full items-start space-y-[5px]">
+					<div className="flex flex-col w-full items-start gap-y-[5px]">
 						<p className="text-mv-white text-xl font-normal">
 							Confirm Password
 						</p>
@@ -103,6 +108,12 @@ export default function BidderRegisterPage() {
 							onChange={handleConfirmPasswordChange}
 						/>
 					</div>
+					{registrationError && (
+						<p style={{ color: 'red', marginTop: '2rem' }}>
+							{registrationError}
+						</p>
+					)}
+
 					<div className="w-[70%] flex items-center justify-center">
 						<RegisterButton onClick={handleRegister} />
 					</div>

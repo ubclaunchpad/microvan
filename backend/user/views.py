@@ -68,7 +68,7 @@ class BidderListApiView(APIView):
             )
         else:
             return Response(
-                {"error": "Failed to create user in Cognito"},
+                {"error": response},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

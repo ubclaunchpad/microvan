@@ -4,12 +4,10 @@ import HistoryIcon from '@mui/icons-material/History';
 import PersonIcon from '@mui/icons-material/Person';
 import LogOutButton from '../buttons/LogOutButton';
 
-export default function ProfilePopUpCard({
-	bidderID,
-}) {
+export default function ProfilePopUpCard({ bidderID }) {
 	const navigate = useNavigate();
-	
-	const handleLogOut = async() => {
+
+	const handleLogOut = async () => {
 		try {
 			localStorage.removeItem('userInfo');
 			navigate('/');
@@ -29,23 +27,30 @@ export default function ProfilePopUpCard({
 							<div>
 								<div className="flex flex-col items-center">
 									<div className="flex flex-col justify-center">
-										<span className="font-poppins text-xl font-semibold leading-10 text-center bg-gray-600">Bidder ID: #123456</span>
+										<span className="font-poppins text-xl font-semibold leading-10 text-center bg-gray-600">
+											Bidder ID: #123456
+										</span>
 										<span>{bidderID}</span>
 									</div>
 								</div>
-							</div>	
+							</div>
 						</div>
-						<hr className="border-solid border border-black border-opacity-30 my-4"/>
+						<hr className="border-solid border border-black border-opacity-30 my-4" />
 						<div className="flex flex-row justify-between py-3">
 							<div>
 								<div className="flex flex-row items-center px-5">
-									<PersonIcon
-										style={{ fontSize: '39px' }}
-										className="mr-2"
-									/>
+									<PersonIcon style={{ fontSize: '39px' }} className="mr-2" />
 									<div className="flex flex-col justify-between px-6">
-										<span className="font-poppins text-base font-medium leading-6 text-left">User Profile</span>
-										<a href="/onboard" className="font-poppins text-xs font-normal leading-5 text-left text-blue-600 underline hover:text-blue-800">Click to see your user details, notification settings, and watchlist</a>
+										<span className="font-poppins text-base font-medium leading-6 text-left">
+											User Profile
+										</span>
+										<a
+											href="/onboard"
+											className="font-poppins text-xs font-normal leading-5 text-left text-blue-600 underline hover:text-blue-800"
+										>
+											Click to see your user details, notification settings, and
+											watchlist
+										</a>
 									</div>
 								</div>
 							</div>
@@ -55,8 +60,15 @@ export default function ProfilePopUpCard({
 								<div className="flex flex-row items-center px-5">
 									<HistoryIcon style={{ fontSize: '39px' }} className="mr-2" />
 									<div className="flex flex-col justify-between px-6 py-4">
-									<span className="font-poppins text-base font-medium leading-6 text-left">Bid History</span>
-									<a href="/onboard" className="font-poppins text-xs font-normal leading-5 text-left text-blue-600 underline hover:text-blue-800">Click to see your current and past bids</a>
+										<span className="font-poppins text-base font-medium leading-6 text-left">
+											Bid History
+										</span>
+										<a
+											href="/onboard"
+											className="font-poppins text-xs font-normal leading-5 text-left text-blue-600 underline hover:text-blue-800"
+										>
+											Click to see your current and past bids
+										</a>
 									</div>
 								</div>
 							</div>
@@ -67,7 +79,7 @@ export default function ProfilePopUpCard({
 								<div className="flex flex-col items-center">
 									<LogOutButton onClick={handleLogOut} />
 								</div>
-							</div>	
+							</div>
 						</div>
 					</div>
 				</div>
