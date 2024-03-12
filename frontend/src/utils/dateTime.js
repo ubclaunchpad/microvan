@@ -1,14 +1,7 @@
 // used to calculate the width of the green progress bar
-const calculateProgress = (
-	endDateTime,
-	startDateTime,
-	maxWidth,
-	timeRemaining
-) => {
+const calculateProgress = (endDateTime, startDateTime, timeRemaining) => {
 	const totalDuration = endDateTime.getTime() - startDateTime.getTime();
-	const elapsedTime = Math.max(0, totalDuration - timeRemaining);
-
-	return maxWidth - (elapsedTime / totalDuration) * maxWidth;
+	return (timeRemaining / totalDuration) * 100;
 };
 
 // returns the a string representation of the time left in the given auction

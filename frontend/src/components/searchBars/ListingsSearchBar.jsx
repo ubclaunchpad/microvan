@@ -41,7 +41,7 @@ export default function ListingSearchBar({ setResults }) {
 			<SearchIcon className="w-[24px] h-[24px] text-mv-black" />
 			<input
 				className="w-full text-base font-normal text-mv-black placeholder-dark-grey outline-none"
-				placeholder="Search auctions"
+				placeholder="Search vehicle"
 				value={input}
 				onChange={(e) => handleChange(e.target.value)}
 			/>

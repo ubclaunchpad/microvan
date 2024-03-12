@@ -28,7 +28,7 @@ export default function ForgotPasswordPage() {
 				</button>
 			</div>
 
-			<div className="flex min-w-screen min-h-full items-start justify-center space-x-[31px] mt-[10%] ml-[-5%]">
+			<div className="flex min-w-screen min-h-full items-start justify-center gap-x-[31px] mt-[10%] ml-[-5%]">
 				<div className="flex flex-col">
 					<img src={logo} alt="logo" className="w-[80px] h-[80px]" />
 				</div>
@@ -42,9 +42,9 @@ export default function ForgotPasswordPage() {
 						Type in the email you registered to Microvan Inc. with below.
 						Instructions for resetting your password will be sent to you there.
 					</p>
-					<div className="w-full space-y-[5px]">
+					<div className="w-full gap-y-[5px]">
 						<p className="text-dark-grey text-xl font-normal">Email</p>
-						<div className="flex flex-row items-center justify-between w-full space-x-[27px] h-[56px]">
+						<div className="flex flex-row items-center justify-between w-full gap-x-[27px] h-[56px]">
 							<OnboardingInputField
 								placeholder="johndoe@gmail.com"
 								className="w-full h-full"
