@@ -6,6 +6,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import logo from '../../assets/microvan_logo.svg';
 import useAuth from '../../hooks/useAuth';
+import ProfilePopUpCard from '../cards/ProfilePopUpCard';
 
 export default function NavBar() {
 	const [notificationHover, setNotificationHover] = useState(false);
@@ -92,6 +93,18 @@ export default function NavBar() {
 						<PersonIcon className="w-[35px] h-[35px] text-mv-green hover:cursor-pointer" />
 					) : (
 						<PersonOutlinedIcon className="w-[35px] h-[35px] text-mv-black hover:cursor-pointer" />
+					)}
+					{personHover && (
+						<div
+							style={{
+								position: 'fixed',
+								bottom: '230',
+								right: '10px',
+								zIndex: 100,
+							}}
+						>
+							<ProfilePopUpCard />
+						</div>
 					)}
 				</div>
 			</div>
