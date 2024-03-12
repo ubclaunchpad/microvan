@@ -40,9 +40,13 @@ export default function ListingsPage() {
 
 	const vehicles = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
+	// eslint-disable-next-line no-console
 	console.log(units);
+	// eslint-disable-next-line no-console
 	console.log(selectedSortBy);
+	// eslint-disable-next-line no-console
 	console.log(selectedType);
+	// eslint-disable-next-line no-console
 	console.log(selectedBrand);
 
 	const updateMinPrice = ({ target: { value } }) => {
