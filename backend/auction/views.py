@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 from core.permissions import IsAdminUser, IsAuthenticated
 from services.AWSCognitoService import AWSCognitoService
-from vehicle.models import SavedUnits, Vehicle
+from vehicle.models import SavedUnits, Vehicle, Equipment, Trailer
 
 from .models import Auction, AuctionItem
 from .serializers import AuctionSerializer
@@ -212,3 +212,36 @@ class AddToAuctionApiView(APIView):
             {"message": "Vehicle added to auction successfully"},
             status=status.HTTP_201_CREATED,
         )
+    
+class AuctionVehiclesApiView(APIView):
+    """
+    An endpoint to retrieve an auction's associated vehicles
+    """
+
+    cognitoService = AWSCognitoService()
+
+    def get(self, request, **kwargs):
+        auction_id = kwargs.get("auction_id")
+        auction = get_object_or_404(Auction, id=auction_id)
+
+        auction_items = AuctionItem.objects.filter(auction_id=auction)
+        
+        vehicle_list = []
+        equipment_list = []
+        trailer_list = []
+
+        for auction_item in auction_items:
+            if isinstance(auction_item.content_object, Vehicle):
+                vehicle_list.append(auction_item.content_object)
+            elif isinstance(auction_item.content_object, Equipment):
+                equipment_list.append(auction_item.content_object)
+            elif isinstance(auction_item.content_object, Trailer):
+                trailer_list.append(auction_item.content_object)
+
+        vehicle_data = [{"id": vehicle.id} for vehicle in vehicle_list]
+        equipment_data = [{"id": equipment.id} for equipment in equipment_list]
+        trailer_data = [{"id": trailer.id} for trailer in trailer_list]
+        
+        return Response({"vehicles": vehicle_data, "equipment": equipment_data, 
+                         "trailers": trailer_data}, status=status.HTTP_200_OK)
+
