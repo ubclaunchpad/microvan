@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import NavBar from '../components/navBars/NavBar';
 import CoverImage from '../assets/cover-image.png';
@@ -13,9 +13,15 @@ import LogInJoinAuctionButton from '../components/buttons/LogInJoinAuctionButton
 import RegisterEarlyButton from '../components/buttons/RegisterEarlyButton';
 import RegisterForAuctionButton from '../components/buttons/RegisterForAuctionButton';
 import useAuth from '../hooks/useAuth';
+import useAxios from '../hooks/useAxios';
+import sortAuctions from '../utils/auctionUtils';
 
 export default function HomePage() {
 	const [searchedAuctions, setSearchedAuctions] = useState([]);
+	const [currentAuctionList, setCurrentAuctionList] = useState([]);
+	const [upcomingAuctionList, setUpcomingAuctionList] = useState([]);
+	const [pastAuctionList, setPastAuctionList] = useState([]);
+	const { fetchData } = useAxios();
 	const { isAuthenticated } = useAuth();
 
 	// eslint-disable-next-line no-console
@@ -27,6 +33,27 @@ export default function HomePage() {
 		upcomingAuctionButton = <RegisterEarlyButton />;
 		currentAuctionButton = <RegisterForAuctionButton />;
 	}
+
+	const getAuctions = async () => {
+		try {
+			const response = await fetchData({
+				endpoint: 'auctions/',
+				method: 'GET',
+			});
+			const auctionList = sortAuctions(response.data);
+			setUpcomingAuctionList(auctionList.upcoming);
+			setCurrentAuctionList(auctionList.current);
+			setPastAuctionList(auctionList.past);
+		} catch (err) {
+			// eslint-disable-next-line no-console
+			console.error(err);
+		}
+	};
+
+	useEffect(() => {
+		getAuctions();
+	}, []);
+
 
 	return (
 		<div className="min-w-screen max-w-screen">
@@ -98,90 +125,62 @@ export default function HomePage() {
 					</h2>
 					<AuctionsSearchBar setResults={setSearchedAuctions} />
 				</div>
-				<div className="flex flex-col gap-y-[18px] w-[80%] items-start">
+				{currentAuctionList.length > 0 && <div className="flex flex-col gap-y-[18px] w-[80%] items-start">
 					<h2 className="text-mv-black text-4xl font-semibold">
 						Current Auction
 					</h2>
 					<CurrentAuctionCard
 						imageUrls={[image, image, image, image]}
-						startDate={new Date('2024-02-22')}
-						endDate={new Date('2024-02-28')}
+						startDate={new Date(currentAuctionList[0].start_date)}
+						endDate={new Date(currentAuctionList[0].end_date)}
 						numberOfEquipment={10}
 						numberOfTrailers={15}
 						numberOfTrucks={5}
 						button={currentAuctionButton}
 					/>
-				</div>
-				<div className="flex flex-col gap-y-[18px] w-[80%] items-start">
+				</div>}
+				{upcomingAuctionList.length > 0 && <div className="flex flex-col gap-y-[18px] w-[80%] items-start">
 					<h2 className="text-mv-black text-4xl font-semibold">
 						Upcoming Auctions
 					</h2>
 					<div className="grid grid-cols-3 grid-rows-1 gap-[4.3rem] w-full">
-						<UpcomingAuctionCard
-							imageUrls={[image, image, image, image]}
-							startDate={new Date('2024-02-29')}
-							endDate={new Date('2024-03-05')}
-							numberOfEquipment={3}
-							numberOfTrailers={18}
-							numberOfTrucks={20}
-							button={upcomingAuctionButton}
-						/>
-						<UpcomingAuctionCard
-							imageUrls={[image, image, image, image]}
-							startDate={new Date('2024-03-07')}
-							endDate={new Date('2024-03-10')}
-							numberOfEquipment={3}
-							numberOfTrailers={18}
-							numberOfTrucks={20}
-							button={upcomingAuctionButton}
-						/>
-						<UpcomingAuctionCard
-							imageUrls={[image, image, image, image]}
-							startDate={new Date('2024-04-25')}
-							endDate={new Date('2024-04-30')}
-							numberOfEquipment={3}
-							numberOfTrailers={18}
-							numberOfTrucks={20}
-							button={upcomingAuctionButton}
-						/>
+						{upcomingAuctionList.map(auction => (
+							<UpcomingAuctionCard
+								imageUrls={[image, image, image, image]}
+								startDate={new Date(auction.start_date)}
+								endDate={new Date(auction.end_date)}
+								numberOfEquipment={3}
+								numberOfTrailers={18}
+								numberOfTrucks={20}
+								button={upcomingAuctionButton}
+							/>
+						))}
+						
 					</div>
-				</div>
-				<div className="flex flex-col gap-y-[18px] w-[80%] items-start">
+				</div>}
+				{pastAuctionList.length > 0 && <div className="flex flex-col gap-y-[18px] w-[80%] items-start">
 					<h2 className="text-mv-black text-4xl font-semibold">
 						Past Auctions
 					</h2>
 					<div className="grid grid-cols-3 grid-rows-1 gap-[4.3rem] w-full">
-						<PastAuctionCard
-							imageUrls={[image, image, image, image]}
-							startDate={new Date('2024-02-29')}
-							endDate={new Date('2024-03-05')}
-							numberOfEquipment={3}
-							numberOfTrailers={18}
-							numberOfTrucks={20}
-						/>
-						<PastAuctionCard
-							imageUrls={[image, image, image, image]}
-							startDate={new Date('2024-03-07')}
-							endDate={new Date('2024-03-10')}
-							numberOfEquipment={3}
-							numberOfTrailers={18}
-							numberOfTrucks={20}
-						/>
-						<PastAuctionCard
-							imageUrls={[image, image, image, image]}
-							startDate={new Date('2024-04-25')}
-							endDate={new Date('2024-04-30')}
-							numberOfEquipment={3}
-							numberOfTrailers={18}
-							numberOfTrucks={20}
-						/>
+						{pastAuctionList.map(auction => (
+							<PastAuctionCard
+								imageUrls={[image, image, image, image]}
+								startDate={new Date(auction.start_date)}
+								endDate={new Date(auction.end_date)}
+								numberOfEquipment={3}
+								numberOfTrailers={18}
+								numberOfTrucks={20}
+							/>
+						))}
+						
 					</div>
 					<button type="button" className="flex ml-auto items-end">
 						<p className="text-mv-black text-base font-normal underline">
 							view more
 						</p>
 					</button>
-				</div>
+				</div>}
 			</div>
 			<div className="w-full items-center">
 				<Footer />
