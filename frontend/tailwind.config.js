@@ -15,6 +15,8 @@ module.exports = {
 			'light-grey': '#F5F5F5',
 			'progress-bar': '#EEEDED',
 			'dark-green': '#144126',
+			'button-dark-grey': '#575757',
+			'button-disabled': '#D1D1D1',
 		},
 		extend: {
 			fontFamily: {

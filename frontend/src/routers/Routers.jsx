@@ -9,6 +9,7 @@ import BidderRegisterPage from '../pages/auth/bidders/BidderRegisterPage';
 import ForgotPasswordPage from '../pages/auth/bidders/ForgotPasswordPage';
 import BidderPasswordPage from '../pages/auth/bidders/BidderPasswordPage';
 import BidderEmailVerificationPage from '../pages/auth/bidders/BidderEmailVerificationPage';
+import VehicleDetailsPage from '../pages/VehicleDetailsPage';
 
 export default function Routers() {
 	return (
@@ -26,6 +27,8 @@ export default function Routers() {
 					path="/register/email"
 					element={<BidderEmailVerificationPage />}
 				/>
+				<Route path="/test" element={<VehicleDetailsPage />} />{' '}
+				{/* This is a test page */}
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
 		</div>
