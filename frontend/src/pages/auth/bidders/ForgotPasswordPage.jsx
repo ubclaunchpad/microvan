@@ -43,7 +43,7 @@ export default function ForgotPasswordPage() {
 						Instructions for resetting your password will be sent to you there.
 					</p>
 					<div className="w-full gap-y-[5px]">
-						<p className="text-dark-grey text-xl font-normal">Email</p>
+						<p className="text-mv-black text-xl font-medium">Email Address</p>
 						<div className="flex flex-row items-center justify-between w-full gap-x-[27px] h-[56px]">
 							<OnboardingInputField
 								placeholder="johndoe@gmail.com"

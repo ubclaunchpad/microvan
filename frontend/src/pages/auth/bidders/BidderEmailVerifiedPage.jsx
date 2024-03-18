@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import logo from '../../../assets/microvan_logo.svg';
 import ViewAuctionButton from '../../../components/buttons/ViewAuctionButton';
 
-export default function BidderRegisterPage() {
+export default function BidderEmailVerifiedPage() {
 	const navigate = useNavigate();
 
 	return (
@@ -28,28 +28,28 @@ export default function BidderRegisterPage() {
 						className="flex-shrink-0 w-[70px] h-[70px]"
 					/>
 					<h1 className="text-mv-green text-[50px] font-normal">
-						CHECK YOUR EMAIL!
+						YOUR EMAIL HAS BEEN VERIFIED
 					</h1>
 				</div>
 				<p className="text-mv-black text-xl font-normal">
-					Thank you for registering with Microvan Inc. Virtual Auctions!
+					Your email has been successfully verified, and you&apos;re one step
+					closer to participating in our exciting virtual auctions.
 					<br />
 					<br />
-					To complete your registration and fully activate your account,
-					it&apos;s essential that you verify your email address. Please check
-					your email inbox (and the spam/junk folder, just in case) for our
-					verification email. Click the link provided in the email to verify
-					your email address.
+					As a reminder, in accordance with the guidelines provided during your
+					registration, each participant must submit proof of a ₱100,000 deposit
+					before engaging in any auction activities. This deposit is a
+					prerequisite for bidding and ensures a secure and fair auction process
+					for all our users.
 					<br />
 					<br />
-					Note that <b>before participating in any auction</b>, you must upload{' '}
-					<b>proof of a deposit amounting to ₱100,000</b>. Once your deposit is
-					received and approved by a member of our staff, you will be notified
-					via email and within our website, confirming your eligibility to
-					participate in auctions.
+					Upon submission, our team will review your deposit proof. You will be
+					notified both via email and on our platform once your deposit has been
+					validated, officially clearing you to participate in the auctions.
 					<br />
 					<br />
-					In the meantime, feel free to take a look at our auctions.
+					Feel free to take a look at our auctions. If you have any questions or
+					require assistance, our support team is here to help.
 				</p>
 				<div className="flex items-center justify-center w-[60%] mt-[34px]">
 					<ViewAuctionButton />
