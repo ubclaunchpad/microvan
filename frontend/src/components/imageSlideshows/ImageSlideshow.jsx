@@ -5,6 +5,7 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 export default function ImageSlideshow({ images }) {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const imageRefs = useRef([]);
+	const ids = [0, 1, 2, 3, 4, 5];
 
 	const handleImageClick = (index) => {
 		setCurrentIndex(index);
@@ -61,7 +62,7 @@ export default function ImageSlideshow({ images }) {
 				{images.map((image, index) => (
 					<img
 						ref={(el) => (imageRefs.current[index] = el)}
-						key={index}
+						key={ids[index]}
 						src={image}
 						alt={`Thumbnail ${index + 1}`}
 						className={`w-1/4 max-h-[110px] object-contain cursor-pointer ${

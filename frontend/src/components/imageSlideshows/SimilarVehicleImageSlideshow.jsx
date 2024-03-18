@@ -6,10 +6,6 @@ export default function SimilarVehicleImageSlideshow({ images }) {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const imageRefs = useRef([]);
 
-	const handleImageClick = (index) => {
-		setCurrentIndex(index);
-	};
-
 	const goToNextImage = () => {
 		if (currentIndex < images.length - 1) {
 			setCurrentIndex(currentIndex + 1);
