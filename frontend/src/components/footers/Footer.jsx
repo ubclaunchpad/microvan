@@ -7,6 +7,7 @@ export default function Footer() {
 
 	const handleContactUsButton = () => {
 		navigate('/contact');
+		window.scrollTo(0, 0);
 	};
 
 	return (
