@@ -1,5 +1,6 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -13,7 +14,9 @@ class BidderListApiView(APIView):
 
     def get_permissions(self):
         if self.request.method == "GET":
-            self.permission_classes = [IsAdminUser]
+            self.permission_classes = [IsAuthenticated]
+        else:
+            self.permission_classes = [AllowAny]
         return super().get_permissions()
 
     def get(self, request):
@@ -303,6 +306,8 @@ class ListVerified(APIView):
 
 
 class LoginAPIView(APIView):
+    permission_classes = [AllowAny]
+
     cognitoService = AWSCognitoService()
 
     def post(self, request, *args, **kwargs):
@@ -347,6 +352,8 @@ class LoginAPIView(APIView):
 
 
 class PasswordResetAPIView(APIView):
+    permission_classes = [AllowAny]
+
     cognitoService = AWSCognitoService()
 
     def post(self, request, *args, **kwargs):
@@ -361,6 +368,8 @@ class PasswordResetAPIView(APIView):
 
 
 class PasswordResetConfirmAPIView(APIView):
+    permission_classes = [AllowAny]
+
     cognitoService = AWSCognitoService()
 
     def post(self, request, *args, **kwargs):
@@ -378,17 +387,17 @@ class PasswordResetConfirmAPIView(APIView):
 
 
 class VerifyEmailAPIView(APIView):
+    permission_classes = [AllowAny]
+
     cognitoService = AWSCognitoService()
 
-    def post(self, request, *args, **kwargs):
-        email = request.data.get("email")
-        verification_code = request.data.get("verification_code")
+    def get(self, request, *args, **kwargs):
+        email = request.query_params.get("email")
+        verification_code = request.query_params.get("code")
 
         result = self.cognitoService.verify_email(email, verification_code)
         if result:
-            return Response(
-                {"success": "Email verified successfully."}, status=status.HTTP_200_OK
-            )
+            return redirect("https://www.auction.microvaninc.com/register/verified")
         else:
             return Response(
                 {"error": "Failed to verify email"}, status=status.HTTP_400_BAD_REQUEST
@@ -452,7 +461,7 @@ class EmailChangeAPIView(APIView):
 
 
 class RefreshTokenAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     cognitoService = AWSCognitoService()
 

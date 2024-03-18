@@ -83,7 +83,9 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://auctions.microvaninc.com",
+    "http://www.auctions.microvaninc.com",
     "https://auctions.microvaninc.com",
+    "https://www.auctions.microvaninc.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -177,6 +179,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "util.authentication.AWSCognitoIDTokenAuthentication",
     ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
 }
 
 SIMPLE_JWT = {

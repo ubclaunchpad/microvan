@@ -30,8 +30,12 @@ class GenericAuthenticatedUser(AnonymousUser):
 class AWSCognitoIDTokenAuthentication(authentication.BaseAuthentication):
     def authenticate(self, request):
         token = request.COOKIES.get("idToken")
+        unauthenticated_user = GenericAuthenticatedUser()
         if not token:
-            return None
+            return (unauthenticated_user, None)
+
+        if request.path.startswith("/api/v1/auth"):
+            return (unauthenticated_user, None)
 
         try:
             decoded_token = self.verify_jwt_token(token)

@@ -7,6 +7,6 @@ architecture = "x86_64"
 handler = "src/handlers/cognitoCustomMessage.cognitoCustomMessageHandler"
 manifest_hash = "70a557897a9d2205fadda31828179700"
 packagetype = "Zip"
-functions = ["helloFromLambdaFunction"]
+functions = ["cognitoCustomMessage"]
 
 [layer_build_definitions]

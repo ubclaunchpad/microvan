@@ -4,6 +4,10 @@
 export const cognitoCustomMessageHandler = async (event) => {
     if (event.triggerSource === "CustomMessage_SignUp") {
         const firstName = event.request.userAttributes["given_name"];
+        const email = encodeURIComponent(event.request.userAttributes["email"]);
+        const verificationCode = event.request.codeParameter;
+
+        const verificationLink = `http://localhost:8000/api/v1/auth/email-verify/?email=${email}&code=${verificationCode}`;
 
         const emailContent = `
           <html>
@@ -73,6 +77,7 @@ export const cognitoCustomMessageHandler = async (event) => {
                           color: #ffffff;
                           text-align: center;
                           text-decoration: none;
+                          text-decoration-color: #ffffff;
                           font-size: 18px;
                           font-weight: 600;
                       }
@@ -120,13 +125,13 @@ export const cognitoCustomMessageHandler = async (event) => {
                           and Conditions.
                       </p>
                       <div class="button-container">
-                          <a href="{####}" class="button-link">Click here to verify</a>
+                          <a href="${verificationLink}" class="button-link">Click here to verify</a>
                       </div>
                       <p>
                           If the button does not work, use this link or copy this link into your browser: <br /><a
-                              href="{####}"
+                              href="${verificationLink}"
                               class="link"
-                              >{####}</a
+                              >${verificationLink}</a
                           >
                       </p>
 
