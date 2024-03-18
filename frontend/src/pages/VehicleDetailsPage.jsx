@@ -109,7 +109,7 @@ export default function VehicleDetailsPage() {
 						<h2 className="text-mv-black text-xl font-semibold leading-[35px] tracking-[0.5px]">
 							Similar vehicles
 						</h2>
-						<div className="flex gap-x-[8px]g">
+						<div className="flex gap-x-[8px]">
 							<PreviousSimilarVehicleButton onClick={() => {}} isDisabled />
 							<NextSimilarVehicleButton onClick={() => {}} />
 						</div>

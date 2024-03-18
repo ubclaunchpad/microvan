@@ -7,9 +7,9 @@ import OnboardPage from '../pages/OnboardingPage';
 import BidderLogInPage from '../pages/auth/bidders/BidderLogInPage';
 import BidderRegisterPage from '../pages/auth/bidders/BidderRegisterPage';
 import ForgotPasswordPage from '../pages/auth/bidders/ForgotPasswordPage';
-import BidderPasswordPage from '../pages/auth/bidders/BidderPasswordPage';
 import BidderEmailVerificationPage from '../pages/auth/bidders/BidderEmailVerificationPage';
 import VehicleDetailsPage from '../pages/VehicleDetailsPage';
+import BidderEmailVerifiedPage from '../pages/auth/bidders/BidderEmailVerifiedPage';
 
 export default function Routers() {
 	return (
@@ -22,10 +22,13 @@ export default function Routers() {
 				<Route path="/signin" element={<BidderLogInPage />} />
 				<Route path="/signin/forgotpassword" element={<ForgotPasswordPage />} />
 				<Route path="/register" element={<BidderRegisterPage />} />
-				<Route path="/register/password" element={<BidderPasswordPage />} />
 				<Route
 					path="/register/email"
 					element={<BidderEmailVerificationPage />}
+				/>
+				<Route
+					path="/register/verified"
+					element={<BidderEmailVerifiedPage />}
 				/>
 				<Route path="/test" element={<VehicleDetailsPage />} />{' '}
 				{/* This is a test page */}

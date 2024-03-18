@@ -5,16 +5,16 @@ export default function ViewAuctionButton() {
 	const navigate = useNavigate();
 
 	const handleClick = () => {
-		navigate('/listings');
+		navigate('/');
 	};
 
 	return (
 		<button
 			type="button"
-			className="bg-mv-green rounded-[10px] inline-flex px-[63px] py-[25px] flex-start shrink-0 items-center justify-center h-[60px]"
+			className="bg-mv-white border-2 border-solid gap-[10px] border-mv-green rounded-[10px] inline-flex px-[94px] py-[17px] flex-start shrink-0 items-center justify-center h-[60px] w-full"
 			onClick={handleClick}
 		>
-			<div className="text-mv-white text-base font-medium">View Auction</div>
+			<div className="text-mv-green text-xl font-normal">View Auction</div>
 		</button>
 	);
 }
