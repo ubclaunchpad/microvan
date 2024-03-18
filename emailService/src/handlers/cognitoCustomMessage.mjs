@@ -1,7 +1,7 @@
 /**
  * This function is used as a trigger for AWS Cognito's Custom Message trigger.
  */
-exports.cognitoCustomMessageHandler = async (event, context) => {
+export const cognitoCustomMessageHandler = async (event) => {
     if (event.triggerSource === "CustomMessage_SignUp") {
         const firstName = event.request.userAttributes["given_name"];
 
