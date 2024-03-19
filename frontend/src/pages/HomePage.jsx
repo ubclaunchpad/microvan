@@ -40,7 +40,18 @@ export default function HomePage() {
 				endpoint: 'auctions/',
 				method: 'GET',
 			});
-			const auctionList = sortAuctions(response.data);
+			
+			const itemsPromises = response.data.map(async (auction) => {
+				const itemResponse = await fetchData({
+					endpoint: `auctions/${auction.id}/vehicles/`,
+					method: 'GET',
+				});
+				return { ...auction, items: itemResponse.data };
+			});
+	
+			const auctionsWithItems = await Promise.all(itemsPromises);
+	
+			const auctionList = sortAuctions(auctionsWithItems);
 			setUpcomingAuctionList(auctionList.upcoming);
 			setCurrentAuctionList(auctionList.current);
 			setPastAuctionList(auctionList.past);
@@ -133,9 +144,9 @@ export default function HomePage() {
 						imageUrls={[image, image, image, image]}
 						startDate={new Date(currentAuctionList[0].start_date)}
 						endDate={new Date(currentAuctionList[0].end_date)}
-						numberOfEquipment={10}
-						numberOfTrailers={15}
-						numberOfTrucks={5}
+						numberOfEquipment={currentAuctionList[0].items.equipment.length}
+						numberOfTrailers={currentAuctionList[0].items.trailers.length}
+						numberOfTrucks={currentAuctionList[0].items.vehicles.length}
 						button={currentAuctionButton}
 					/>
 				</div>}
@@ -149,9 +160,9 @@ export default function HomePage() {
 								imageUrls={[image, image, image, image]}
 								startDate={new Date(auction.start_date)}
 								endDate={new Date(auction.end_date)}
-								numberOfEquipment={3}
-								numberOfTrailers={18}
-								numberOfTrucks={20}
+								numberOfEquipment={auction.items.equipment.length}
+								numberOfTrailers={auction.items.trailers.length}
+								numberOfTrucks={auction.items.vehicles.length}
 								button={upcomingAuctionButton}
 							/>
 						))}
@@ -168,9 +179,9 @@ export default function HomePage() {
 								imageUrls={[image, image, image, image]}
 								startDate={new Date(auction.start_date)}
 								endDate={new Date(auction.end_date)}
-								numberOfEquipment={3}
-								numberOfTrailers={18}
-								numberOfTrucks={20}
+								numberOfEquipment={auction.items.equipment.length}
+								numberOfTrailers={auction.items.trailers.length}
+								numberOfTrucks={auction.items.vehicles.length}
 							/>
 						))}
 						

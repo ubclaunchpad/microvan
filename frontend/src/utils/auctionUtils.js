@@ -17,4 +17,6 @@ const sortAuctions = (auctionList) => {
     return ({"upcoming": upcomingList, "current": currentList, "past": pastList});
 }
 
+
+
 export default sortAuctions;
