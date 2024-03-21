@@ -36,11 +36,13 @@ export default function HomePage() {
 
 	const getAuctions = async () => {
 		try {
+			// get auction list
 			const response = await fetchData({
 				endpoint: 'auctions/',
 				method: 'GET',
 			});
 			
+			// get items associated with each auction
 			const itemsPromises = response.data.map(async (auction) => {
 				const itemResponse = await fetchData({
 					endpoint: `auctions/${auction.id}/vehicles/`,
@@ -50,7 +52,7 @@ export default function HomePage() {
 			});
 	
 			const auctionsWithItems = await Promise.all(itemsPromises);
-	
+			
 			const auctionList = sortAuctions(auctionsWithItems);
 			setUpcomingAuctionList(auctionList.upcoming);
 			setCurrentAuctionList(auctionList.current);
