@@ -1,26 +1,22 @@
 import React from 'react';
 
-export default function BidNowButton({ size, onClick }) {
-	const sizeButtonClass = {
-		small: 'w-[173px] h-[46px]',
-		large: 'w-[285px] h-[66px]',
-	};
-
-	const sizeTextClass = {
-		small: 'text-[14px]',
-		large: 'text-[18px]',
-	};
-
+export default function BidNowButton({ onClick, size = 'sm' }) {
 	return (
 		<button
 			type="button"
-			className={`${sizeButtonClass[size]} bg-mv-green px-[24px] py-[10px] flex gap-[5px] items-center justify-center rounded-[5px] border border-solid border-mv-green shadow-buttonShadow `}
+			className={`bg-mv-green rounded-[5px] shadow-searchBarShadow w-full flex items-center justify-center ${
+				size === 'sm' ? 'px-5 py-3' : 'px-[89px] py-[19px]'
+			}`}
 			onClick={onClick}
 		>
-			<div
-				className={`${sizeTextClass[size]} leading-5 font-medium text-mv-white`}
-			>
-				Bid Now
+			<div className="flex items-center justify-center">
+				<p
+					className={`text-mv-white font-medium leading-5 tracking-[0.1px] ${
+						size === 'sm' ? 'text-sm' : 'text-lg'
+					} `}
+				>
+					Bid now
+				</p>
 			</div>
 		</button>
 	);

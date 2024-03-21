@@ -2,7 +2,6 @@ import React from 'react';
 
 export default function OnboardingInputField({
 	placeholder,
-	className,
 	type,
 	value,
 	onChange,
@@ -11,7 +10,7 @@ export default function OnboardingInputField({
 		<input
 			placeholder={placeholder}
 			type={type}
-			className={`border-solid rounded-[10px] border-[1px] border-dark-grey pt-[15px] pl-[21px] pb-[11px] text-xl font-normal focus:outline-none ${className}`}
+			className="border-solid rounded-[10px] border-[2px] border-border-dark-grey pt-[9px] pl-[21px] pb-[10px] text-base font-medium focus:outline-none w-full h-[43px] placeholder:text-onboarding-placeholder text-mv-black"
 			value={value}
 			onChange={onChange}
 		/>

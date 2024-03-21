@@ -15,6 +15,10 @@ module.exports = {
 			'light-grey': '#F5F5F5',
 			'progress-bar': '#EEEDED',
 			'dark-green': '#144126',
+			'button-dark-grey': '#575757',
+			'button-disabled': '#D1D1D1',
+			'border-dark-grey': '#B7B7B7',
+			'onboarding-placeholder': '#D2D2D2',
 		},
 		extend: {
 			fontFamily: {

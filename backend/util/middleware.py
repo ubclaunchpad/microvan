@@ -1,11 +1,15 @@
 import jwt
 from django.utils.deprecation import MiddlewareMixin
-from util.jwt import decode_token
+
 from services import AWSCognitoService
+from util.jwt import decode_token
 
 
 class RefreshTokenMiddleware(MiddlewareMixin):
     def process_request(self, request):
+        if request.path.startswith("/api/v1/auth"):
+            return
+
         refresh_token = request.COOKIES.get("refreshToken")
         if not refresh_token:
             return

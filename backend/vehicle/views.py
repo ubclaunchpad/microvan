@@ -1,10 +1,9 @@
-from rest_framework import status
+import pandas as pd
+from rest_framework import permissions, status
 from rest_framework.generics import get_object_or_404
+from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-import pandas as pd
-from rest_framework.parsers import FileUploadParser
-from rest_framework import permissions
 
 from core.permissions import IsAdminUser, IsAuthenticated
 

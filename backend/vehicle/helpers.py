@@ -1,7 +1,8 @@
-from .models import Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle
-from django.shortcuts import get_object_or_404
 import pandas as pd
 import requests
+from django.shortcuts import get_object_or_404
+
+from .models import Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle
 from .serializers import VehicleSerializer
 
 
