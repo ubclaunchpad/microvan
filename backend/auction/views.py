@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from vehicle.serializers import VehicleBidderListSerializer
 from core.permissions import IsAdminUser, IsAuthenticated
 from services.AWSCognitoService import AWSCognitoService
-from vehicle.models import SavedUnits, Vehicle
+from vehicle.models import SavedUnits, Vehicle, Equipment, Trailer
 
 from .models import Auction, AuctionItem
 from .serializers import AuctionSerializer
@@ -215,48 +215,34 @@ class AddToAuctionApiView(APIView):
         )
 
 
-class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 5
-    page_size_query_param = 'page_size'
-    max_page_size = 100
-
-
-class GetUnitsApiView(APIView):
+class AuctionVehiclesApiView(APIView):
     """
-    An endpoint to retrieve all units associated with a provided auction
+    An endpoint to retrieve an auction's associated vehicles
     """
 
-    permission_classes = [IsAuthenticated]
-
-    pagination_class = StandardResultsSetPagination()
+    cognitoService = AWSCognitoService()
 
     def get(self, request, **kwargs):
         auction_id = kwargs.get("auction_id")
         auction = get_object_or_404(Auction, id=auction_id)
 
-        # Filtering
-        min_price = request.query_params.get('min_price')
-        max_price = request.query_params.get('max_price')
-        vehicle_type = request.query_params.get('type')
-        brand = request.query_params.get('brand')
-
         auction_items = AuctionItem.objects.filter(auction_id=auction)
 
-        # Assuming your AuctionItem model or the related Vehicle model has fields for price, type, and brand
-        if min_price:
-            auction_items = auction_items.filter(content_object__price__gte=min_price)
-        if max_price:
-            auction_items = auction_items.filter(content_object__price__lte=max_price)
-        if vehicle_type:
-            auction_items = auction_items.filter(content_object__type=vehicle_type)
-        if brand:
-            auction_items = auction_items.filter(content_object__brand=brand)
+        vehicle_list = []
+        equipment_list = []
+        trailer_list = []
 
-        # Convert to list of content_objects
-        vehicle_list = [auction_item.content_object for auction_item in auction_items]
+        for auction_item in auction_items:
+            if isinstance(auction_item.content_object, Vehicle):
+                vehicle_list.append(auction_item.content_object)
+            elif isinstance(auction_item.content_object, Equipment):
+                equipment_list.append(auction_item.content_object)
+            elif isinstance(auction_item.content_object, Trailer):
+                trailer_list.append(auction_item.content_object)
 
-        # Pagination
-        page = self.pagination_class.paginate_queryset(vehicle_list, request)
-        serializer = VehicleBidderListSerializer(page, many=True)
+        vehicle_data = [{"id": vehicle.id} for vehicle in vehicle_list]
+        equipment_data = [{"id": equipment.id} for equipment in equipment_list]
+        trailer_data = [{"id": trailer.id} for trailer in trailer_list]
 
-        return self.pagination_class.get_paginated_response(serializer.data)
+        return Response({"vehicles": vehicle_data, "equipment": equipment_data,
+                         "trailers": trailer_data}, status=status.HTTP_200_OK)

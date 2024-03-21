@@ -8,6 +8,7 @@ from .views import (
     GetSavedUnitApiView,
     GetUnitsApiView,
     SaveUnitApiView,
+    AuctionVehiclesApiView,
 )
 
 urlpatterns = [
@@ -28,5 +29,9 @@ urlpatterns = [
         AddToAuctionApiView.as_view(),
         name="add_to_auction",
     ),
-    path("<uuid:auction_id>/vehicles/", GetUnitsApiView.as_view(), name="get_units")
+    path(
+        "<uuid:auction_id>/vehicles/",
+        AuctionVehiclesApiView.as_view(),
+        name="auction_vehicles",
+    ),
 ]
