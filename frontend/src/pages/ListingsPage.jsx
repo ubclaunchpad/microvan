@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NavBar from '../components/navBars/NavBar';
 import CurrentAuctionCountdown from '../components/timers/CurrentAuctionCountdown';
 import ListingSearchBar from '../components/searchBars/ListingsSearchBar';
@@ -8,9 +8,12 @@ import VehicleItemCard from '../components/cards/VehicleItemCard';
 import vehicleImage from '../assets/truck.png';
 import Footer from '../components/footers/Footer';
 import PriceInputField from '../components/inputs/PriceInputField';
+import useAxios from "../hooks/useAxios";
 
 export default function ListingsPage() {
-	const [units, setUnits] = useState([]);
+	const { fetchData } = useAxios();
+
+	const [units, setUnits] = useState(null);
 	const [selectedSortBy, setSelectedSortBy] = useState('All');
 	const [selectedType, setSelectedType] = useState('All');
 	const [selectedBrand, setSelectedBrand] = useState('All');
@@ -38,10 +41,6 @@ export default function ListingsPage() {
 		'Scania',
 	];
 
-	const vehicles = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-	// eslint-disable-next-line no-console
-	console.log(units);
 	// eslint-disable-next-line no-console
 	console.log(selectedSortBy);
 	// eslint-disable-next-line no-console
@@ -65,14 +64,27 @@ export default function ListingsPage() {
 		}
 	};
 
-	if (vehicles.length === 0) {
+	useEffect(() => {
+		// TODO: Update to be any auction id
+		const fetchUnits = async () => {
+			const result = await fetchData({
+				endpoint: '/auctions/39e2d079-2910-4858-9196-0166da3fc534/vehicles/',
+				method: 'GET',
+			});
+			setUnits(result.data);
+		}
+
+		fetchUnits();
+	}, []);
+
+	if (units && units.length === 0) {
 		return (
 			<div className="flex flex-col justify-between min-h-screen max-h-screen max-w-screen min-w-screen">
 				<div className="flex flex-col w-full">
 					<NavBar />
 					<div className="flex flex-col w-[85%] mx-auto">
 						<div className="flex flex-col gap-y-[48px] mt-[116px]">
-							<h1 className="text-mv-black text-4xl font-semibold">
+							<h1 className="text-mv-black text-3xl font-semibold">
 								Auction Listings (Nov 5-7)
 							</h1>
 							<p className="text-mv-black text-xl font-base">
@@ -94,13 +106,13 @@ export default function ListingsPage() {
 
 			<div className="flex flex-col w-[85%] mx-auto">
 				<div className="mt-[116px]">
-					<h1 className="text-mv-black text-4xl font-semibold">
+					<h1 className="text-mv-black text-3xl font-semibold">
 						Auction Listings (Nov 5-7)
 					</h1>
 				</div>
 
 				<div className="mt-[75px] flex justify-between items-end">
-					<h2 className="text-mv-black text-[26px] font-medium">
+					<h2 className="text-mv-black text-xl font-medium">
 						Items for Monday, November 6
 					</h2>
 
@@ -111,11 +123,11 @@ export default function ListingsPage() {
 					/>
 				</div>
 
-				<div className="mt-[23px]">
+				<div className="mt-[26px]">
 					<ListingSearchBar setResults={setUnits} />
 				</div>
 
-				<div className="mt-[117px] flex gap-x-9">
+				<div className="mt-[77px] flex gap-x-9">
 					<div className="w-[22%] flex flex-col mt-[32px] gap-y-4 sticky top-0">
 						<h2 className="text-mv-black text-xl font-medium">Filters</h2>
 						<div className="px-5 pt-5 pb-[80px] bg-light-grey rounded-[20px] flex flex-col gap-y-[36px] shadow-filterBoxShadow">
@@ -162,14 +174,14 @@ export default function ListingsPage() {
 								onValueChange={setSelectedSortBy}
 							/>
 						</div>
-						<div className="flex flex-col gap-y-[67px] w-full">
-							{vehicles.map((vehicle) => (
+						<div className="flex flex-col gap-y-[29px] w-full">
+							{units && units.map((unit) => (
 								<VehicleItemCard
-									key={vehicle}
-									description="Hino 10W Tractor Head Double Differential Projector Light 1992"
-									modelNumber="FM658N"
+									key={unit.id}
+									description={unit.description}
+									modelNumber={unit.model_number}
 									engineNumber="V25C-B10153"
-									chassisNumber="SS2VJB-10038"
+									chassisNumber={unit.chassis_number}
 									price="210,000"
 									imageUrl={vehicleImage}
 								/>
@@ -179,7 +191,7 @@ export default function ListingsPage() {
 				</div>
 			</div>
 
-			<div className="mt-[266px]">
+			<div className="mt-[101px]">
 				<Footer />
 			</div>
 		</div>

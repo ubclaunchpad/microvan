@@ -41,6 +41,12 @@ class EquipmentSerializer(serializers.ModelSerializer):
         ]
 
 
+class VehicleBidderListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vehicle
+        fields = ["id", "description", "model_number", "chassis_number", "minimum_price"]
+
+
 class VehicleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vehicle
