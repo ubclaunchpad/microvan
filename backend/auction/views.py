@@ -212,7 +212,8 @@ class AddToAuctionApiView(APIView):
             {"message": "Vehicle added to auction successfully"},
             status=status.HTTP_201_CREATED,
         )
-    
+
+
 class AuctionVehiclesApiView(APIView):
     """
     An endpoint to retrieve an auction's associated vehicles
@@ -225,7 +226,7 @@ class AuctionVehiclesApiView(APIView):
         auction = get_object_or_404(Auction, id=auction_id)
 
         auction_items = AuctionItem.objects.filter(auction_id=auction)
-        
+
         vehicle_list = []
         equipment_list = []
         trailer_list = []
@@ -241,7 +242,6 @@ class AuctionVehiclesApiView(APIView):
         vehicle_data = [{"id": vehicle.id} for vehicle in vehicle_list]
         equipment_data = [{"id": equipment.id} for equipment in equipment_list]
         trailer_data = [{"id": trailer.id} for trailer in trailer_list]
-        
+
         return Response({"vehicles": vehicle_data, "equipment": equipment_data, 
                          "trailers": trailer_data}, status=status.HTTP_200_OK)
-
