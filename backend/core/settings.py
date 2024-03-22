@@ -114,7 +114,7 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 """"""
-if os.environ.get("ENVIRONMENT") == "prod":
+if env("ENVIRONMENT") == "prod":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql_psycopg2",

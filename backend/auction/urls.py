@@ -6,7 +6,6 @@ from .views import (
     AuctionDetailApiView,
     AuctionListApiView,
     GetSavedUnitApiView,
-    GetUnitsApiView,
     SaveUnitApiView,
     AuctionVehiclesApiView,
 )
