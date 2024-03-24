@@ -1,4 +1,4 @@
-name: Build Pipeline for Python and Django
+name: Build Pipeline
 
 on:
   push:
@@ -7,7 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  python_django:
+    name: Build Django Backend
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -33,28 +34,45 @@ jobs:
           python-version: '3.10'
 
       - name: Install pipenv
-        run: |
-          python -m pip install --upgrade pipenv wheel
+        run: python -m pip install --upgrade pipenv wheel
 
-      - id: cache-pipenv
-        uses: actions/cache@v3
+      - uses: actions/cache@v3
         with:
           path: ~/.local/share/virtualenvs
           key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
 
       - name: Install dependencies
-        if: steps.cache-pipenv.outputs.cache-hit != 'true'
-        run: |
-          pipenv install --deploy --dev
+        run: pipenv install --deploy --dev
 
       - name: Run linting
-        run: |
-          pipenv run flake8
-      
+        run: pipenv run flake8
+
       - name: Makes sure it runs
-        run: |
-          pipenv run python manage.py check
+        run: pipenv run python manage.py check
 
       - name: Run tests
-        run: |
-          pipenv run python manage.py test
+        run: pipenv run python manage.py test
+
+  node_react:
+    name: Build React Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+
+      - run: npm install
+
+      - run: npm run lint
+
+      - run: npm run build --if-present
+
+      - run: npm test
