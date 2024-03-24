@@ -1,19 +1,11 @@
 # This config was automatically generated from your source code
-# Stacks detected: cicd:github-actions:.github/workflows,deps:node:frontend,deps:python:backend,file:manage.py:backend,package_manager:pipenv:backend,test:tox:backend
+# Stacks detected: deps:node:frontend,deps:python:backend,file:manage.py:backend,package_manager:pipenv:backend,test:tox:backend
 version: 2.1
 orbs:
   node: circleci/node@5
   python: circleci/python@2
 jobs:
-  env:
-      SECRET_KEY: $DJANGO_SECRET
-      AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-      AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-      AWS_STORAGE_BUCKET_NAME: $AWS_STORAGE_BUCKET_NAME
-      AWS_S3_REGION_NAME: $AWS_S3_REGION_NAME
-      COGNITO_USER_POOL_ID: $COGNITO_USER_POOL_ID
-      COGNITO_APP_CLIENT_ID: $COGNITO_APP_CLIENT_ID
-      COGNITO_APP_CLIENT_SECRET: $COGNITO_APP_CLIENT_SECRET
+      
 
   test-node:
     # Install node dependencies and run tests
@@ -62,6 +54,15 @@ jobs:
       - run:
           name: Run tests
           command: pipenv run python manage.py test
+          environment:
+            SECRET_KEY: $DJANGO_SECRET
+            AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+            AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+            AWS_STORAGE_BUCKET_NAME: $AWS_STORAGE_BUCKET_NAME
+            AWS_S3_REGION_NAME: $AWS_S3_REGION_NAME
+            COGNITO_USER_POOL_ID: $COGNITO_USER_POOL_ID
+            COGNITO_APP_CLIENT_ID: $COGNITO_APP_CLIENT_ID
+            COGNITO_APP_CLIENT_SECRET: $COGNITO_APP_CLIENT_SECRET
   deploy:
     # This is an example deploy job, not actually used by the workflow
     docker:
