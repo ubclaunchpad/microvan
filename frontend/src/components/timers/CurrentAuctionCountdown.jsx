@@ -37,11 +37,11 @@ export default function CurrentAuctionCountdown({
 
 	return (
 		<div className="float-right text-right" style={{ width: maxWidth }}>
-			<div className="mb-2 text-mv-black text-xl font-medium">
+			<div className="mb-2 text-mv-black text-lg font-medium">
 				{statusString}
 			</div>
 			<div
-				className="h-[11px] bg-progress-bar rounded-lg overflow-hidden"
+				className="h-[14px] bg-progress-bar rounded-lg overflow-hidden"
 				style={{ width: maxWidth, float: 'right' }}
 			>
 				<div
