@@ -2,9 +2,14 @@ name: Deploy Application
 
 on:
   workflow_run:
-    workflows: ["Build Pipeline"]
-    types: [completed]
-    branches: [ main ]
+    workflows:
+      - "Build Pipeline"
+    types:
+      - completed
+    branches:
+      - main
+    branches-ignore:
+      - "!main"
 
 jobs:
   setup:
