@@ -4,6 +4,7 @@ on:
   workflow_run:
     workflows: ["Build Pipeline"]
     types: [completed]
+    branches: [ lance/fix-cd-pipeline ]
 
 jobs:
   setup:
