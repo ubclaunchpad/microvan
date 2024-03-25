@@ -69,17 +69,21 @@ def parse_excel_to_vehicle(excel_file):
             "chassis_condition": row["Chassis"],
             "body_condition": row["Body"],
         }
-
+        if len(vehicle_data.get("model_number")) > 10:
+            continue
         brand_id = vehicle_data.pop("brand", None)
         type_id = vehicle_data.pop("vehicle_type", None)
-        Brand.objects.get_or_create(name=brand_id)
-        Type.objects.get_or_create(name=type_id)
-        brand = (
-            get_object_or_404(Brand, name=brand_id) if brand_id is not None else None
-        )
-        vehicle_type = (
-            get_object_or_404(Type, name=type_id) if type_id is not None else None
-        )
+        pre_create = Brand.objects.filter(name=brand_id).first()
+        if pre_create == None:
+            Brand.objects.create(name=brand_id)
+        pre2 = Type.objects.filter(name=type_id).first()
+        if pre2 == None:
+            Type.objects.create(name=type_id)
+        brand = Brand.objects.filter(name=brand_id).first()
+        vehicle_type = Type.objects.filter(name=type_id).first()
+
+        if brand == None or vehicle_type == None:
+            continue
 
         vehicle, created = Vehicle.objects.get_or_create(
             brand=brand, vehicle_type=vehicle_type, **vehicle_data

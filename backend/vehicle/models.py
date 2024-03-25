@@ -16,7 +16,11 @@ class Type(MainModel):
 
 class Vehicle(MainModel):
     unicode_id = models.IntegerField(unique=True)
-    model_number = models.CharField(max_length=10, blank=True, null=True)
+    model_number = models.CharField(max_length=150, blank=True, null=True)
+    chassis_number = models.CharField(max_length=150, blank=True, null=True)
+    engine_number = models.CharField(max_length=150, blank=True, null=True)
+    selling_price = models.IntegerField(default=0)
+    starting_price = models.IntegerField(default=0)
     chassis_number = models.CharField(max_length=50, blank=True, null=True)
     description = models.CharField(max_length=2000)
     brand = models.ForeignKey(Brand, on_delete=models.PROTECT)

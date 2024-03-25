@@ -243,5 +243,11 @@ class AuctionVehiclesApiView(APIView):
         equipment_data = [{"id": equipment.id} for equipment in equipment_list]
         trailer_data = [{"id": trailer.id} for trailer in trailer_list]
 
-        return Response({"vehicles": vehicle_data, "equipment": equipment_data,
-                         "trailers": trailer_data}, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "vehicles": vehicle_data,
+                "equipment": equipment_data,
+                "trailers": trailer_data,
+            },
+            status=status.HTTP_200_OK,
+        )
