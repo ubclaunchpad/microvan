@@ -129,6 +129,9 @@ jobs:
   deploy_frontend:
     needs: ["terraform", "setup"]
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
 
     steps:
       - name: Checkout code
@@ -154,3 +157,4 @@ jobs:
         run: railway up --service "microvan"
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        working-directory: ./
