@@ -52,6 +52,10 @@ jobs:
   deploy_infrastructure:
     needs: setup
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -70,6 +74,9 @@ jobs:
   deploy_backend:
     needs: ["deploy_infrastructure", "setup"]
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
 
     env:
       DB_USERNAME: ${{ needs.setup.outputs.DB_USERNAME }}
