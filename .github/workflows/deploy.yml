@@ -12,11 +12,8 @@ jobs:
     outputs:
       DB_USERNAME: ${{ steps.get-secrets.outputs.db_username }}
       DB_PASSWORD: ${{ steps.get-secrets.outputs.db_password }}
-      DB_ENGINE: ${{ steps.get-secrets.outputs.db_engine }}
       DB_HOST: ${{ steps.get-secrets.outputs.db_host }}
-      DB_PORT: ${{ steps.get-secrets.outputs.db_port }}
       DB_NAME: ${{ steps.get-secrets.outputs.db_name }}
-      DB_INSTANCE_IDENTIFIER: ${{ steps.get-secrets.outputs.db_instance_identifier }}
       DJANGO_KEY: ${{ steps.get-secrets.outputs.django_key }}
       AWS_STORAGE_BUCKET_NAME: ${{ steps.get-secrets.outputs.aws_storage_bucket_name }}
       AWS_S3_REGION_NAME: ${{ steps.get-secrets.outputs.aws_s3_region_name }}
@@ -37,11 +34,8 @@ jobs:
           DB_SECRET_STRING=$(aws secretsmanager get-secret-value --secret-id db_credentials --query SecretString --output text)
           echo "db_username=$(echo $DB_SECRET_STRING | jq -r .username)" >> $GITHUB_OUTPUT
           echo "db_password=$(echo $DB_SECRET_STRING | jq -r .password)" >> $GITHUB_OUTPUT
-          echo "db_engine=$(echo $DB_SECRET_STRING | jq -r .engine)" >> $GITHUB_OUTPUT
           echo "db_host=$(echo $DB_SECRET_STRING | jq -r .host)" >> $GITHUB_OUTPUT
-          echo "db_port=$(echo $DB_SECRET_STRING | jq -r .port)" >> $GITHUB_OUTPUT
           echo "db_name=$(echo $DB_SECRET_STRING | jq -r .dbname)" >> $GITHUB_OUTPUT
-          echo "db_instance_identifier=$(echo $DB_SECRET_STRING | jq -r .dbInstanceIdentifier)" >> $GITHUB_OUTPUT
 
           SECRET_STRING=$(aws secretsmanager get-secret-value --secret-id secrets --query SecretString --output text)
           echo "django_key=$(echo $SECRET_STRING | jq -r .DJANGO_KEY)" >> $GITHUB_OUTPUT
