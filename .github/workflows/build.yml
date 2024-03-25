@@ -55,6 +55,8 @@ jobs:
         working-directory: ./backend
 
     env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       DB_USERNAME: ${{ needs.setup.outputs.DB_USERNAME }}
       DB_PASSWORD: ${{ needs.setup.outputs.DB_PASSWORD }}
       DB_HOST: ${{ needs.setup.outputs.DB_HOST }}

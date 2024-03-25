@@ -56,6 +56,10 @@ jobs:
       run:
         working-directory: ./terraform
 
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -72,9 +76,6 @@ jobs:
       - name: Terraform Apply
         run: |
           terraform apply -auto-approve -var "db_username=${{ needs.setup.outputs.DB_USERNAME }}" -var "db_password=${{ needs.setup.outputs.DB_PASSWORD }}"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   
   deploy_backend:
     needs: ["deploy_infrastructure", "setup"]
@@ -84,6 +85,8 @@ jobs:
         working-directory: ./backend
 
     env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       DB_USERNAME: ${{ needs.setup.outputs.DB_USERNAME }}
       DB_PASSWORD: ${{ needs.setup.outputs.DB_PASSWORD }}
       DB_HOST: ${{ needs.setup.outputs.DB_HOST }}
