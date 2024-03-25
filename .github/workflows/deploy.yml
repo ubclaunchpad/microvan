@@ -49,36 +49,45 @@ jobs:
           echo "cognito_app_client_id=$(echo $SECRET_STRING | jq -r .COGNITO_APP_CLIENT_ID)" >> $GITHUB_OUTPUT
           echo "congito_app_client_secret=$(echo $SECRET_STRING | jq -r .COGNITO_APP_CLIENT_SECRET)" >> $GITHUB_OUTPUT
 
-  deploy_infrastructure:
-    needs: setup
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./terraform
-
+  terraform:
     env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      TF_CLOUD_ORGANIZATION: "microvan"
+      TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
+      TF_WORKSPACE: "microvan"
+      CONFIG_DIRECTORY: "./terraform"
 
+    name: "Terraform Apply"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v1
+      - name: Upload Configuration
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
+        id: apply-upload
+        with:
+          workspace: ${{ env.TF_WORKSPACE }}
+          directory: ${{ env.CONFIG_DIRECTORY }}
 
-      - name: Terraform Init
-        run: terraform init
-        
-      - name: Terraform Plan
-        run: terraform plan -var "db_username=${{ needs.setup.outputs.DB_USERNAME }}" -var "db_password=${{ needs.setup.outputs.DB_PASSWORD }}"
+      - name: Create Apply Run
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+        id: apply-run
+        with:
+          workspace: ${{ env.TF_WORKSPACE }}
+          configuration_version: ${{ steps.apply-upload.outputs.configuration_version_id }}
 
-      - name: Terraform Apply
-        run: |
-          terraform apply -auto-approve -var "db_username=${{ needs.setup.outputs.DB_USERNAME }}" -var "db_password=${{ needs.setup.outputs.DB_PASSWORD }}"
+      - name: Apply
+        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
+        if: fromJSON(steps.apply-run.outputs.payload).data.attributes.actions.IsConfirmable
+        id: apply
+        with:
+          run: ${{ steps.apply-run.outputs.run_id }}
+          comment: "Apply Run from GitHub Actions CI ${{ github.sha }}"
   
   deploy_backend:
-    needs: ["deploy_infrastructure", "setup"]
+    needs: ["terraform", "setup"]
     runs-on: ubuntu-latest
     defaults:
       run:
