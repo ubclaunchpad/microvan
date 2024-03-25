@@ -19,9 +19,9 @@ export default function BidderLogInPage() {
 	const handleLogIn = async () => {
 		try {
 			const result = await fetchData({
-				endpoint: 'auth/login/',
+				endpoint: '/auth/login/',
 				method: 'POST',
-				data: { email, password, is_admin: true },
+				data: { email, password, is_admin: false },
 			});
 			localStorage.setItem('userInfo', JSON.stringify(result.data));
 			navigate('/');

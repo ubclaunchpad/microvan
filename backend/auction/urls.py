@@ -5,9 +5,9 @@ from .views import (
     AddToAuctionApiView,
     AuctionDetailApiView,
     AuctionListApiView,
+    AuctionVehiclesApiView,
     GetSavedUnitApiView,
     SaveUnitApiView,
-    AuctionVehiclesApiView,
 )
 
 urlpatterns = [

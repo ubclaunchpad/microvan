@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router';
 import logo from '../../../assets/microvan_logo.svg';
 import OnboardingInputField from '../../../components/inputs/OnboardingInputField';
 import RegisterButton from '../../../components/buttons/RegisterButton';
+import useAxios from '../../../hooks/useAxios';
 
 export default function BidderRegisterPage() {
 	const navigate = useNavigate();
+	const { fetchData } = useAxios();
 
 	const [firstName, setFirstName] = useState('');
 	const [surname, setSurname] = useState('');
@@ -28,6 +30,19 @@ export default function BidderRegisterPage() {
 		setConfirmPassword(event.target.value);
 
 	const handleRegisterUser = () => {
+		fetchData({
+			endpoint: '/bidders/',
+			method: 'POST',
+			data: {
+				email,
+				password,
+				given_name: firstName,
+				family_name: surname,
+				company_address: companyAddress,
+				company_name: company,
+				phone_number: phoneNumber,
+			},
+		});
 		navigate('/register/email');
 	};
 

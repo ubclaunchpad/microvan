@@ -41,7 +41,7 @@ export default function HomePage() {
 				endpoint: 'auctions/',
 				method: 'GET',
 			});
-			
+
 			// get items associated with each auction
 			const itemsPromises = response.data.map(async (auction) => {
 				const itemResponse = await fetchData({
@@ -50,9 +50,9 @@ export default function HomePage() {
 				});
 				return { ...auction, items: itemResponse.data };
 			});
-	
+
 			const auctionsWithItems = await Promise.all(itemsPromises);
-			
+
 			const auctionList = sortAuctions(auctionsWithItems);
 			setUpcomingAuctionList(auctionList.upcoming);
 			setCurrentAuctionList(auctionList.current);
@@ -66,7 +66,6 @@ export default function HomePage() {
 	useEffect(() => {
 		getAuctions();
 	}, []);
-
 
 	return (
 		<div className="min-w-screen max-w-screen">
@@ -138,62 +137,66 @@ export default function HomePage() {
 					</h2>
 					<AuctionsSearchBar setResults={setSearchedAuctions} />
 				</div>
-				{currentAuctionList.length > 0 && <div className="flex flex-col gap-y-[18px] w-[80%] items-start">
-					<h2 className="text-mv-black text-4xl font-semibold">
-						Current Auction
-					</h2>
-					<CurrentAuctionCard
-						imageUrls={[image, image, image, image]}
-						startDate={new Date(currentAuctionList[0].start_date)}
-						endDate={new Date(currentAuctionList[0].end_date)}
-						numberOfEquipment={currentAuctionList[0].items.equipment.length}
-						numberOfTrailers={currentAuctionList[0].items.trailers.length}
-						numberOfTrucks={currentAuctionList[0].items.vehicles.length}
-						button={currentAuctionButton}
-					/>
-				</div>}
-				{upcomingAuctionList.length > 0 && <div className="flex flex-col gap-y-[18px] w-[80%] items-start">
-					<h2 className="text-mv-black text-4xl font-semibold">
-						Upcoming Auctions
-					</h2>
-					<div className="grid grid-cols-3 grid-rows-1 gap-[4.3rem] w-full">
-						{upcomingAuctionList.map(auction => (
-							<UpcomingAuctionCard
-								imageUrls={[image, image, image, image]}
-								startDate={new Date(auction.start_date)}
-								endDate={new Date(auction.end_date)}
-								numberOfEquipment={auction.items.equipment.length}
-								numberOfTrailers={auction.items.trailers.length}
-								numberOfTrucks={auction.items.vehicles.length}
-								button={upcomingAuctionButton}
-							/>
-						))}
-						
+				{currentAuctionList.length > 0 && (
+					<div className="flex flex-col gap-y-[18px] w-[80%] items-start">
+						<h2 className="text-mv-black text-4xl font-semibold">
+							Current Auction
+						</h2>
+						<CurrentAuctionCard
+							imageUrls={[image, image, image, image]}
+							startDate={new Date(currentAuctionList[0].start_date)}
+							endDate={new Date(currentAuctionList[0].end_date)}
+							numberOfEquipment={currentAuctionList[0].items.equipment.length}
+							numberOfTrailers={currentAuctionList[0].items.trailers.length}
+							numberOfTrucks={currentAuctionList[0].items.vehicles.length}
+							button={currentAuctionButton}
+						/>
 					</div>
-				</div>}
-				{pastAuctionList.length > 0 && <div className="flex flex-col gap-y-[18px] w-[80%] items-start">
-					<h2 className="text-mv-black text-4xl font-semibold">
-						Past Auctions
-					</h2>
-					<div className="grid grid-cols-3 grid-rows-1 gap-[4.3rem] w-full">
-						{pastAuctionList.map(auction => (
-							<PastAuctionCard
-								imageUrls={[image, image, image, image]}
-								startDate={new Date(auction.start_date)}
-								endDate={new Date(auction.end_date)}
-								numberOfEquipment={auction.items.equipment.length}
-								numberOfTrailers={auction.items.trailers.length}
-								numberOfTrucks={auction.items.vehicles.length}
-							/>
-						))}
-						
+				)}
+				{upcomingAuctionList.length > 0 && (
+					<div className="flex flex-col gap-y-[18px] w-[80%] items-start">
+						<h2 className="text-mv-black text-4xl font-semibold">
+							Upcoming Auctions
+						</h2>
+						<div className="grid grid-cols-3 grid-rows-1 gap-[4.3rem] w-full">
+							{upcomingAuctionList.map((auction) => (
+								<UpcomingAuctionCard
+									imageUrls={[image, image, image, image]}
+									startDate={new Date(auction.start_date)}
+									endDate={new Date(auction.end_date)}
+									numberOfEquipment={auction.items.equipment.length}
+									numberOfTrailers={auction.items.trailers.length}
+									numberOfTrucks={auction.items.vehicles.length}
+									button={upcomingAuctionButton}
+								/>
+							))}
+						</div>
 					</div>
-					<button type="button" className="flex ml-auto items-end">
-						<p className="text-mv-black text-base font-normal underline">
-							view more
-						</p>
-					</button>
-				</div>}
+				)}
+				{pastAuctionList.length > 0 && (
+					<div className="flex flex-col gap-y-[18px] w-[80%] items-start">
+						<h2 className="text-mv-black text-4xl font-semibold">
+							Past Auctions
+						</h2>
+						<div className="grid grid-cols-3 grid-rows-1 gap-[4.3rem] w-full">
+							{pastAuctionList.map((auction) => (
+								<PastAuctionCard
+									imageUrls={[image, image, image, image]}
+									startDate={new Date(auction.start_date)}
+									endDate={new Date(auction.end_date)}
+									numberOfEquipment={auction.items.equipment.length}
+									numberOfTrailers={auction.items.trailers.length}
+									numberOfTrucks={auction.items.vehicles.length}
+								/>
+							))}
+						</div>
+						<button type="button" className="flex ml-auto items-end">
+							<p className="text-mv-black text-base font-normal underline">
+								view more
+							</p>
+						</button>
+					</div>
+				)}
 			</div>
 			<div className="w-full items-center">
 				<Footer />

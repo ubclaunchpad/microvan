@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 from core.permissions import IsAdminUser, IsAuthenticated
 from services.AWSCognitoService import AWSCognitoService
-from vehicle.models import SavedUnits, Vehicle, Equipment, Trailer
+from vehicle.models import Equipment, SavedUnits, Trailer, Vehicle
 
 from .models import Auction, AuctionItem
 from .serializers import AuctionSerializer
@@ -243,5 +243,11 @@ class AuctionVehiclesApiView(APIView):
         equipment_data = [{"id": equipment.id} for equipment in equipment_list]
         trailer_data = [{"id": trailer.id} for trailer in trailer_list]
 
-        return Response({"vehicles": vehicle_data, "equipment": equipment_data,
-                         "trailers": trailer_data}, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "vehicles": vehicle_data,
+                "equipment": equipment_data,
+                "trailers": trailer_data,
+            },
+            status=status.HTTP_200_OK,
+        )

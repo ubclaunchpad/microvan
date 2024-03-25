@@ -72,7 +72,7 @@ export default function ListingsPage() {
 					<NavBar />
 					<div className="flex flex-col w-[85%] mx-auto">
 						<div className="flex flex-col gap-y-[48px] mt-[116px]">
-							<h1 className="text-mv-black text-4xl font-semibold">
+							<h1 className="text-mv-black text-3xl font-semibold">
 								Auction Listings (Nov 5-7)
 							</h1>
 							<p className="text-mv-black text-xl font-base">
@@ -94,13 +94,13 @@ export default function ListingsPage() {
 
 			<div className="flex flex-col w-[85%] mx-auto">
 				<div className="mt-[116px]">
-					<h1 className="text-mv-black text-4xl font-semibold">
+					<h1 className="text-mv-black text-3xl font-semibold">
 						Auction Listings (Nov 5-7)
 					</h1>
 				</div>
 
 				<div className="mt-[75px] flex justify-between items-end">
-					<h2 className="text-mv-black text-[26px] font-medium">
+					<h2 className="text-mv-black text-xl font-medium">
 						Items for Monday, November 6
 					</h2>
 
@@ -111,11 +111,11 @@ export default function ListingsPage() {
 					/>
 				</div>
 
-				<div className="mt-[23px]">
+				<div className="mt-[26px]">
 					<ListingSearchBar setResults={setUnits} />
 				</div>
 
-				<div className="mt-[117px] flex gap-x-9">
+				<div className="mt-[77px] flex gap-x-9">
 					<div className="w-[22%] flex flex-col mt-[32px] gap-y-4 sticky top-0">
 						<h2 className="text-mv-black text-xl font-medium">Filters</h2>
 						<div className="px-5 pt-5 pb-[80px] bg-light-grey rounded-[20px] flex flex-col gap-y-[36px] shadow-filterBoxShadow">
@@ -179,7 +179,7 @@ export default function ListingsPage() {
 				</div>
 			</div>
 
-			<div className="mt-[266px]">
+			<div className="mt-[101px]">
 				<Footer />
 			</div>
 		</div>

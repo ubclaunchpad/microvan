@@ -34,7 +34,11 @@ class AWSCognitoIDTokenAuthentication(authentication.BaseAuthentication):
         if not token:
             return (unauthenticated_user, None)
 
-        if request.path.startswith("/api/v1/auth"):
+        if (
+            request.path.startswith("/api/v1/auth")
+            or request.path == "/api/v1/bidders/"
+            or request.path == "/api/v1/admins/"
+        ):
             return (unauthenticated_user, None)
 
         try:
