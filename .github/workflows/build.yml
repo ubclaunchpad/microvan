@@ -158,6 +158,7 @@ jobs:
           plan: ${{ fromJSON(steps.plan-run.outputs.payload).data.relationships.plan.data.id }}
 
       - name: Update PR
+        if: github.event_name == 'pull_request'
         uses: actions/github-script@v6
         id: plan-comment
         with:
