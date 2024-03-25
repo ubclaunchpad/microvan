@@ -129,9 +129,6 @@ jobs:
   deploy_frontend:
     needs: ["terraform", "setup"]
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
 
     steps:
       - name: Checkout code
