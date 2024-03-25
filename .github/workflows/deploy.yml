@@ -1,14 +1,9 @@
 name: Deploy Application
 
 on:
-  pull_request:
-    branches: [ main ]
-  push:
-    branches: [ main ]
   workflow_run:
     workflows: ["Build Pipeline"]
     types: [completed]
-    branches: [ main ]
 
 jobs:
   setup:
