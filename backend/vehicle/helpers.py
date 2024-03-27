@@ -51,6 +51,7 @@ def parse_excel_to_vehicle(excel_file):
             "unicode_id": row["UNICODE"],
             "model_number": row["MODEL"],
             "chassis_number": row["CHASSIS"],
+            "engine_number": row["ENGINE NUMBER"],
             "description": row["DESCRIPTION"],
             "brand": row["BRAND"],
             "vehicle_type": row["TYPE"],
@@ -71,22 +72,21 @@ def parse_excel_to_vehicle(excel_file):
         }
         brand_id = vehicle_data.pop("brand", None)
         type_id = vehicle_data.pop("vehicle_type", None)
-        pre_create = Brand.objects.filter(name=brand_id).first()
-        if pre_create is None:
-            Brand.objects.create(name=brand_id)
-        pre2 = Type.objects.filter(name=type_id).first()
-        if pre2 is None:
-            Type.objects.create(name=type_id)
         brand = Brand.objects.filter(name=brand_id).first()
-        vehicle_type = Type.objects.filter(name=type_id).first()
+        if brand is None:
+            brand = Brand.objects.create(name=brand_id)
+        type = Type.objects.filter(name=type_id).first()
+        if type is None:
+            type = Type.objects.create(name=type_id)
 
-        if brand is None or vehicle_type is None:
+        if brand is None or type is None:
             continue
-
         vehicle, created = Vehicle.objects.get_or_create(
-            brand=brand, vehicle_type=vehicle_type, **vehicle_data
+            brand=brand, vehicle_type=type, **vehicle_data
         )
+        print(vehicle_data)
         vehicles.append(vehicle)
+        break
 
     serialized_data = VehicleSerializer(vehicles, many=True).data
     return serialized_data
