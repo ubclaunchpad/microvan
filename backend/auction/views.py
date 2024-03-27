@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 from core.permissions import IsAdminUser, IsAuthenticated
 from services.AWSCognitoService import AWSCognitoService
-from vehicle.models import SavedUnits, Vehicle, Equipment, Trailer
+from vehicle.models import Equipment, SavedUnits, Trailer, Vehicle
 
 from .models import Auction, AuctionItem
 from .serializers import AuctionSerializer
