@@ -48,6 +48,7 @@ class VehicleSerializer(serializers.ModelSerializer):
             "id",
             "unicode_id",
             "model_number",
+            "engine_number",
             "chassis_number",
             "description",
             "brand",
