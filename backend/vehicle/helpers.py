@@ -84,6 +84,7 @@ def parse_excel_to_vehicle(excel_file):
         vehicle, created = Vehicle.objects.get_or_create(
             brand=brand, vehicle_type=type, **vehicle_data
         )
+
         vehicles.append(vehicle)
     serialized_data = VehicleSerializer(vehicles, many=True).data
     return serialized_data
