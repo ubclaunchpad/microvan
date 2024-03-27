@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router';
 import logo from '../../../assets/microvan_logo.svg';
 import OnboardingInputField from '../../../components/inputs/OnboardingInputField';
 import LogInButton from '../../../components/buttons/LogInButton';
-import useAxios from '../../../hooks/useAxios';
+import { useAuth } from '../../../providers/AuthProvider';
 
 export default function BidderLogInPage() {
 	const navigate = useNavigate();
-	const { fetchData } = useAxios();
+	const { signIn } = useAuth();
 
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -18,16 +18,11 @@ export default function BidderLogInPage() {
 
 	const handleLogIn = async () => {
 		try {
-			const result = await fetchData({
-				endpoint: '/auth/login/',
-				method: 'POST',
-				data: { email, password, is_admin: false },
-			});
-			localStorage.setItem('userInfo', JSON.stringify(result.data));
+			await signIn(email, password);
 			navigate('/');
 		} catch (err) {
 			setLoginError(
-				err.response ? err.response.data.error : 'An unknown error occurred'
+				'Failed to log in. Please check your credentials and try again.'
 			);
 		}
 	};

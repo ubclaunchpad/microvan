@@ -3,13 +3,15 @@ import { useNavigate } from 'react-router';
 import HistoryIcon from '@mui/icons-material/History';
 import PersonIcon from '@mui/icons-material/Person';
 import LogOutButton from '../buttons/LogOutButton';
+import { useAuth } from "../../providers/AuthProvider";
 
 export default function ProfilePopUpCard({ bidderID }) {
 	const navigate = useNavigate();
+	const { logout } = useAuth();
 
 	const handleLogOut = async () => {
 		try {
-			localStorage.removeItem('userInfo');
+			await logout();
 			navigate('/');
 		} catch (err) {
 			// eslint-disable-next-line no-console
