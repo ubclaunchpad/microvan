@@ -14,4 +14,4 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 EXPOSE 8000
 
-CMD ["pipenv", "run", "start"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
