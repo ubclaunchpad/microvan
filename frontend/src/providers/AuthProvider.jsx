@@ -38,43 +38,6 @@ export function AuthProvider({ children }) {
 			});
 		});
 
-	const signUpBidder = async (
-		email,
-		password,
-		firstName,
-		lastName,
-		companyName,
-		companyAddress,
-		phoneNumber
-	) =>
-		new Promise((resolve, reject) => {
-			const bidderNumber = Math.floor(
-				10000000 + Math.random() * 90000000
-			).toString();
-			userPool.signUp(
-				email,
-				password,
-				[
-					{ Name: 'email', Value: email },
-					{ Name: 'given_name', Value: firstName },
-					{ Name: 'family_name', Value: lastName },
-					{ Name: 'custom:company_name', Value: companyName },
-					{ Name: 'custom:company_address', Value: companyAddress },
-					{ Name: 'phone_number', Value: phoneNumber },
-					{ Name: 'custom:is_blacklisted', Value: 'false' },
-					{ Name: 'custom:bidder_number', Value: bidderNumber },
-				],
-				null,
-				(err, result) => {
-					if (err) {
-						reject(err);
-						return;
-					}
-					resolve(result.user);
-				}
-			);
-		});
-
 	const logout = () => {
 		const cognitoUser = userPool.getCurrentUser();
 		if (cognitoUser) {
@@ -153,7 +116,6 @@ export function AuthProvider({ children }) {
 	const value = useMemo(
 		() => ({
 			signIn,
-			signUpBidder,
 			logout,
 			getSession,
 			getUserInfo,
