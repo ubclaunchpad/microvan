@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import timedelta
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Prefetch
@@ -71,12 +71,24 @@ class AuctionListApiView(APIView):
 
     def post(self, request, *args, **kwargs):
         """
-        Create an Auction with given data, including start and end times.
+        Create an Auction with given data, including start and end times, 
+        and create AuctionDay models for every day between start_date and end_date inclusive.
         """
         serializer = AuctionSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            auction = serializer.save() 
+
+            start_date = auction.start_date.date()
+            end_date = auction.end_date.date()
+            delta = timedelta(days=1)
+            current_date = start_date
+
+            while current_date <= end_date:
+                AuctionDay.objects.create(auction=auction, date=current_date)
+                current_date += delta
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -244,12 +256,12 @@ class GetSavedUnitApiView(APIView):
 class AddToAuctionApiView(APIView):
     permission_classes = [IsAdminUser]
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, auction_id):
         auction_day_id = request.data.get("auction_day_id")
         content_type = request.data.get("content_type")
-        object_id = request.data.get("object_id")
+        object_ids = request.data.get("object_ids")
 
-        if not all([auction_day_id, content_type, object_id]):
+        if not all([auction_day_id, content_type, object_ids]):
             return Response(
                 {"error": "Missing required fields."},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -257,12 +269,24 @@ class AddToAuctionApiView(APIView):
 
         try:
             auction_day = AuctionDay.objects.get(id=auction_day_id)
-            content_type = ContentType.objects.get(model=content_type.lower())
-            item = content_type.get_object_for_this_type(id=object_id)
+            ct = ContentType.objects.get(model=content_type.lower())
+            successes, failures = 0, 0
 
-            AuctionItem.objects.create(auction_day=auction_day, content_object=item)
+            for object_id in object_ids:
+                try:
+                    item = ct.get_object_for_this_type(id=object_id)
+                    AuctionItem.objects.create(auction_day=auction_day, content_object=item)
+                    successes += 1
+                except Exception as inner_exception:
+                    failures += 1
+
+            if failures:
+                return Response(
+                    {"message": f"Items partially added to auction. Success: {successes}, Failures: {failures}"},
+                    status=status.HTTP_207_MULTI_STATUS,
+                )
             return Response(
-                {"message": "Item added to auction successfully"},
+                {"message": "All items added to auction successfully"},
                 status=status.HTTP_201_CREATED,
             )
         except Exception as e:
@@ -277,10 +301,10 @@ class AuctionVehiclesApiView(APIView):
     cognitoService = AWSCognitoService()
 
     def get(self, request, **kwargs):
-        auction_id = kwargs.get("auction_id")
-        auction = get_object_or_404(Auction, id=auction_id)
+        auction_day_id = kwargs.get("auction_day_id")
+        auction_day = get_object_or_404(AuctionDay, id=auction_day_id)
 
-        auction_items = AuctionItem.objects.filter(auction_id=auction)
+        auction_items = AuctionItem.objects.filter(auction_day=auction_day)
 
         vehicle_list = []
         equipment_list = []
