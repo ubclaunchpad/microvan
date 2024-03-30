@@ -6,7 +6,6 @@ from rest_framework.views import APIView
 
 from core.permissions import IsAdminUser
 from services.AWSCognitoService import AWSCognitoService
-from util.jwt import decode_token
 
 
 class BidderListApiView(APIView):
@@ -14,7 +13,7 @@ class BidderListApiView(APIView):
 
     def get_permissions(self):
         if self.request.method == "GET":
-            self.permission_classes = [IsAuthenticated]
+            self.permission_classes = [IsAdminUser]
         else:
             self.permission_classes = [AllowAny]
         return super().get_permissions()
@@ -385,55 +384,5 @@ class EmailChangeAPIView(APIView):
         else:
             return Response(
                 {"error": "Failed to update email address in Cognito."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
-class RefreshTokenAPIView(APIView):
-    permission_classes = [AllowAny]
-
-    cognitoService = AWSCognitoService()
-
-    def post(self, request, *args, **kwargs):
-        refresh_token = request.data.get("refresh_token")
-        if not refresh_token:
-            return Response(
-                {"error": "Refresh token is required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        auth_header = request.headers.get("Authorization")
-        if not auth_header:
-            return Response(
-                {"error": "Authorization header is missing"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        access_token = auth_header.split(" ")[1]
-
-        decoded_token = decode_token(access_token)
-        username = decoded_token.get("sub")
-        if not username:
-            return Response(
-                {"error": "Error decoding token"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        new_tokens = self.cognitoService.refresh_tokens(username, refresh_token)
-
-        if new_tokens:
-            return Response(
-                {
-                    "id_token": new_tokens.get("IdToken"),
-                    "access_token": new_tokens.get("AccessToken"),
-                    "refresh_token": new_tokens.get("RefreshToken")
-                    if new_tokens.get("RefreshToken") is not None
-                    else refresh_token,
-                },
-                status=status.HTTP_200_OK,
-            )
-        else:
-            return Response(
-                {"error": "Failed to refresh tokens"},
                 status=status.HTTP_400_BAD_REQUEST,
             )

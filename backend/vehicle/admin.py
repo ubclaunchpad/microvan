@@ -27,6 +27,7 @@ class VehicleAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "unicode_id",
+        "engine_number",
         "model_number",
         "chassis_number",
         "brand",

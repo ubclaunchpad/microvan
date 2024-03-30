@@ -16,6 +16,8 @@ class Auction(MainModel):
     end_date = models.DateTimeField(null=False)
     cover_image = models.CharField(max_length=500, null=True, blank=True)
     is_published = models.BooleanField(default=False)
+    start_time = models.TimeField(null=False, default="00:00")
+    end_time = models.TimeField(null=False, default="23:59")
 
     def __str__(self):
         return (
@@ -25,19 +27,38 @@ class Auction(MainModel):
         )
 
 
+class AuctionDay(MainModel):
+    auction = models.ForeignKey(
+        Auction, on_delete=models.CASCADE, related_name='days')
+    date = models.DateField(null=False)
+
+    class Meta:
+        unique_together = ('auction', 'date')
+
+
 class AuctionItem(MainModel):
     """
     Items that bidders can bid on in a given auction
     """
 
-    auction_id = models.ForeignKey(Auction, on_delete=models.PROTECT)
+    auction_day = models.ForeignKey(
+        AuctionDay, on_delete=models.PROTECT, related_name='items')
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     object_id = models.UUIDField()
-    content_object = GenericForeignKey("content_type", "object_id")
+    content_object = GenericForeignKey('content_type', 'object_id')
 
     class Meta:
-        unique_together = ("auction_id", "content_type", "object_id")
+        unique_together = ('auction_day', 'content_type', 'object_id')
 
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
+
+
+class AuctionVerifiedUser(MainModel):
+    cognito_user_id = models.CharField(max_length=255, null=False, blank=False)
+    auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
+    is_verified = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('cognito_user_id', 'auction')

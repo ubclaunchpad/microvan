@@ -2,7 +2,7 @@ import pandas as pd
 from rest_framework import permissions, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import FileUploadParser
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -11,7 +11,6 @@ from core.permissions import IsAdminUser
 from .helpers import has_more_data, infinite_filter, parse_excel_to_vehicle
 from .models import Brand, Type, Vehicle
 from .serializers import VehicleSerializer
-
 
 # Create your views here.
 class VehicleListApiView(APIView):

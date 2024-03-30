@@ -2,7 +2,7 @@ from datetime import datetime
 
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -83,7 +83,7 @@ class AuctionDetailApiView(APIView):
         if self.request.method == "PUT" or self.request.method == "DELETE":
             self.permission_classes = [IsAdminUser]
         else:
-            self.permission_classes = [IsAuthenticated]
+            self.permission_classes = [AllowAny]
         return super().get_permissions()
 
     def get(self, request, auction_id, format=None):

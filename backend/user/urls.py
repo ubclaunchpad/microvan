@@ -12,13 +12,11 @@ from .views import (
     ListVerified,
     PasswordResetAPIView,
     PasswordResetConfirmAPIView,
-    RefreshTokenAPIView,
     VerifyEmailAPIView,
 )
 
 urlpatterns = [
     # Authentication
-    path("auth/refresh/", RefreshTokenAPIView.as_view(), name="token_refresh"),
     path(
         "auth/password-reset/",
         PasswordResetAPIView.as_view(),
