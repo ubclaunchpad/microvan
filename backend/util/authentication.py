@@ -35,9 +35,9 @@ class AWSCognitoIDTokenAuthentication(authentication.BaseAuthentication):
             return (unauthenticated_user, None)
 
         if (
-            request.path.startswith("/api/v1/auth")
-            or request.path == "/api/v1/bidders/"
-            or request.path == "/api/v1/admins/"
+            request.path.startswith("/v1/auth")
+            or request.path == "/v1/bidders/"
+            or request.path == "/v1/admins/"
         ):
             return (unauthenticated_user, None)
 

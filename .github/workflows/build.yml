@@ -18,8 +18,9 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       DB_USERNAME: ${{ secrets.DB_USERNAME }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DB_HOST: ${{ secrets.outputs.DB_HOST }}
+      DB_HOST: ${{ secrets.DB_HOST }}
       DB_NAME: ${{ secrets.DB_NAME }}
+      DB_PORT: ${{ secrets.DB_PORT }}
       SECRET_KEY: ${{ secrets.DJANGO_KEY }}
       AWS_STORAGE_BUCKET_NAME: ${{ secrets.AWS_STORAGE_BUCKET_NAME }}
       AWS_S3_REGION_NAME: ${{ secrets.AWS_S3_REGION_NAME }}
@@ -57,6 +58,10 @@ jobs:
       run:
         shell: bash
         working-directory: ./frontend
+
+    env:
+      REACT_APP_USER_POOL_ID: ${{ secrets.COGNITO_USER_POOL_ID }}
+      REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_COGNITO_CLIENT_ID }}
 
     steps:
       - uses: actions/checkout@v4

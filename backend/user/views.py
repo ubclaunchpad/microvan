@@ -1,10 +1,10 @@
 from django.shortcuts import get_object_or_404, redirect
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.permissions import IsAdminUser, IsAuthenticated
+from core.permissions import IsAdminUser
 from services.AWSCognitoService import AWSCognitoService
 from util.jwt import decode_token
 
@@ -305,52 +305,6 @@ class ListVerified(APIView):
         return Response(verifiedBidders, status=status.HTTP_200_OK)
 
 
-class LoginAPIView(APIView):
-    permission_classes = [AllowAny]
-
-    cognitoService = AWSCognitoService()
-
-    def post(self, request, *args, **kwargs):
-        email = request.data.get("email")
-        password = request.data.get("password")
-        is_admin = request.data.get("is_admin")
-
-        if not email or not password or is_admin is None:
-            return Response(
-                {"error": "Email, password, and is_admin fields are required."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        auth_result = self.cognitoService.login_user(email, password)
-
-        if auth_result:
-            user_id = decode_token(auth_result.get("IdToken")).get("sub")
-            user_details = self.cognitoService.get_user_details(
-                user_id=user_id, is_admin=is_admin
-            )
-            response = Response(user_details, status=status.HTTP_200_OK)
-            response.set_cookie(
-                "idToken", auth_result.get("IdToken"), httponly=True, samesite="Lax"
-            )
-            response.set_cookie(
-                "accessToken",
-                auth_result.get("AccessToken"),
-                httponly=True,
-                samesite="Lax",
-            )
-            response.set_cookie(
-                "refreshToken",
-                auth_result.get("RefreshToken"),
-                httponly=True,
-                samesite="Lax",
-            )
-            return response
-        else:
-            return Response(
-                {"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-
 class PasswordResetAPIView(APIView):
     permission_classes = [AllowAny]
 
@@ -401,31 +355,6 @@ class VerifyEmailAPIView(APIView):
         else:
             return Response(
                 {"error": "Failed to verify email"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-
-class LogoutAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    cognitoService = AWSCognitoService()
-
-    def post(self, request, *args, **kwargs):
-        access_token = request.data.get("access_token")
-
-        if not access_token:
-            return Response(
-                {"error": "Access token is required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Attempt to sign out the user from all devices using the access token
-        result = self.cognitoService.logout_user(access_token)
-
-        if result:
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            return Response(
-                {"error": "Failed to log out"}, status=status.HTTP_400_BAD_REQUEST
             )
 
 

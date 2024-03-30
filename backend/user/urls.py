@@ -10,8 +10,6 @@ from .views import (
     ListBlacklisted,
     ListUnverified,
     ListVerified,
-    LoginAPIView,
-    LogoutAPIView,
     PasswordResetAPIView,
     PasswordResetConfirmAPIView,
     RefreshTokenAPIView,
@@ -21,8 +19,6 @@ from .views import (
 urlpatterns = [
     # Authentication
     path("auth/refresh/", RefreshTokenAPIView.as_view(), name="token_refresh"),
-    path("auth/login/", LoginAPIView.as_view(), name="auth-login"),
-    path("auth/logout/", LogoutAPIView.as_view(), name="auth-logout"),
     path(
         "auth/password-reset/",
         PasswordResetAPIView.as_view(),

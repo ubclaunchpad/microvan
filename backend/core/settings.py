@@ -66,7 +66,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
-    "util.middleware.RefreshTokenMiddleware",
+    "util.middleware.JWTAuthenticationMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -159,22 +159,29 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "util.authentication.AWSCognitoIDTokenAuthentication",
-    ),
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
-}
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "django_cognito_jwt.backend.JWTBackend",
+]
 
-SIMPLE_JWT = {
-    "ALGORITHM": "RS256",
-    "AUDIENCE": COGNITO_APP_CLIENT_ID,
-    "ISSUER": "https://cognito-idp.{region}.amazonaws.com/{userPoolId}".format(
-        region=AWS_S3_REGION_NAME,
-        userPoolId=COGNITO_USER_POOL_ID,
-    ),
-    "JWK_URL": "https://cognito-idp.{region}.amazonaws.com/{userPoolId}/.well-known/jwks.json".format(
-        region=AWS_S3_REGION_NAME,
-        userPoolId=COGNITO_USER_POOL_ID,
-    ),
-}
+COGNITO_PUBLIC_KEYS_URL = f"https://cognito-idp.{AWS_S3_REGION_NAME}.amazonaws.com/{COGNITO_USER_POOL_ID}/.well-known/jwks.json"
+
+# REST_FRAMEWORK = {
+#     "DEFAULT_AUTHENTICATION_CLASSES": (
+#         "util.authentication.AWSCognitoIDTokenAuthentication",
+#     ),
+#     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
+# }
+
+# SIMPLE_JWT = {
+#     "ALGORITHM": "RS256",
+#     "AUDIENCE": COGNITO_APP_CLIENT_ID,
+#     "ISSUER": "https://cognito-idp.{region}.amazonaws.com/{userPoolId}".format(
+#         region=AWS_S3_REGION_NAME,
+#         userPoolId=COGNITO_USER_POOL_ID,
+#     ),
+#     "JWK_URL": "https://cognito-idp.{region}.amazonaws.com/{userPoolId}/.well-known/jwks.json".format(
+#         region=AWS_S3_REGION_NAME,
+#         userPoolId=COGNITO_USER_POOL_ID,
+#     ),
+# }
