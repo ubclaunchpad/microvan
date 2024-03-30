@@ -28,12 +28,11 @@ class Auction(MainModel):
 
 
 class AuctionDay(MainModel):
-    auction = models.ForeignKey(
-        Auction, on_delete=models.CASCADE, related_name='days')
+    auction = models.ForeignKey(Auction, on_delete=models.CASCADE, related_name="days")
     date = models.DateField(null=False)
 
     class Meta:
-        unique_together = ('auction', 'date')
+        unique_together = ("auction", "date")
 
 
 class AuctionItem(MainModel):
@@ -42,13 +41,14 @@ class AuctionItem(MainModel):
     """
 
     auction_day = models.ForeignKey(
-        AuctionDay, on_delete=models.PROTECT, related_name='items')
+        AuctionDay, on_delete=models.PROTECT, related_name="items"
+    )
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     object_id = models.UUIDField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey("content_type", "object_id")
 
     class Meta:
-        unique_together = ('auction_day', 'content_type', 'object_id')
+        unique_together = ("auction_day", "content_type", "object_id")
 
     def save(self, *args, **kwargs):
         self.clean()
@@ -61,4 +61,4 @@ class AuctionVerifiedUser(MainModel):
     is_verified = models.BooleanField(default=False)
 
     class Meta:
-        unique_together = ('cognito_user_id', 'auction')
+        unique_together = ("cognito_user_id", "auction")

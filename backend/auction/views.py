@@ -1,76 +1,82 @@
 from datetime import datetime
 
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import Prefetch
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core.permissions import IsAdminUser
 from services.AWSCognitoService import AWSCognitoService
+from user.serializers import UserSerializer
 from vehicle.models import Equipment, SavedUnits, Trailer, Vehicle
+from vehicle.serializers import (
+    EquipmentSerializer,
+    TrailerSerializer,
+    VehicleSerializer,
+)
 
-from .models import Auction, AuctionItem
+from .models import Auction, AuctionDay, AuctionItem, AuctionVerifiedUser
 from .serializers import AuctionSerializer
 
 
 class AuctionListApiView(APIView):
-    def get_permissions(self):
-        if self.request.method == "POST":
-            self.permission_classes = [IsAdminUser]
-        return super().get_permissions()
+    permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
         """
-        Get all auctions
+        Get all auctions with counts of different types of items.
         """
-        auctions = Auction.objects.all()
-        serializer = AuctionSerializer(auctions, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        auctions = Auction.objects.all().prefetch_related(
+            Prefetch(
+                "days",
+                queryset=AuctionDay.objects.prefetch_related(
+                    Prefetch(
+                        "items",
+                        queryset=AuctionItem.objects.select_related("content_object"),
+                    )
+                ),
+            )
+        )
+
+        auctions_data = []
+        for auction in auctions:
+            truck_count = 0
+            equipment_count = 0
+            trailer_count = 0
+
+            for day in auction.days.all():
+                for item in day.items.all():
+                    if isinstance(item.content_object, Vehicle):
+                        truck_count += 1
+                    elif isinstance(item.content_object, Equipment):
+                        equipment_count += 1
+                    elif isinstance(item.content_object, Trailer):
+                        trailer_count += 1
+
+            auction_data = AuctionSerializer(auction).data
+            auction_data.update(
+                {
+                    "truck_count": truck_count,
+                    "equipment_count": equipment_count,
+                    "trailer_count": trailer_count,
+                }
+            )
+
+            auctions_data.append(auction_data)
+
+        return Response(auctions_data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         """
-        Create the Auction with given auction data
+        Create an Auction with given data, including start and end times.
         """
-        date_format = "%Y-%m-%d"
-
-        # Check if start_date and end_date are provided
-        if (
-            request.data.get("start_date") is None
-            or request.data.get("end_date") is None
-        ):
-            return Response(
-                {"error": "Start date and end date are required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        start_date = datetime.strptime(request.data.get("start_date"), date_format)
-        end_date = datetime.strptime(request.data.get("end_date"), date_format)
-
-        # Check if start date is in the past
-        if start_date.date() < datetime.now().date():
-            return Response(
-                {"error": "Start date should be in the future"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Check if end date is before start date
-        if end_date < start_date:
-            return Response(
-                {"error": "End date should be after start date"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        data = {
-            "name": request.data.get("name"),
-            "start_date": start_date,
-            "end_date": end_date,
-        }
-        serializer = AuctionSerializer(data=data)
+        serializer = AuctionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -86,13 +92,57 @@ class AuctionDetailApiView(APIView):
             self.permission_classes = [AllowAny]
         return super().get_permissions()
 
-    def get(self, request, auction_id, format=None):
+    def get(self, request, auction_id, *args, **kwargs):
+        auction_day_date = request.query_params.get("date")
+
         auction = get_object_or_404(Auction, id=auction_id)
-        serializer = AuctionSerializer(auction)
-        return Response(serializer.data)
+
+        if auction_day_date:
+            auction_day = get_object_or_404(
+                AuctionDay, auction=auction, date=auction_day_date
+            )
+            items = AuctionItem.objects.filter(auction_day=auction_day).select_related(
+                "content_object"
+            )
+
+            vehicles = [
+                VehicleSerializer(item.content_object).data
+                for item in items
+                if isinstance(item.content_object, Vehicle)
+            ]
+            equipment = [
+                EquipmentSerializer(item.content_object).data
+                for item in items
+                if isinstance(item.content_object, Equipment)
+            ]
+            trailers = [
+                TrailerSerializer(item.content_object).data
+                for item in items
+                if isinstance(item.content_object, Trailer)
+            ]
+
+            return Response(
+                {
+                    "auction": AuctionSerializer(auction).data,
+                    "auction_day": {
+                        "date": auction_day_date,
+                        "vehicles": vehicles,
+                        "equipment": equipment,
+                        "trailers": trailers,
+                    },
+                },
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                {
+                    "auction": AuctionSerializer(auction).data,
+                },
+                status=status.HTTP_200_OK,
+            )
 
     def put(self, request, auction_id, format=None):
-        auction = get_object_or_404(Auction, id=auction_id)
+        auction = get_object_or_404(Auction, pk=auction_id)
         serializer = AuctionSerializer(auction, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -100,7 +150,7 @@ class AuctionDetailApiView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, auction_id, format=None):
-        auction = get_object_or_404(Auction, id=auction_id)
+        auction = get_object_or_404(Auction, pk=auction_id)
         auction.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -192,27 +242,31 @@ class GetSavedUnitApiView(APIView):
 
 
 class AddToAuctionApiView(APIView):
-    """
-    Takes in a vehicle and auction ID and associates
-    it with an auction by creating an AuctionItem
-    """
-
     permission_classes = [IsAdminUser]
 
     def post(self, request, *args, **kwargs):
-        auction_id = kwargs.get("auction_id")
-        vehicle_id = kwargs.get("vehicle_id")
+        auction_day_id = request.data.get("auction_day_id")
+        content_type = request.data.get("content_type")
+        object_id = request.data.get("object_id")
 
-        auction = get_object_or_404(Auction, id=auction_id)
-        vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+        if not all([auction_day_id, content_type, object_id]):
+            return Response(
+                {"error": "Missing required fields."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        auction_item = AuctionItem(auction_id=auction, content_object=vehicle)
-        auction_item.save()
+        try:
+            auction_day = AuctionDay.objects.get(id=auction_day_id)
+            content_type = ContentType.objects.get(model=content_type.lower())
+            item = content_type.get_object_for_this_type(id=object_id)
 
-        return Response(
-            {"message": "Vehicle added to auction successfully"},
-            status=status.HTTP_201_CREATED,
-        )
+            AuctionItem.objects.create(auction_day=auction_day, content_object=item)
+            return Response(
+                {"message": "Item added to auction successfully"},
+                status=status.HTTP_201_CREATED,
+            )
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AuctionVehiclesApiView(APIView):
@@ -252,3 +306,21 @@ class AuctionVehiclesApiView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+
+
+class BidderVerificationApiView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request, auction_id, *args, **kwargs):
+        is_verified = request.query_params.get("verified") == "true"
+
+        verified_users = (
+            AuctionVerifiedUser.objects.filter(
+                auction_id=auction_id, is_verified=is_verified
+            )
+            .select_related("user")
+            .all()
+        )
+
+        user_data = [UserSerializer(user.user).data for user in verified_users]
+        return Response(user_data, status=status.HTTP_200_OK)

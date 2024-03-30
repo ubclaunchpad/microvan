@@ -262,20 +262,6 @@ class AdminDetailApiView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ListUnverified(APIView):
-    permission_classes = [IsAdminUser]
-
-    cognitoService = AWSCognitoService()
-
-    def get(self, request):
-        bidders = self.cognitoService.list_users()
-        unverifiedBidders = []
-        for index in range(len(bidders)):
-            if bidders[index].is_verified is False:
-                unverifiedBidders.append(bidders[index])
-        return Response(unverifiedBidders, status=status.HTTP_200_OK)
-
-
 class ListBlacklisted(APIView):
     permission_classes = [IsAdminUser]
 
@@ -288,20 +274,6 @@ class ListBlacklisted(APIView):
             if bidders[index].is_blacklisted is True:
                 blacklistedBidders.append(bidders[index])
         return Response(blacklistedBidders, status=status.HTTP_200_OK)
-
-
-class ListVerified(APIView):
-    permission_classes = [IsAdminUser]
-
-    cognitoService = AWSCognitoService()
-
-    def get(self, request):
-        bidders = self.cognitoService.list_users()
-        verifiedBidders = []
-        for index in range(len(bidders)):
-            if bidders[index].is_verified is True:
-                verifiedBidders.append(bidders[index])
-        return Response(verifiedBidders, status=status.HTTP_200_OK)
 
 
 class PasswordResetAPIView(APIView):

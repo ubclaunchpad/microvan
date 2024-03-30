@@ -1,10 +1,18 @@
 from django.contrib import admin
 
-from .models import Auction, AuctionItem, AuctionDay, AuctionVerifiedUser
+from .models import Auction, AuctionDay, AuctionItem, AuctionVerifiedUser
 
 
 class AuctionAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "start_date", "end_date", "start_time", "end_time", "is_published")
+    list_display = (
+        "id",
+        "name",
+        "start_date",
+        "end_date",
+        "start_time",
+        "end_time",
+        "is_published",
+    )
     search_fields = ("name",)
     list_filter = ("is_published", "start_date", "end_date")
     ordering = ("-start_date",)

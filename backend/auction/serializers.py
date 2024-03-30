@@ -6,7 +6,16 @@ from .models import Auction, AuctionItem
 class AuctionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Auction
-        fields = ["id", "name", "start_date", "end_date"]
+        fields = [
+            "id",
+            "name",
+            "start_date",
+            "end_date",
+            "start_time",
+            "end_time",
+            "cover_image",
+            "is_published",
+        ]
 
 
 class AuctionItemSerializer(serializers.ModelSerializer):

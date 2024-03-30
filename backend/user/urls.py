@@ -8,8 +8,6 @@ from .views import (
     BidderListApiView,
     BidderVerifyApiView,
     ListBlacklisted,
-    ListUnverified,
-    ListVerified,
     PasswordResetAPIView,
     PasswordResetConfirmAPIView,
     VerifyEmailAPIView,
@@ -44,9 +42,7 @@ urlpatterns = [
         BidderBlacklistApiView.as_view(),
         name="bidder-blacklist",
     ),
-    path("bidders/unverified", ListUnverified.as_view(), name="unverified-list"),
     path("bidders/blacklisted", ListBlacklisted.as_view(), name="blacklisted-list"),
-    path("bidders/verified", ListVerified.as_view(), name="verified-list"),
     # Admins
     path("admins/", AdminListApiView.as_view(), name="admin-list"),
     path("admins/<str:admin_id>/", AdminDetailApiView.as_view(), name="admin-detail"),
