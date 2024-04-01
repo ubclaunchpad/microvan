@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -19,7 +19,7 @@ from vehicle.serializers import (
 )
 
 from .models import Auction, AuctionDay, AuctionItem, AuctionVerifiedUser
-from .serializers import AuctionSerializer
+from .serializers import AuctionSerializer, AuctionVerifiedUserSerializer
 
 
 class AuctionListApiView(APIView):
@@ -35,7 +35,7 @@ class AuctionListApiView(APIView):
                 queryset=AuctionDay.objects.prefetch_related(
                     Prefetch(
                         "items",
-                        queryset=AuctionItem.objects.select_related("content_object"),
+                        queryset=AuctionItem.objects.select_related("content_type"),
                     )
                 ),
             )
@@ -71,12 +71,12 @@ class AuctionListApiView(APIView):
 
     def post(self, request, *args, **kwargs):
         """
-        Create an Auction with given data, including start and end times, 
+        Create an Auction with given data, including start and end times,
         and create AuctionDay models for every day between start_date and end_date inclusive.
         """
         serializer = AuctionSerializer(data=request.data)
         if serializer.is_valid():
-            auction = serializer.save() 
+            auction = serializer.save()
 
             start_date = auction.start_date.date()
             end_date = auction.end_date.date()
@@ -88,8 +88,24 @@ class AuctionListApiView(APIView):
                 current_date += delta
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AuctionDayApiView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, auction_id, *args, **kwargs):
+        auction = get_object_or_404(Auction, id=auction_id)
+        auction_days = AuctionDay.objects.filter(auction=auction)
+        auction_days_data = []
+        for auction_day in auction_days:
+            auction_day_data = {
+                "id": auction_day.id,
+                "date": auction_day.date,
+            }
+            auction_days_data.append(auction_day_data)
+        return Response(auction_days_data, status=status.HTTP_200_OK)
 
 
 class AuctionDetailApiView(APIView):
@@ -253,46 +269,6 @@ class GetSavedUnitApiView(APIView):
         return Response({"vehicles": vehicle_data}, status=status.HTTP_200_OK)
 
 
-class AddToAuctionApiView(APIView):
-    permission_classes = [IsAdminUser]
-
-    def post(self, request, auction_id):
-        auction_day_id = request.data.get("auction_day_id")
-        content_type = request.data.get("content_type")
-        object_ids = request.data.get("object_ids")
-
-        if not all([auction_day_id, content_type, object_ids]):
-            return Response(
-                {"error": "Missing required fields."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        try:
-            auction_day = AuctionDay.objects.get(id=auction_day_id)
-            ct = ContentType.objects.get(model=content_type.lower())
-            successes, failures = 0, 0
-
-            for object_id in object_ids:
-                try:
-                    item = ct.get_object_for_this_type(id=object_id)
-                    AuctionItem.objects.create(auction_day=auction_day, content_object=item)
-                    successes += 1
-                except Exception as inner_exception:
-                    failures += 1
-
-            if failures:
-                return Response(
-                    {"message": f"Items partially added to auction. Success: {successes}, Failures: {failures}"},
-                    status=status.HTTP_207_MULTI_STATUS,
-                )
-            return Response(
-                {"message": "All items added to auction successfully"},
-                status=status.HTTP_201_CREATED,
-            )
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
 class AuctionVehiclesApiView(APIView):
     """
     An endpoint to retrieve an auction's associated vehicles
@@ -300,8 +276,14 @@ class AuctionVehiclesApiView(APIView):
 
     cognitoService = AWSCognitoService()
 
-    def get(self, request, **kwargs):
-        auction_day_id = kwargs.get("auction_day_id")
+    def get_permissions(self):
+        if self.request.method == "GET":
+            self.permission_classes = [IsAuthenticated]
+        else:
+            self.permission_classes = [IsAdminUser]
+        return super().get_permissions()
+
+    def get(self, request, auction_id, auction_day_id):
         auction_day = get_object_or_404(AuctionDay, id=auction_day_id)
 
         auction_items = AuctionItem.objects.filter(auction_day=auction_day)
@@ -331,20 +313,93 @@ class AuctionVehiclesApiView(APIView):
             status=status.HTTP_200_OK,
         )
 
+    def post(self, request, auction_id):
+        auction_day_id = request.data.get("auction_day_id")
+        content_type = request.data.get("content_type")
+        object_ids = request.data.get("object_ids")
+
+        if not all([auction_day_id, content_type, object_ids]):
+            return Response(
+                {"error": "Missing required fields."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            auction_day = AuctionDay.objects.get(id=auction_day_id)
+            ct = ContentType.objects.get(model=content_type.lower())
+            successes, failures = 0, 0
+
+            for object_id in object_ids:
+                try:
+                    item = ct.get_object_for_this_type(id=object_id)
+                    AuctionItem.objects.create(
+                        auction_day=auction_day, content_object=item
+                    )
+                    successes += 1
+                except Exception as inner_exception:
+                    failures += 1
+
+            if failures:
+                return Response(
+                    {
+                        "message": f"Items partially added to auction. Success: {successes}, Failures: {failures}"
+                    },
+                    status=status.HTTP_207_MULTI_STATUS,
+                )
+            return Response(
+                {"message": "All items added to auction successfully"},
+                status=status.HTTP_201_CREATED,
+            )
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class BidderVerificationApiView(APIView):
-    permission_classes = [IsAdminUser]
+    def get_permissions(self):
+        if self.request.method == "GET":
+            self.permission_classes = [IsAuthenticated]
+        else:
+            self.permission_classes = [IsAdminUser]
+        return super().get_permissions()
 
     def get(self, request, auction_id, *args, **kwargs):
-        is_verified = request.query_params.get("verified") == "true"
+        bidder_id = request.query_params.get("bidder_id")
+        is_verified_param = request.query_params.get("verified")
 
-        verified_users = (
-            AuctionVerifiedUser.objects.filter(
-                auction_id=auction_id, is_verified=is_verified
-            )
-            .select_related("user")
-            .all()
+        query = Q(auction_id=auction_id)
+
+        if bidder_id is not None:
+            query &= Q(cognito_user_id=bidder_id)
+
+        if is_verified_param is not None:
+            is_verified = is_verified_param.lower() == "true"
+            query &= Q(is_verified=is_verified)
+
+        verified_users = AuctionVerifiedUser.objects.filter(query).all()
+
+        serialized_data = AuctionVerifiedUserSerializer(verified_users, many=True)
+        return Response(serialized_data.data, status=status.HTTP_200_OK)
+
+    def post(self, request, auction_id):
+        bidder_id = request.data.get("bidder_id")
+        is_verified = request.data.get("is_verified")
+
+        bidderVerification = AuctionVerifiedUser.objects.create(
+            auction_id=auction_id, cognito_user_id=bidder_id, is_verified=is_verified
         )
 
-        user_data = [UserSerializer(user.user).data for user in verified_users]
-        return Response(user_data, status=status.HTTP_200_OK)
+        serialized_data = AuctionVerifiedUserSerializer(bidderVerification)
+        return Response(serialized_data.data, status=status.HTTP_201_CREATED)
+
+    def put(self, request, auction_id):
+        bidder_id = request.data.get("bidder_id")
+        is_verified = request.data.get("is_verified")
+
+        bidderVerification = get_object_or_404(
+            AuctionVerifiedUser, auction_id=auction_id, cognito_user_id=bidder_id
+        )
+        bidderVerification.is_verified = is_verified
+        bidderVerification.save()
+
+        serialized_data = AuctionVerifiedUserSerializer(bidderVerification)
+        return Response(serialized_data.data, status=status.HTTP_200_OK)

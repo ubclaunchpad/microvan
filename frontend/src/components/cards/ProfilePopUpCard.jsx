@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router';
 import HistoryIcon from '@mui/icons-material/History';
 import PersonIcon from '@mui/icons-material/Person';
 import LogOutButton from '../buttons/LogOutButton';
-import { useAuth } from "../../providers/AuthProvider";
+import { useAuth } from '../../providers/AuthProvider';
+import { useUser } from '../../providers/UserProvider';
 
 export default function ProfilePopUpCard({ bidderID }) {
 	const navigate = useNavigate();
 	const { logout } = useAuth();
+	const user = useUser();
 
 	const handleLogOut = async () => {
 		try {
@@ -30,7 +32,7 @@ export default function ProfilePopUpCard({ bidderID }) {
 								<div className="flex flex-col items-center">
 									<div className="flex flex-col justify-center">
 										<span className="font-poppins text-xl font-semibold leading-10 text-center bg-gray-600">
-											Bidder ID: #123456
+											{`Bidder ID: #${user?.['custom:bidder_number']}`}
 										</span>
 										<span>{bidderID}</span>
 									</div>

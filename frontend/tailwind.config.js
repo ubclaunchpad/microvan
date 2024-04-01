@@ -29,6 +29,7 @@ module.exports = {
 				navBarShadow: '0px 2px 4px 0px rgba(22, 22, 22, 0.10)',
 				searchBarShadow: '0px 4px 16px 0px rgba(22, 22, 22, 0.10)',
 				auctionCardShadow: '10px 10px 50px 0px rgba(0, 0, 0, 0.25)',
+				defaultAuctionCardShadow: '10px 10px 25px 0px rgba(0, 0, 0, 0.20)',
 				upcomingAuctionCountdownShadow: '0px 4px 10px 0px rgba(0, 0, 0, 0.25)',
 				filterBoxShadow: 'drop-shadow(0px 2px 4px rgba(22, 22, 22, 0.10))',
 			},

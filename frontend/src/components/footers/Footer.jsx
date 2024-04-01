@@ -12,19 +12,19 @@ export default function Footer() {
 
 	return (
 		<div className="w-full h-[326px] bg-dark-green flex flex-col items-center">
-			<div className="w-[85%] h-full text-mv-white justify-between flex items-center">
+			<div className="w-[85%] h-full text-mv-white justify-between flex items-start pt-[43px]">
 				<div className="flex flex-col">
-					<div className="flex flex-col mb-8">
-						<h3 className="text-[28px] font-medium">Still have questions?</h3>
-						<p className="text-lg font-normal">We&apos;re here to help.</p>
+					<div className="flex flex-col mb-[30px] gap-y-[4px]">
+						<h3 className="text-2xl font-medium">Still have questions?</h3>
+						<p className="text-base font-normal">We&apos;re here to help.</p>
 					</div>
-					<div className="mb-10 w-[80%]">
+					<div className="mb-[55px] w-[80%]">
 						<ContactUsButton onClick={handleContactUsButton} />
 					</div>
-					<p className="text-lg font-normal">© Microvan Inc. 2024</p>
+					<p className="text-base font-normal">© Microvan Inc. 2024</p>
 				</div>
 				<div className="flex flex-col w-[30%]">
-					<h3 className="text-[19px] font-semibold">Our Hours:</h3>
+					<h3 className="text-base font-semibold">Our Hours:</h3>
 					<div className="flex flex-col">
 						{[
 							{ day: 'Monday', hours: '8am-5pm' },
@@ -36,12 +36,10 @@ export default function Footer() {
 							{ day: 'Sunday', hours: 'Closed' },
 						].map((schedule) => (
 							<div className="flex gap-x-10">
-								<p className="text-[19px] font-normal flex-1 text-left pr-4">
+								<p className="text-base font-normal flex-1 text-left pr-4">
 									{schedule.day}
 								</p>
-								<p className="text-[19px] font-normal flex-1">
-									{schedule.hours}
-								</p>
+								<p className="text-base font-normal flex-1">{schedule.hours}</p>
 							</div>
 						))}
 					</div>

@@ -5,11 +5,11 @@ import ListingsPage from '../pages/ListingsPage';
 import ContactUsPage from '../pages/ContactUsPage';
 import OnboardPage from '../pages/OnboardingPage';
 import BidderLogInPage from '../pages/auth/bidders/BidderLogInPage';
-import BidderRegisterPage from '../pages/auth/bidders/BidderRegisterPage';
 import ForgotPasswordPage from '../pages/auth/bidders/ForgotPasswordPage';
+import BidderRegisterPage from '../pages/auth/bidders/BidderRegisterPage';
 import BidderEmailVerificationPage from '../pages/auth/bidders/BidderEmailVerificationPage';
-import VehicleDetailsPage from '../pages/VehicleDetailsPage';
 import BidderEmailVerifiedPage from '../pages/auth/bidders/BidderEmailVerifiedPage';
+import VehicleDetailsPage from '../pages/VehicleDetailsPage';
 
 export default function Routers() {
 	return (
@@ -30,9 +30,7 @@ export default function Routers() {
 					path="/register/verified"
 					element={<BidderEmailVerifiedPage />}
 				/>
-				<Route path="/test" element={<VehicleDetailsPage />} />{' '}
-				{/* This is a test page */}
-				<Route path="*" element={<Navigate to="/" replace />} />
+				<Route path="*" element={<Navigate to="/" replace />} />)
 			</Routes>
 		</div>
 	);

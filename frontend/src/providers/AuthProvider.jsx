@@ -1,15 +1,23 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import React, {
+	createContext,
+	useContext,
+	useMemo,
+	useState,
+	useEffect,
+} from 'react';
 import {
 	CognitoUserPool,
 	CognitoUser,
 	AuthenticationDetails,
 } from 'amazon-cognito-identity-js';
+import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext(null);
 
 export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }) {
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 	const userPool = new CognitoUserPool({
 		UserPoolId: process.env.REACT_APP_USER_POOL_ID,
@@ -30,6 +38,7 @@ export function AuthProvider({ children }) {
 
 			cognitoUser.authenticateUser(authenticationDetails, {
 				onSuccess: (result) => {
+					setIsLoggedIn(true);
 					resolve(result);
 				},
 				onFailure: (err) => {
@@ -42,6 +51,7 @@ export function AuthProvider({ children }) {
 		const cognitoUser = userPool.getCurrentUser();
 		if (cognitoUser) {
 			cognitoUser.signOut();
+			setIsLoggedIn(false);
 		}
 	};
 
@@ -76,6 +86,10 @@ export function AuthProvider({ children }) {
 					return;
 				}
 
+				const group = jwtDecode(session.getIdToken().getJwtToken())[
+					'cognito:groups'
+				][0];
+
 				cognitoUser.getUserAttributes((error, attributes) => {
 					if (error) {
 						reject(error);
@@ -87,31 +101,17 @@ export function AuthProvider({ children }) {
 						return acc;
 					}, {});
 
-					cognitoUser.getUserGroups((e, result) => {
-						if (e) {
-							reject(e);
-							return;
-						}
-
-						const groups = result.Groups.map((group) => group.GroupName);
-						resolve({ ...userAttributes, groups });
-					});
+					resolve({ ...userAttributes, group });
 				});
 			});
 		});
 	};
 
-	const isLoggedIn = () =>
-		new Promise((resolve) => {
-			const cognitoUser = userPool.getCurrentUser();
-			if (!cognitoUser) {
-				resolve(false);
-				return;
-			}
-			cognitoUser.getSession((err, session) => {
-				resolve(!err && session.isValid());
-			});
-		});
+	useEffect(() => {
+		getSession()
+			.then(() => setIsLoggedIn(true))
+			.catch(() => setIsLoggedIn(false));
+	}, []);
 
 	const value = useMemo(
 		() => ({
@@ -121,7 +121,7 @@ export function AuthProvider({ children }) {
 			getUserInfo,
 			isLoggedIn,
 		}),
-		[]
+		[isLoggedIn]
 	);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

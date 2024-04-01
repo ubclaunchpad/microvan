@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Auction, AuctionItem
+from .models import Auction, AuctionItem, AuctionVerifiedUser
 
 
 class AuctionSerializer(serializers.ModelSerializer):
@@ -22,3 +22,9 @@ class AuctionItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = AuctionItem
         fields = ["auction_id", "content_type", "object_id"]
+
+
+class AuctionVerifiedUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AuctionVerifiedUser
+        fields = ["auction_id", "cognito_user_id", "is_verified"]

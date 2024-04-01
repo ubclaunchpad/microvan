@@ -31,7 +31,7 @@ export default function BidderRegisterPage() {
 
 	const handleRegisterUser = () => {
 		fetchData({
-			endpoint: '/bidders/',
+			endpoint: '/v1/bidders',
 			method: 'POST',
 			data: {
 				email,

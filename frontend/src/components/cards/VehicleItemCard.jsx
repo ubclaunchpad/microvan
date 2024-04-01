@@ -28,7 +28,16 @@ export default function VehicleItemCard({
 			</div>
 			<div className="w-2/3 flex pl-[46px] pt-[42px] pb-[30px] pr-[36px]">
 				<div className="w-[70%] flex flex-col gap-y-[21px]">
-					<div className="font-semibold text-xl text-mv-black tracking-[0.5px] leading-7">
+					<div
+						className="font-semibold text-xl text-mv-black tracking-[0.5px] leading-7"
+						style={{
+							display: '-webkit-box',
+							WebkitLineClamp: 3,
+							WebkitBoxOrient: 'vertical',
+							overflow: 'hidden',
+							textOverflow: 'ellipsis',
+						}}
+					>
 						{description}
 					</div>
 

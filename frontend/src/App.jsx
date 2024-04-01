@@ -1,12 +1,12 @@
 import React from 'react';
 import Routers from './routers/Routers';
-import { AuthProvider } from './providers/AuthProvider';
+import { UserProvider } from './providers/UserProvider';
 
 function App() {
 	return (
-		<AuthProvider>
+		<UserProvider>
 			<Routers />
-		</AuthProvider>
+		</UserProvider>
 	);
 }
 

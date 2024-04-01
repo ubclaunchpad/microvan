@@ -12,7 +12,7 @@ export default function ListingSearchBar({ setResults }) {
 
 		try {
 			const response = await fetchData({
-				url: `vehicles?search=${input}`,
+				url: `/v1/vehicles?search=${input}`,
 				method: 'GET',
 			});
 			setResults(response.data);
