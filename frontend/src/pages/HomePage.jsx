@@ -43,7 +43,11 @@ export default function HomePage() {
 				});
 				const auctionList = sortAuctions(auctionsResponse.data);
 
-				if (user && auctionList.current.length > 0) {
+				setUpcomingAuctionList(auctionList.upcoming);
+				setCurrentAuctionList(auctionList.current);
+				setPastAuctionList(auctionList.past);
+
+				if (user && isLoggedIn && auctionList.current.length > 0) {
 					const response = await fetchData({
 						endpoint: `/v1/auctions/${auctionList.current[0].id}/verification?bidder_id=${user.sub}`,
 						method: 'GET',
@@ -52,9 +56,6 @@ export default function HomePage() {
 					setCurrentVerified(
 						response.data.length > 0 ? response.data[0].is_verified : null
 					);
-					setUpcomingAuctionList(auctionList.upcoming);
-					setCurrentAuctionList(auctionList.current);
-					setPastAuctionList(auctionList.past);
 				}
 			} catch (error) {
 				/* empty */

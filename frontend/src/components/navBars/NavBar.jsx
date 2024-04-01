@@ -6,7 +6,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import logo from '../../assets/microvan_logo.svg';
 import { useAuth } from '../../providers/AuthProvider';
-import ProfilePopUpCard from '../cards/ProfilePopUpCard';
+import ProfilePopUpModal from '../modals/ProfilePopUpModal';
 
 export default function NavBar() {
 	const [notificationHover, setNotificationHover] = useState(false);
@@ -115,7 +115,7 @@ export default function NavBar() {
 								zIndex: 100,
 							}}
 						>
-							<ProfilePopUpCard />
+							<ProfilePopUpModal />
 						</div>
 					)}
 				</div>
