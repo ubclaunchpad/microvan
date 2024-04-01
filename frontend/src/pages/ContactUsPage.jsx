@@ -15,10 +15,15 @@ export default function ContactUsPage() {
 
 	useEffect(() => {
 		if (user) {
-			setName(`${user.given_name} ${user.family_name}`);
-			setEmail(user.email);
-			setPhoneNumber(user.phone_number);
-			setBidderNumber(user?.['custom:bidder_number'] ?? '');
+			setName(`${user.given_name || ''} ${user.family_name || ''}`);
+			setEmail(user.email || '');
+			setPhoneNumber(user.phone_number || '');
+			setBidderNumber(user['custom:bidder_number'] || '');
+		} else {
+			setName('');
+			setEmail('');
+			setPhoneNumber('');
+			setBidderNumber('');
 		}
 	}, [user]);
 
