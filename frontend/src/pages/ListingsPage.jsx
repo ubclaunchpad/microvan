@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { ScrollRestoration } from 'react-router-dom';
 import NavBar from '../components/navBars/NavBar';
 import CurrentAuctionCountdown from '../components/timers/CurrentAuctionCountdown';
 import ListingSearchBar from '../components/searchBars/ListingsSearchBar';
@@ -17,13 +17,16 @@ import {
 } from '../utils/dateTime';
 
 export default function ListingsPage() {
-	const location = useLocation();
-	const { auction, vehicles } = location.state;
-
+	const [auction, setAuction] = useState(null);
 	const [units, setUnits] = useState([]);
 	const [brands, setBrands] = useState([]);
 	const [types, setTypes] = useState([]);
-	const [sortByItems, setSortByItems] = useState([]);
+	const [sortByItems, setSortByItems] = useState([
+		'All',
+		'Trucks',
+		'Equipments',
+		'Trailers',
+	]);
 	const [selectedSortBy, setSelectedSortBy] = useState('All');
 	const [selectedType, setSelectedType] = useState('All');
 	const [selectedBrand, setSelectedBrand] = useState('All');
@@ -48,50 +51,88 @@ export default function ListingsPage() {
 	};
 
 	useEffect(() => {
-		const fetchUnits = async () => {
-			const vehiclePromises = vehicles.vehicles.map((vehicle) =>
-				fetchData({
-					endpoint: `/v1/vehicles/${vehicle.id}`,
+		const fetchAuctionAndVehicles = async () => {
+			try {
+				// Step 1: Fetch the current auction
+				const currentAuctionResponse = await fetchData({
+					endpoint: '/v1/auctions/current',
 					method: 'GET',
-				})
-			);
+				});
+				const currentAuction = currentAuctionResponse.data;
 
-			const vehicleData = (await Promise.all(vehiclePromises)).map(
-				(vehicle) => vehicle.data
-			);
+				if (!currentAuction.id) {
+					return;
+				}
 
-			setUnits(vehicleData);
-			setBrands([
-				'All',
-				...new Set(vehicleData.map((vehicle) => vehicle.brand_name)),
-			]);
-			setTypes([
-				'All',
-				...new Set(vehicleData.map((vehicle) => vehicle.vehicle_type_name)),
-			]);
+				setAuction(currentAuction);
+
+				const dateResponse = await fetchData({
+					endpoint: `/v1/auctions/${currentAuction.id}/day`,
+					method: 'GET',
+				});
+
+				const auctionDayId = dateResponse.data.find((day) => {
+					const requestDate = new Date(day.date).setHours(0, 0, 0, 0);
+					const currentDate = new Date().setHours(0, 0, 0, 0);
+					return requestDate === currentDate;
+				})?.id;
+
+				if (!auctionDayId) {
+					return;
+				}
+
+				const brandSet = new Set();
+				const typeSet = new Set();
+
+				const vehiclesResponse = await fetchData({
+					endpoint: `/v1/auctions/${currentAuction.id}/days/${auctionDayId}/vehicles`,
+					method: 'GET',
+				});
+
+				setSortByItems(
+					['All', 'Trucks', 'Equipments', 'Trailers'].filter((item) => {
+						if (item === 'Trucks') {
+							return vehiclesResponse.data.vehicles.length > 0;
+						}
+						if (item === 'Equipments') {
+							return vehiclesResponse.data.equipment.length > 0;
+						}
+						if (item === 'Trailers') {
+							return vehiclesResponse.data.trailers.length > 0;
+						}
+						return true;
+					})
+				);
+
+				const vehicleIds = vehiclesResponse.data.vehicles;
+
+				vehicleIds.forEach(async (vehicle) => {
+					const vehicleResponse = await fetchData({
+						endpoint: `/v1/vehicles/${vehicle.id}`,
+						method: 'GET',
+					});
+
+					const vehicleData = vehicleResponse.data;
+
+					setUnits((prevUnits) => [...prevUnits, vehicleData]);
+
+					brandSet.add(vehicleData.brand_name);
+					typeSet.add(vehicleData.vehicle_type_name);
+					setBrands(['All', ...brandSet]);
+					setTypes(['All', ...typeSet]);
+				});
+			} catch (error) {
+				/* empty */
+			}
 		};
 
-		fetchUnits();
+		fetchAuctionAndVehicles();
+	}, []);
 
-		const itemsSortBy = ['All'];
-		if (vehicles?.vehicles?.length > 0) {
-			itemsSortBy.push('Trucks');
-		}
-		if (vehicles?.equipments?.length > 0) {
-			itemsSortBy.push('Equipments');
-		}
-		if (vehicles?.trailers?.length > 0) {
-			itemsSortBy.push('Trailers');
-		}
-		setSortByItems(itemsSortBy);
-	}, [vehicles]);
-
-	const auctionTitle = `Auction Listings (${formatFlexibleDateRange(
-		new Date(auction?.start_date),
-		new Date(auction?.end_date)
-	)})`;
-
-	if (new Date().getTime() < new Date(auction?.start_date).getTime()) {
+	if (
+		!auction ||
+		new Date().getTime() < new Date(auction?.start_date).getTime()
+	) {
 		return (
 			<div className="flex flex-col justify-between min-h-screen max-h-screen max-w-screen min-w-screen">
 				<div className="flex flex-col w-full">
@@ -99,7 +140,7 @@ export default function ListingsPage() {
 					<div className="flex flex-col w-[85%] mx-auto">
 						<div className="flex flex-col gap-y-[69px] mt-[46px]">
 							<h1 className="text-mv-black text-2xl font-semibold">
-								{auctionTitle}
+								Auction Listings
 							</h1>
 							<p className="text-mv-black text-base font-base">
 								Currently, there is no ongoing auction. Please come back next
@@ -124,12 +165,16 @@ export default function ListingsPage() {
 
 	return (
 		<div className="flex flex-col max-w-screen min-w-screen min-h-screen justify-between">
+			<ScrollRestoration />
 			<NavBar />
 
 			<div className="flex flex-col w-[85%] mx-auto">
 				<div className="mt-[46px]">
 					<h1 className="text-mv-black text-2xl font-semibold">
-						{auctionTitle}
+						{`Auction Listings (${formatFlexibleDateRange(
+							new Date(auction?.start_date),
+							new Date(auction?.end_date)
+						)})`}
 					</h1>
 				</div>
 
@@ -200,6 +245,7 @@ export default function ListingsPage() {
 							{units.map((vehicle) => (
 								<VehicleItemCard
 									key={vehicle.id}
+									vehicleId={vehicle.id}
 									description={vehicle.description}
 									modelNumber={vehicle.model_number}
 									engineNumber={vehicle.engine_number}

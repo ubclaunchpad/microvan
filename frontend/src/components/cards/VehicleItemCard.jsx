@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router';
 import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
 import StarsOutlinedIcon from '@mui/icons-material/StarsOutlined';
@@ -7,6 +8,7 @@ import ViewModelButton from '../buttons/ViewModelButton';
 import QuickViewButton from '../buttons/QuickViewButton';
 
 export default function VehicleItemCard({
+	vehicleId,
 	description,
 	modelNumber,
 	engineNumber,
@@ -14,6 +16,12 @@ export default function VehicleItemCard({
 	price,
 	imageUrl,
 }) {
+	const navigate = useNavigate();
+
+	const handleViewClick = () => {
+		navigate(`/listings/${vehicleId}`);
+	};
+
 	return (
 		<div className="flex w-full h-[314px] rounded-[20px] shadow-searchBarShadow">
 			<div className="w-1/3 relative rounded-l-[20px]">
@@ -78,7 +86,7 @@ export default function VehicleItemCard({
 					<span className="mb-[5px]">
 						<p className="text-mv-black text-[28px] font-medium leading-5 tracking-[0.1px]">{`₱${price}`}</p>
 					</span>
-					<ViewModelButton />
+					<ViewModelButton onClick={handleViewClick} />
 					<span className="mb-[2px]">
 						<p className="text-base text-mv-black font-medium leading-5 tracking-[0.1px]">
 							or

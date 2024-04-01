@@ -1,18 +1,19 @@
 import React from 'react';
+import { RouterProvider } from 'react-router-dom';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
 import './globals.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+import router from './routers/Routers';
 import { AuthProvider } from './providers/AuthProvider';
+import { UserProvider } from './providers/UserProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-	<BrowserRouter>
-		<AuthProvider>
-			<App />
-		</AuthProvider>
-	</BrowserRouter>
+	<AuthProvider>
+		<UserProvider>
+			<RouterProvider router={router} />
+		</UserProvider>
+	</AuthProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

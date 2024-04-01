@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, ScrollRestoration } from 'react-router-dom';
 import NavBar from '../components/navBars/NavBar';
 import CoverImage from '../assets/cover-image.png';
 import AboutMeImage from '../assets/about-me-logo.png';
@@ -24,6 +24,7 @@ import { useUser } from '../providers/UserProvider';
 
 export default function HomePage() {
 	const user = useUser();
+	// eslint-disable-next-line no-unused-vars
 	const [searchedAuctions, setSearchedAuctions] = useState([]);
 	const [currentAuctionList, setCurrentAuctionList] = useState([]);
 	const [upcomingAuctionList, setUpcomingAuctionList] = useState([]);
@@ -64,29 +65,7 @@ export default function HomePage() {
 	}, [isLoggedIn, user]);
 
 	const handleStartBiddingButton = async () => {
-		const dateResponse = await fetchData({
-			endpoint: `/v1/auctions/${currentAuctionList[0].id}/day`,
-			method: 'GET',
-		});
-
-		const auctionDayId = dateResponse.data.find((day) => {
-			const requestDate = new Date(day.date);
-			requestDate.setHours(0, 0, 0, 0);
-
-			const currentDate = new Date();
-			currentDate.setHours(0, 0, 0, 0);
-
-			return requestDate.getTime() === currentDate.getTime();
-		}).id;
-
-		const response = await fetchData({
-			endpoint: `/v1/auctions/${currentAuctionList[0].id}/days/${auctionDayId}/vehicles`,
-			method: 'GET',
-		});
-
-		navigate('/listings', {
-			state: { auction: currentAuctionList[0], vehicles: response.data },
-		});
+		navigate('/listings');
 	};
 
 	let upcomingAuctionButton = <LogInJoinAuctionButton />;
@@ -104,6 +83,7 @@ export default function HomePage() {
 
 	return (
 		<div className="min-w-screen max-w-screen">
+			<ScrollRestoration />
 			<div className="relative min-h-screen">
 				<div className="top-0 left-0 w-full z-50">
 					<NavBar />

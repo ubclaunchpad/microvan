@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Prefetch, Q
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -106,6 +107,34 @@ class AuctionDayApiView(APIView):
             }
             auction_days_data.append(auction_day_data)
         return Response(auction_days_data, status=status.HTTP_200_OK)
+
+
+class CurrentAuctionApiView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        """
+        Get the current auction
+        """
+        today = timezone.now().date()
+        current_auctions = Auction.objects.filter(
+            start_date__lte=today, end_date__gte=today
+        )
+
+        if not current_auctions.exists():
+            return Response(
+                {"message": "No current auction found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        current_auction = current_auctions.first()
+
+        serialized_data = AuctionSerializer(current_auction)
+
+        return Response(
+            serialized_data.data,
+            status=status.HTTP_200_OK,
+        )
 
 
 class AuctionDetailApiView(APIView):

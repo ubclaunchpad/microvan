@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, ScrollRestoration } from 'react-router-dom';
 import logo from '../../../assets/microvan_logo.svg';
 import OnboardingInputField from '../../../components/inputs/OnboardingInputField';
 import LogInButton from '../../../components/buttons/LogInButton';
@@ -29,6 +29,7 @@ export default function BidderLogInPage() {
 
 	return (
 		<div className="flex flex-col items-center justify-between min-h-screen min-w-screen bg-mv-white">
+			<ScrollRestoration />
 			<div className="self-start pl-[29px] pt-[27px]">
 				<button
 					type="button"

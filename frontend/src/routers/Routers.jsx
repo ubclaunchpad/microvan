@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import HomePage from '../pages/HomePage';
 import ListingsPage from '../pages/ListingsPage';
 import ContactUsPage from '../pages/ContactUsPage';
@@ -11,27 +11,17 @@ import BidderEmailVerificationPage from '../pages/auth/bidders/BidderEmailVerifi
 import BidderEmailVerifiedPage from '../pages/auth/bidders/BidderEmailVerifiedPage';
 import VehicleDetailsPage from '../pages/VehicleDetailsPage';
 
-export default function Routers() {
-	return (
-		<div>
-			<Routes>
-				<Route path="/" element={<HomePage />} />
-				<Route path="/listings" element={<ListingsPage />} />
-				<Route path="/contact" element={<ContactUsPage />} />
-				<Route path="/onboard" element={<OnboardPage />} />
-				<Route path="/signin" element={<BidderLogInPage />} />
-				<Route path="/signin/forgotpassword" element={<ForgotPasswordPage />} />
-				<Route path="/register" element={<BidderRegisterPage />} />
-				<Route
-					path="/register/email"
-					element={<BidderEmailVerificationPage />}
-				/>
-				<Route
-					path="/register/verified"
-					element={<BidderEmailVerifiedPage />}
-				/>
-				<Route path="*" element={<Navigate to="/" replace />} />)
-			</Routes>
-		</div>
-	);
-}
+const router = createBrowserRouter([
+	{ path: '/', element: <HomePage /> },
+	{ path: '/listings', element: <ListingsPage /> },
+	{ path: '/listings/:vehicleId', element: <VehicleDetailsPage /> },
+	{ path: '/contact', element: <ContactUsPage /> },
+	{ path: '/onboard', element: <OnboardPage /> },
+	{ path: '/signin', element: <BidderLogInPage /> },
+	{ path: '/signin/forgotpassword', element: <ForgotPasswordPage /> },
+	{ path: '/register', element: <BidderRegisterPage /> },
+	{ path: '/register/email', element: <BidderEmailVerificationPage /> },
+	{ path: '/register/verified', element: <BidderEmailVerifiedPage /> },
+]);
+
+export default router;

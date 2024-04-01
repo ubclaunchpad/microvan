@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
 import StarsOutlinedIcon from '@mui/icons-material/StarsOutlined';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams, ScrollRestoration } from 'react-router-dom';
 import NavBar from '../components/navBars/NavBar';
 import Footer from '../components/footers/Footer';
 import VehicleDetailsCountdown from '../components/timers/VehicleDetailsCountdown';
@@ -18,12 +18,31 @@ import BidNowButton from '../components/buttons/BidNowButton';
 import NextSimilarVehicleButton from '../components/buttons/NextSimilarVehicleButton';
 import PreviousSimilarVehicleButton from '../components/buttons/PreviousSimilarVehicleButton';
 import SimilarVehicleCard from '../components/cards/SimilarVehicleCard';
+import useAxios from '../hooks/useAxios';
 
 export default function VehicleDetailsPage() {
 	const navigate = useNavigate();
+	const { fetchData } = useAxios();
+	const [vehicle, setVehicle] = useState(null);
+
+	const { vehicleId } = useParams();
+
+	useEffect(() => {
+		const fetchVehicleData = async () => {
+			const response = await fetchData({
+				endpoint: `/v1/vehicles/${vehicleId}`,
+				method: 'GET',
+			});
+
+			setVehicle(response.data);
+		};
+
+		fetchVehicleData();
+	}, [vehicleId]);
 
 	return (
 		<div className="flex flex-col max-w-screen min-w-screen min-h-screen justify-between">
+			<ScrollRestoration />
 			<NavBar />
 
 			<div className="flex flex-col w-[85%] mx-auto">
@@ -50,14 +69,14 @@ export default function VehicleDetailsPage() {
 					</div>
 					<div className="w-1/2 flex flex-col">
 						<h1 className="text-mv-black text-2xl font-semibold leading-7 tracking-[0.5px]">
-							Hino 10W Tractor Head Double Differential Projector Light 1992
+							{vehicle?.description}
 						</h1>
 						<div className="flex mt-[34px] items-center justify-start gap-x-[40px]">
 							<div className="flex flex-row items-center justify-center gap-x-[20px] text-mv-black">
 								<DirectionsBusIcon className="text-dark-grey w-[25px] h-[25px]" />
 								<div className="flex flex-col leading-6 tracking-[0.5px]">
 									<p className="font-medium">Model</p>
-									<p className="font-normal">SS2VJB</p>
+									<p className="font-normal">{vehicle?.model_number}</p>
 								</div>
 							</div>
 							<div className="flex flex-row justify-between">
@@ -65,7 +84,7 @@ export default function VehicleDetailsPage() {
 									<AgricultureIcon className="text-dark-grey w-[25px] h-[25px]" />
 									<div className="flex flex-col leading-6 tracking-[0.5px]">
 										<p className="font-medium">Chassis</p>
-										<p className="font-normal">SS2VJB-10038</p>
+										<p className="font-normal">{vehicle?.chassis_number}</p>
 									</div>
 								</div>
 							</div>
@@ -73,7 +92,7 @@ export default function VehicleDetailsPage() {
 								<StarsOutlinedIcon className="text-dark-grey w-[25px] h-[25px]" />
 								<div className="flex flex-col leading-6 tracking-[0.5px]">
 									<p className="font-medium">Engine no.</p>
-									<p className="font-normal">V25C-B10153</p>
+									<p className="font-normal">{vehicle?.engine_number}</p>
 								</div>
 							</div>
 						</div>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { ScrollRestoration } from 'react-router-dom';
 import NavBar from '../components/navBars/NavBar';
 import Footer from '../components/footers/Footer';
 import SubmitContactFormButton from '../components/buttons/SubmitContactFormButton';
@@ -43,6 +44,7 @@ export default function ContactUsPage() {
 
 	return (
 		<div className="flex flex-col min-h-screen w-screen">
+			<ScrollRestoration />
 			<NavBar />
 
 			<div className="flex-1 mt-[45.65px] w-full">
