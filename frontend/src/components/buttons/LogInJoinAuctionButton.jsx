@@ -14,7 +14,7 @@ export default function LogInJoinAuctionButton() {
 			className="bg-mv-green rounded-[10px] flex w-full flex-start shrink-0 items-center justify-center h-full"
 			onClick={handleClick}
 		>
-			<div className="text-mv-white text-base font-medium">
+			<div className="text-mv-white text-sm font-medium">
 				Log in to Join Auction
 			</div>
 		</button>

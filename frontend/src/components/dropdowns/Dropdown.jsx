@@ -40,7 +40,7 @@ export default function Dropdown({ title, items, onValueChange }) {
 				}`}
 				onClick={() => setIsOpen(!isOpen)}
 			>
-				<span className="text-mv-black text-xl leading-normal font-normal">
+				<span className="text-mv-black text-base leading-normal font-normal">
 					{selectedValue}
 				</span>
 				<KeyboardArrowDownIcon
@@ -61,7 +61,7 @@ export default function Dropdown({ title, items, onValueChange }) {
 						<button
 							type="button"
 							key={value}
-							className="text-left w-full text-xl text-mv-black font-normal"
+							className="text-left w-full text-base text-mv-black font-normal"
 							style={{ marginTop: index === 0 ? 0 : 20 }}
 							role="menuitem"
 							tabIndex="-1"

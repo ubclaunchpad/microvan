@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, ScrollRestoration } from 'react-router-dom';
 import altLogo from '../assets/alt-microvan-logo.svg';
 import ToRegisterPageButton from '../components/buttons/ToRegisterPageButton';
 import ToLogInPageButton from '../components/buttons/ToLogInPageButton';
@@ -9,6 +9,7 @@ export default function OnboardPage() {
 
 	return (
 		<div className="flex flex-col items-center justify-between min-h-screen min-w-screen bg-mv-green">
+			<ScrollRestoration />
 			<div className="self-start pl-[29px] pt-[27px]">
 				<button
 					type="button"

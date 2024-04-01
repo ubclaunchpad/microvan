@@ -5,7 +5,7 @@ import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined
 import PersonIcon from '@mui/icons-material/Person';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import logo from '../../assets/microvan_logo.svg';
-import useAuth from '../../hooks/useAuth';
+import { useAuth } from '../../providers/AuthProvider';
 import ProfilePopUpCard from '../cards/ProfilePopUpCard';
 
 export default function NavBar() {
@@ -13,7 +13,7 @@ export default function NavBar() {
 	const [personHover, setPersonHover] = useState(false);
 	const [routeToNavigate, setRouteToNavigate] = useState('');
 
-	const { isAuthenticated } = useAuth();
+	const { isLoggedIn } = useAuth();
 	const navigate = useNavigate();
 
 	const location = useLocation();
@@ -30,7 +30,7 @@ export default function NavBar() {
 	}, [routeToNavigate, navigate]);
 
 	const handleAuthenticationClick = (route) => () => {
-		if (!isAuthenticated) {
+		if (!isLoggedIn && (route !== '/contact' || route !== '/')) {
 			setRouteToNavigate('/onboard');
 		} else {
 			setRouteToNavigate(route);

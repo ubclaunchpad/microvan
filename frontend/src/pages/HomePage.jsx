@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useNavigate, ScrollRestoration } from 'react-router-dom';
 import NavBar from '../components/navBars/NavBar';
 import CoverImage from '../assets/cover-image.png';
 import AboutMeImage from '../assets/about-me-logo.png';
@@ -12,63 +13,77 @@ import PastAuctionCard from '../components/cards/PastAuctionCard';
 import LogInJoinAuctionButton from '../components/buttons/LogInJoinAuctionButton';
 import RegisterEarlyButton from '../components/buttons/RegisterEarlyButton';
 import RegisterForAuctionButton from '../components/buttons/RegisterForAuctionButton';
-import useAuth from '../hooks/useAuth';
+import DefaultUpcomingAuctionCard from '../components/cards/DefaultUpcomingAuctionCard';
+import { useAuth } from '../providers/AuthProvider';
 import useAxios from '../hooks/useAxios';
 import sortAuctions from '../utils/auctionUtils';
+import AwaitingApprovalButton from '../components/buttons/AwaitingApprovalButton';
+import StartBiddingButton from '../components/buttons/StartBiddingButton';
+import DefaultCurrentAuctionCard from '../components/cards/DefaultCurrentAuctionCard';
+import { useUser } from '../providers/UserProvider';
 
 export default function HomePage() {
+	const user = useUser();
+	// eslint-disable-next-line no-unused-vars
 	const [searchedAuctions, setSearchedAuctions] = useState([]);
 	const [currentAuctionList, setCurrentAuctionList] = useState([]);
 	const [upcomingAuctionList, setUpcomingAuctionList] = useState([]);
 	const [pastAuctionList, setPastAuctionList] = useState([]);
+	const [currentVerified, setCurrentVerified] = useState(null);
 	const { fetchData } = useAxios();
-	const { isAuthenticated } = useAuth();
+	const { isLoggedIn } = useAuth();
+	const navigate = useNavigate();
 
-	// eslint-disable-next-line no-console
-	console.log(searchedAuctions);
+	useEffect(() => {
+		async function fetchDataAsync() {
+			try {
+				const auctionsResponse = await fetchData({
+					endpoint: '/v1/auctions',
+					method: 'GET',
+				});
+				const auctionList = sortAuctions(auctionsResponse.data);
+
+				if (user && auctionList.current.length > 0) {
+					const response = await fetchData({
+						endpoint: `/v1/auctions/${auctionList.current[0].id}/verification?bidder_id=${user.sub}`,
+						method: 'GET',
+					});
+
+					setCurrentVerified(
+						response.data.length > 0 ? response.data[0].is_verified : null
+					);
+					setUpcomingAuctionList(auctionList.upcoming);
+					setCurrentAuctionList(auctionList.current);
+					setPastAuctionList(auctionList.past);
+				}
+			} catch (error) {
+				/* empty */
+			}
+		}
+
+		fetchDataAsync();
+	}, [isLoggedIn, user]);
+
+	const handleStartBiddingButton = async () => {
+		navigate('/listings');
+	};
 
 	let upcomingAuctionButton = <LogInJoinAuctionButton />;
 	let currentAuctionButton = <LogInJoinAuctionButton />;
-	if (isAuthenticated) {
+	if (isLoggedIn && currentVerified) {
+		currentAuctionButton = (
+			<StartBiddingButton onClick={handleStartBiddingButton} />
+		);
+	} else if (isLoggedIn && currentVerified === false) {
+		currentAuctionButton = <AwaitingApprovalButton />;
+	} else if (isLoggedIn && currentVerified === null) {
 		upcomingAuctionButton = <RegisterEarlyButton />;
 		currentAuctionButton = <RegisterForAuctionButton />;
 	}
 
-	const getAuctions = async () => {
-		try {
-			// get auction list
-			const response = await fetchData({
-				endpoint: 'auctions/',
-				method: 'GET',
-			});
-
-			// get items associated with each auction
-			const itemsPromises = response.data.map(async (auction) => {
-				const itemResponse = await fetchData({
-					endpoint: `auctions/${auction.id}/vehicles/`,
-					method: 'GET',
-				});
-				return { ...auction, items: itemResponse.data };
-			});
-
-			const auctionsWithItems = await Promise.all(itemsPromises);
-
-			const auctionList = sortAuctions(auctionsWithItems);
-			setUpcomingAuctionList(auctionList.upcoming);
-			setCurrentAuctionList(auctionList.current);
-			setPastAuctionList(auctionList.past);
-		} catch (err) {
-			// eslint-disable-next-line no-console
-			console.error(err);
-		}
-	};
-
-	useEffect(() => {
-		getAuctions();
-	}, []);
-
 	return (
 		<div className="min-w-screen max-w-screen">
+			<ScrollRestoration />
 			<div className="relative min-h-screen">
 				<div className="top-0 left-0 w-full z-50">
 					<NavBar />
@@ -97,18 +112,16 @@ export default function HomePage() {
 					</div>
 
 					<div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 z-20 text-center">
-						<p className="text-mv-white text-base mb-2">scroll down to bid</p>
-						<ExpandMoreIcon className="w-[46px] h-[53px] text-mv-white" />
+						<p className="text-mv-white text-[15px] mb-2">scroll down to bid</p>
+						<ExpandMoreIcon className="w-[46px] h-[53px] text-mv-white animate-bounce" />
 					</div>
 				</div>
 			</div>
 			<div className="flex justify-center items-center min-h-screen w-full max-w-full text-center z-10">
 				<div className="flex items-center justify-between w-[80%] gap-x-4">
-					<div className="w-[80%]">
-						<h2 className="text-mv-black text-4xl font-semibold mb-7">
-							About Us
-						</h2>
-						<p className="text-mv-black text-2xl font-normal leading-relaxed">
+					<div className="w-[55%] flex flex-col gap-y-[31px]">
+						<h2 className="text-mv-black text-2xl font-semibold">About Us</h2>
+						<p className="text-mv-black text-base font-normal leading-relaxed">
 							Microvan© Inc. is your retail solution to vehicle troubles. We
 							host virtual and in-person auctions on imported vehicles to
 							companies so that you can cut back on costs. We have vehicles
@@ -130,34 +143,36 @@ export default function HomePage() {
 					</div>
 				</div>
 			</div>
-			<div className="flex flex-col min-h-screen w-full items-center z-10 gap-y-[123px] mb-[123px]">
-				<div className="flex flex-col gap-y-[23px] w-[80%] items-start">
-					<h2 className="text-mv-black text-4xl font-semibold w-full">
+			<div className="flex flex-col min-h-screen w-full items-center z-10 gap-y-[123px]">
+				<div className="flex flex-col gap-y-[41px] w-[80%] items-start">
+					<h2 className="text-mv-black text-2xl font-semibold w-full">
 						Search Auctions
 					</h2>
 					<AuctionsSearchBar setResults={setSearchedAuctions} />
 				</div>
-				{currentAuctionList.length > 0 && (
-					<div className="flex flex-col gap-y-[18px] w-[80%] items-start">
-						<h2 className="text-mv-black text-4xl font-semibold">
-							Current Auction
-						</h2>
+				<div className="flex flex-col gap-y-[36px] w-[80%] items-start">
+					<h2 className="text-mv-black text-2xl font-semibold">
+						Current Auction
+					</h2>
+					{currentAuctionList.length > 0 ? (
 						<CurrentAuctionCard
 							imageUrls={[image, image, image, image]}
 							startDate={new Date(currentAuctionList[0].start_date)}
 							endDate={new Date(currentAuctionList[0].end_date)}
-							numberOfEquipment={currentAuctionList[0].items.equipment.length}
-							numberOfTrailers={currentAuctionList[0].items.trailers.length}
-							numberOfTrucks={currentAuctionList[0].items.vehicles.length}
+							numberOfEquipment={currentAuctionList[0].equipment_count}
+							numberOfTrailers={currentAuctionList[0].trailer_count}
+							numberOfTrucks={currentAuctionList[0].truck_count}
 							button={currentAuctionButton}
 						/>
-					</div>
-				)}
-				{upcomingAuctionList.length > 0 && (
-					<div className="flex flex-col gap-y-[18px] w-[80%] items-start">
-						<h2 className="text-mv-black text-4xl font-semibold">
-							Upcoming Auctions
-						</h2>
+					) : (
+						<DefaultCurrentAuctionCard />
+					)}
+				</div>
+				<div className="flex flex-col gap-y-[34px] w-[80%] items-start">
+					<h2 className="text-mv-black text-2xl font-semibold">
+						Upcoming Auctions
+					</h2>
+					{upcomingAuctionList.length > 0 ? (
 						<div className="grid grid-cols-3 grid-rows-1 gap-[4.3rem] w-full">
 							{upcomingAuctionList.map((auction) => (
 								<UpcomingAuctionCard
@@ -171,8 +186,12 @@ export default function HomePage() {
 								/>
 							))}
 						</div>
-					</div>
-				)}
+					) : (
+						<div>
+							<DefaultUpcomingAuctionCard />
+						</div>
+					)}
+				</div>
 				{pastAuctionList.length > 0 && (
 					<div className="flex flex-col gap-y-[18px] w-[80%] items-start">
 						<h2 className="text-mv-black text-4xl font-semibold">
@@ -190,15 +209,17 @@ export default function HomePage() {
 								/>
 							))}
 						</div>
-						<button type="button" className="flex ml-auto items-end">
-							<p className="text-mv-black text-base font-normal underline">
-								view more
-							</p>
-						</button>
+						{pastAuctionList.length > 3 && (
+							<button type="button" className="flex ml-auto items-end">
+								<p className="text-mv-black text-base font-normal underline">
+									view more
+								</p>
+							</button>
+						)}
 					</div>
 				)}
 			</div>
-			<div className="w-full items-center">
+			<div className="w-full items-center mt-[218px]">
 				<Footer />
 			</div>
 		</div>

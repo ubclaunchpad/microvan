@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, ScrollRestoration } from 'react-router-dom';
 import logo from '../../../assets/microvan_logo.svg';
 import OnboardingInputField from '../../../components/inputs/OnboardingInputField';
 import RegisterButton from '../../../components/buttons/RegisterButton';
@@ -31,7 +31,7 @@ export default function BidderRegisterPage() {
 
 	const handleRegisterUser = () => {
 		fetchData({
-			endpoint: '/bidders/',
+			endpoint: '/v1/bidders',
 			method: 'POST',
 			data: {
 				email,
@@ -48,6 +48,7 @@ export default function BidderRegisterPage() {
 
 	return (
 		<div className="flex flex-col items-center justify-between min-h-screen min-w-screen bg-mv-white">
+			<ScrollRestoration />
 			<div className="self-start pl-[29px] pt-[27px]">
 				<button
 					type="button"
