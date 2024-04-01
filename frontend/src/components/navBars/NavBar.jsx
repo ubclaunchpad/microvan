@@ -78,9 +78,15 @@ export default function NavBar() {
 					onMouseLeave={() => setNotificationHover(false)}
 				>
 					{notificationHover ? (
-						<NotificationsIcon className="w-[35px] h-[35px] text-mv-green hover:cursor-pointer" />
+						<NotificationsIcon
+							sx={{ fontSize: 35 }}
+							className="text-mv-green hover:cursor-pointer"
+						/>
 					) : (
-						<NotificationsOutlinedIcon className="w-[35px] h-[35px] text-mv-black hover:cursor-pointer" />
+						<NotificationsOutlinedIcon
+							sx={{ fontSize: 35 }}
+							className="text-mv-black hover:cursor-pointer"
+						/>
 					)}
 				</div>
 				<div
@@ -90,9 +96,15 @@ export default function NavBar() {
 					onClick={handleAuthenticationClick('/profile')}
 				>
 					{personHover ? (
-						<PersonIcon className="w-[35px] h-[35px] text-mv-green hover:cursor-pointer" />
+						<PersonIcon
+							sx={{ fontSize: 35 }}
+							className="text-mv-green hover:cursor-pointer"
+						/>
 					) : (
-						<PersonOutlinedIcon className="w-[35px] h-[35px] text-mv-black hover:cursor-pointer" />
+						<PersonOutlinedIcon
+							sx={{ fontSize: 35 }}
+							className="text-mv-black hover:cursor-pointer"
+						/>
 					)}
 					{personHover && (
 						<div

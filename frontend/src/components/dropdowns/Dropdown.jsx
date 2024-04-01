@@ -45,7 +45,7 @@ export default function Dropdown({ title, items, onValueChange }) {
 				</span>
 				<KeyboardArrowDownIcon
 					className="text-mv-black"
-					style={{ width: 24, height: 24 }}
+					sx={{ fontSize: 24 }}
 				/>
 			</button>
 

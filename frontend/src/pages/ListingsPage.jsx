@@ -53,7 +53,6 @@ export default function ListingsPage() {
 	useEffect(() => {
 		const fetchAuctionAndVehicles = async () => {
 			try {
-				// Step 1: Fetch the current auction
 				const currentAuctionResponse = await fetchData({
 					endpoint: '/v1/auctions/current',
 					method: 'GET',

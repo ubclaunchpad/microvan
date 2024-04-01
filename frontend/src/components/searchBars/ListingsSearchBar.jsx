@@ -38,7 +38,7 @@ export default function ListingSearchBar({ setResults }) {
 
 	return (
 		<div className="flex items-center w-full h-[40px] px-5 py-4 shrink-0 gap-5 rounded-2xl bg-mv-white shadow-searchBarShadow">
-			<SearchIcon className="w-[24px] h-[24px] text-mv-black" />
+			<SearchIcon className="text-mv-black" sx={{ fontSize: 24 }} />
 			<input
 				className="w-full text-base font-normal text-mv-black placeholder-dark-grey outline-none leading-6 tracking-[0.5px]"
 				placeholder="Search vehicle"

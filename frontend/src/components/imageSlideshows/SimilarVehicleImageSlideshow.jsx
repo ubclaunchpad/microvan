@@ -41,7 +41,7 @@ export default function SimilarVehicleImageSlideshow({ images }) {
 						onClick={goToNextImage}
 						className="absolute top-1/2 right-[10px] transform -translate-y-1/2 border border-solid border-mv-white rounded-full p-2 hover:cursor-pointer"
 					>
-						<NavigateNextIcon className="text-mv-white w-[25px] h-[25px]" />
+						<NavigateNextIcon className="text-mv-white" sx={{ fontSize: 25 }} />
 					</div>
 				)}
 				{currentIndex > 0 && (
@@ -49,7 +49,10 @@ export default function SimilarVehicleImageSlideshow({ images }) {
 						onClick={goToPrevImage}
 						className="absolute top-1/2 left-[10px] transform -translate-y-1/2 border border-solid border-mv-white rounded-full p-2 hover:cursor-pointer"
 					>
-						<NavigateBeforeIcon className="text-mv-white w-[25px] h-[25px]" />
+						<NavigateBeforeIcon
+							className="text-mv-white"
+							sx={{ fontSize: 25 }}
+						/>
 					</div>
 				)}
 			</div>

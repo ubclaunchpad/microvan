@@ -35,7 +35,7 @@ export default function Footer() {
 							{ day: 'Saturday', hours: '8am-4pm' },
 							{ day: 'Sunday', hours: 'Closed' },
 						].map((schedule) => (
-							<div className="flex gap-x-10">
+							<div key={schedule.day} className="flex gap-x-10">
 								<p className="text-base font-normal flex-1 text-left pr-4">
 									{schedule.day}
 								</p>

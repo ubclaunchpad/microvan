@@ -82,7 +82,7 @@ export default function HomePage() {
 	}
 
 	return (
-		<div className="min-w-screen max-w-screen">
+		<div className="min-w-screen max-w-screen overflow-x-hidden">
 			<ScrollRestoration />
 			<div className="relative min-h-screen">
 				<div className="top-0 left-0 w-full z-50">
@@ -113,7 +113,10 @@ export default function HomePage() {
 
 					<div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 z-20 text-center">
 						<p className="text-mv-white text-[15px] mb-2">scroll down to bid</p>
-						<ExpandMoreIcon className="w-[46px] h-[53px] text-mv-white animate-bounce" />
+						<ExpandMoreIcon
+							className="text-mv-white animate-bounce"
+							sx={{ fontSize: 46 }}
+						/>
 					</div>
 				</div>
 			</div>
