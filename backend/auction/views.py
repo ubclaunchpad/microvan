@@ -73,7 +73,8 @@ class AuctionListApiView(APIView):
     def post(self, request, *args, **kwargs):
         """
         Create an Auction with given data, including start and end times,
-        and create AuctionDay models for every day between start_date and end_date inclusive.
+        and create AuctionDay models for every day between start_date and
+        end_date inclusive.
         """
         serializer = AuctionSerializer(data=request.data)
         if serializer.is_valid():
@@ -365,14 +366,12 @@ class AuctionVehiclesApiView(APIView):
                         auction_day=auction_day, content_object=item
                     )
                     successes += 1
-                except Exception as inner_exception:
+                except Exception:
                     failures += 1
 
             if failures:
                 return Response(
-                    {
-                        "message": f"Items partially added to auction. Success: {successes}, Failures: {failures}"
-                    },
+                    {"message": f"Items partially added to auction."},
                     status=status.HTTP_207_MULTI_STATUS,
                 )
             return Response(
