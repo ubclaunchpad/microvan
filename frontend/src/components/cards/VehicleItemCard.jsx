@@ -52,14 +52,20 @@ export default function VehicleItemCard({
 					<div className="flex flex-col text-mv-black text-base mr-[50px] gap-y-[20px]">
 						<div className="flex flex-row justify-between">
 							<div className="flex flex-row items-center justify-center gap-x-[19px]">
-								<DirectionsBusIcon className="text-dark-grey w-[25px] h-[25px]" />
+								<DirectionsBusIcon
+									className="text-dark-grey"
+									sx={{ fontSize: 25 }}
+								/>
 								<div className="flex flex-col leading-6 tracking-[0.5px]">
 									<p className="font-medium">Model</p>
 									<p className="font-normal">{modelNumber}</p>
 								</div>
 							</div>
 							<div className="flex flex-row items-center justify-center gap-x-[19px]">
-								<StarsOutlinedIcon className="text-dark-grey w-[25px] h-[25px]" />
+								<StarsOutlinedIcon
+									className="text-dark-grey"
+									sx={{ fontSize: 25 }}
+								/>
 								<div className="flex flex-col leading-6 tracking-[0.5px]">
 									<p className="font-medium">Engine no.</p>
 									<p className="font-normal">{engineNumber}</p>
@@ -68,7 +74,10 @@ export default function VehicleItemCard({
 						</div>
 						<div className="flex flex-row justify-between">
 							<div className="flex flex-row items-center justify-center gap-x-[19px]">
-								<AgricultureIcon className="text-dark-grey w-[25px] h-[25px]" />
+								<AgricultureIcon
+									className="text-dark-grey"
+									sx={{ fontSize: 25 }}
+								/>
 								<div className="flex flex-col leading-6 tracking-[0.5px]">
 									<p className="font-medium">Chassis</p>
 									<p className="font-normal">{chassisNumber}</p>

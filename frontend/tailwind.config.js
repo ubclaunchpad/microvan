@@ -19,6 +19,7 @@ module.exports = {
 			'button-disabled': '#D1D1D1',
 			'border-dark-grey': '#B7B7B7',
 			'onboarding-placeholder': '#D2D2D2',
+			'icon-grey': '#7B7B7B',
 		},
 		extend: {
 			fontFamily: {

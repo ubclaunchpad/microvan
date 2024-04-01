@@ -16,7 +16,7 @@ export default function NextSimilarVehicleButton({
 			}`}
 		>
 			<p className="text-base font-normal">Next</p>
-			<ArrowForwardIcon className="w-[20px] h-[20px]" />
+			<ArrowForwardIcon sx={{ fontSize: 20 }} />
 		</button>
 	);
 }
