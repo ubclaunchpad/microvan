@@ -371,7 +371,7 @@ class AuctionVehiclesApiView(APIView):
 
             if failures:
                 return Response(
-                    {"message": f"Items partially added to auction."},
+                    {"message": "Items partially added to auction."},
                     status=status.HTTP_207_MULTI_STATUS,
                 )
             return Response(
