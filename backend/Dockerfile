@@ -1,16 +1,15 @@
 FROM python:3.10-slim
 
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
-RUN pip install pipenv
-
 COPY Pipfile Pipfile.lock ./
+RUN python -m pip install --upgrade pip
+RUN pip install pipenv && pipenv install --system --deploy --ignore-pipfile
 
-RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --deploy --ignore-pipfile
-
-COPY . .
-
-ENV PATH="/app/.venv/bin:$PATH"
+COPY . /app
 
 EXPOSE 8000
 
