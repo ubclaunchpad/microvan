@@ -7,8 +7,11 @@ import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import logo from '../../assets/microvan_logo.svg';
 import { useAuth } from '../../providers/AuthProvider';
 import ProfilePopUpModal from '../modals/ProfilePopUpModal';
+import { useUser } from '../../providers/UserProvider';
 
 export default function NavBar() {
+	const user = useUser();
+
 	const [notificationHover, setNotificationHover] = useState(false);
 	const [personHover, setPersonHover] = useState(false);
 	const [routeToNavigate, setRouteToNavigate] = useState('');
@@ -39,7 +42,12 @@ export default function NavBar() {
 
 	return (
 		<div className="w-full h-[85px] flex justify-between items-start shadow-navBarShadow py-[10px] pl-[26px] pr-[34px] gap-[10px] bg-mv-white">
-			<img src={logo} alt="logo" className="w-[60px] h-[60px]" />
+			<img
+				src={logo}
+				alt="logo"
+				className="w-[60px] h-[60px] hover:cursor-pointer"
+				onClick={() => navigate('/')}
+			/>
 			<div className="h-full flex items-center gap-[43px]">
 				<NavLink
 					to="/"
@@ -74,8 +82,14 @@ export default function NavBar() {
 					Contact Us
 				</NavLink>
 				<div
-					onMouseEnter={() => setNotificationHover(true)}
-					onMouseLeave={() => setNotificationHover(false)}
+					onMouseEnter={() => {
+						setPersonHover(false);
+						setNotificationHover(true);
+					}}
+					onMouseLeave={() => {
+						setPersonHover(false);
+						setNotificationHover(false);
+					}}
 				>
 					{notificationHover ? (
 						<NotificationsIcon
@@ -91,8 +105,14 @@ export default function NavBar() {
 				</div>
 				<div
 					role="presentation"
-					onMouseEnter={() => setPersonHover(true)}
-					onMouseLeave={() => setPersonHover(false)}
+					onMouseEnter={() => {
+						setNotificationHover(false);
+						setPersonHover(true);
+					}}
+					onMouseLeave={() => {
+						setNotificationHover(false);
+						setPersonHover(false);
+					}}
 					onClick={handleAuthenticationClick('/profile')}
 				>
 					{personHover ? (
@@ -106,7 +126,7 @@ export default function NavBar() {
 							className="text-mv-black hover:cursor-pointer"
 						/>
 					)}
-					{personHover && (
+					{user && personHover && (
 						<div
 							style={{
 								position: 'fixed',
@@ -115,7 +135,12 @@ export default function NavBar() {
 								zIndex: 100,
 							}}
 						>
-							<ProfilePopUpModal />
+							<ProfilePopUpModal
+								handleClose={() => {
+									setPersonHover(false);
+									setNotificationHover(false);
+								}}
+							/>
 						</div>
 					)}
 				</div>
