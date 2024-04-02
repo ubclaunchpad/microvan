@@ -24,12 +24,7 @@ from .serializers import AuctionSerializer, AuctionVerifiedUserSerializer
 
 
 class AuctionListApiView(APIView):
-    def get_permissions(self):
-        if self.request.method == "POST":
-            self.permission_classes = [IsAdminUser]
-        else:
-            self.permission_classes = [AllowAny]
-        return super().get_permissions()
+    permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
         """
