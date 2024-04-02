@@ -153,6 +153,7 @@ class VehiclePriceApiView(APIView):
 
 class UploadFileView(APIView):
     permission_classes = [permissions.AllowAny]
+    authentication_classes = []
     parser_classes = [FileUploadParser]
     serializer_class = VehicleSerializer
     """

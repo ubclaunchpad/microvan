@@ -24,6 +24,11 @@ from .serializers import AuctionSerializer, AuctionVerifiedUserSerializer
 
 
 class AuctionListApiView(APIView):
+    def get_authenticators(self):
+        if self.request.method == "GET":
+            self.authentication_classes = []
+        return super().get_authenticators()
+
     def get_permissions(self):
         if self.request.method == "POST":
             self.permission_classes = [IsAdminUser]
@@ -101,6 +106,7 @@ class AuctionListApiView(APIView):
 
 class AuctionDayApiView(APIView):
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     def get(self, request, auction_id, *args, **kwargs):
         auction = get_object_or_404(Auction, id=auction_id)
@@ -117,6 +123,7 @@ class AuctionDayApiView(APIView):
 
 class CurrentAuctionApiView(APIView):
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     def get(self, request, *args, **kwargs):
         """
@@ -147,6 +154,11 @@ class AuctionDetailApiView(APIView):
     """
     Retrieve, update or delete an auction instance.
     """
+
+    def get_authenticators(self):
+        if self.request.method == "GET":
+            self.authentication_classes = []
+        return super().get_authenticators()
 
     def get_permissions(self):
         if self.request.method == "PUT" or self.request.method == "DELETE":

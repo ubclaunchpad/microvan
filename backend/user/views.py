@@ -11,6 +11,11 @@ from services.AWSCognitoService import AWSCognitoService
 class BidderListApiView(APIView):
     cognitoService = AWSCognitoService()
 
+    def get_authenticators(self):
+        if self.request.method == "POST":
+            self.authentication_classes = []
+        return super().get_authenticators()
+
     def get_permissions(self):
         if self.request.method == "GET":
             self.permission_classes = [IsAdminUser]
@@ -278,6 +283,7 @@ class ListBlacklisted(APIView):
 
 class PasswordResetAPIView(APIView):
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     cognitoService = AWSCognitoService()
 
@@ -294,6 +300,7 @@ class PasswordResetAPIView(APIView):
 
 class PasswordResetConfirmAPIView(APIView):
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     cognitoService = AWSCognitoService()
 
@@ -313,6 +320,7 @@ class PasswordResetConfirmAPIView(APIView):
 
 class VerifyEmailAPIView(APIView):
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     cognitoService = AWSCognitoService()
 
