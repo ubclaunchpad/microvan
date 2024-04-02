@@ -13,4 +13,4 @@ COPY . /app
 
 EXPOSE 8000
 
-CMD sh -c 'gunicorn core.wasgi:application --bind 0.0.0.0:${PORT:-8000}'
+CMD sh -c 'gunicorn core.wsgi:application --bind 0.0.0.0:${PORT:-8000}'
