@@ -80,10 +80,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://auctions.microvaninc.com",
-    "http://www.auctions.microvaninc.com",
-    "https://auctions.microvaninc.com",
-    "https://www.auctions.microvaninc.com",
+    "https://www.auction.microvaninc.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
