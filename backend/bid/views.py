@@ -1,7 +1,7 @@
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -13,7 +13,7 @@ from .serializers import BidSerializer
 
 
 class BidListApiView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     serializer_class = BidSerializer
     cognitoService = AWSCognitoService()
@@ -87,7 +87,7 @@ class BidListApiView(APIView):
             .order_by("-amount")
             .first()
         )
-        if highest_bid and amount <= highest_bid.amount:
+        if highest_bid and int(amount) <= highest_bid.amount:
             return Response(
                 {"error": "Your bid must be higher than the current highest bid."},
                 status=status.HTTP_400_BAD_REQUEST,

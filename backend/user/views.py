@@ -136,7 +136,7 @@ class BidderDetailApiView(APIView):
 
 
 class BidderVerifyApiView(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
 
     cognitoService = AWSCognitoService()
 
