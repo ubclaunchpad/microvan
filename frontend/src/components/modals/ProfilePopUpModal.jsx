@@ -3,19 +3,20 @@ import { useNavigate } from 'react-router';
 import HistoryIcon from '@mui/icons-material/History';
 import PersonIcon from '@mui/icons-material/Person';
 import LogOutButton from '../buttons/LogOutButton';
+import { useAuth } from '../../providers/AuthProvider';
+import { useUser } from '../../providers/UserProvider';
 
-export default function ProfilePopUpCard({ bidderID }) {
+export default function ProfilePopUpModal({ bidderID }) {
 	const navigate = useNavigate();
+	const { logout } = useAuth();
+	const user = useUser();
 
 	const handleLogOut = async () => {
 		try {
-			localStorage.removeItem('userInfo');
+			await logout();
 			navigate('/');
 		} catch (err) {
-			// eslint-disable-next-line no-console
-			console.error(
-				err.response ? err.response.data.error : 'An unknown error occurred'
-			);
+			/* error */
 		}
 	};
 	return (
@@ -28,7 +29,9 @@ export default function ProfilePopUpCard({ bidderID }) {
 								<div className="flex flex-col items-center">
 									<div className="flex flex-col justify-center">
 										<span className="font-poppins text-xl font-semibold leading-10 text-center bg-gray-600">
-											Bidder ID: #123456
+											{user?.group === 'admins'
+												? 'Admin User'
+												: `Bidder ID: #${user?.['custom:bidder_number']}`}
 										</span>
 										<span>{bidderID}</span>
 									</div>

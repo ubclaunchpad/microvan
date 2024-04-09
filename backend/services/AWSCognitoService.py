@@ -139,35 +139,6 @@ class AWSCognitoService:
         except self.client.exceptions.ClientError as e:
             print(f"Error adding user to group {group_name}: {e}")
 
-    def login_user(self, email, password):
-        secret_hash = self._calculate_secret_hash(email)
-        try:
-            response = self.client.initiate_auth(
-                ClientId=settings.COGNITO_APP_CLIENT_ID,
-                AuthFlow="USER_PASSWORD_AUTH",
-                AuthParameters={
-                    "USERNAME": email,
-                    "PASSWORD": password,
-                    "SECRET_HASH": secret_hash,
-                },
-            )
-            return response.get("AuthenticationResult")
-        except self.client.exceptions.NotAuthorizedException:
-            print("The username or password is incorrect.")
-        except self.client.exceptions.UserNotFoundException:
-            print("The user does not exist.")
-        except Exception as e:
-            print(f"Error logging in: {e}")
-        return None
-
-    def logout_user(self, access_token):
-        try:
-            self.client.global_sign_out(AccessToken=access_token)
-            return True
-        except Exception as e:
-            print(f"Error logging out: {e}")
-            return False
-
     def change_password(self, access_token, previous_password, new_password):
         try:
             self.client.change_password(

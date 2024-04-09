@@ -5,7 +5,7 @@ import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined
 import PersonIcon from '@mui/icons-material/Person';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import logo from '../../assets/microvan_logo.svg';
-import useAuth from '../../hooks/useAuth';
+import { useAuth } from '../../providers/AuthProvider';
 import ProfilePopUpCard from '../cards/ProfilePopUpCard';
 import NotificationPopUpCard from '../cards/NotificationPopUpCard';
 
@@ -14,7 +14,7 @@ export default function NavBar() {
 	const [personHover, setPersonHover] = useState(false);
 	const [routeToNavigate, setRouteToNavigate] = useState('');
 
-	const { isAuthenticated } = useAuth();
+	const { isLoggedIn } = useAuth();
 	const navigate = useNavigate();
 
 	const location = useLocation();
@@ -31,7 +31,7 @@ export default function NavBar() {
 	}, [routeToNavigate, navigate]);
 
 	const handleAuthenticationClick = (route) => () => {
-		if (!isAuthenticated) {
+		if (!isLoggedIn && (route !== '/contact' || route !== '/')) {
 			setRouteToNavigate('/onboard');
 		} else {
 			setRouteToNavigate(route);
@@ -79,9 +79,15 @@ export default function NavBar() {
 					onMouseLeave={() => setNotificationHover(false)}
 				>
 					{notificationHover ? (
-						<NotificationsIcon className="w-[35px] h-[35px] text-mv-green hover:cursor-pointer" />
+						<NotificationsIcon
+							sx={{ fontSize: 35 }}
+							className="text-mv-green hover:cursor-pointer"
+						/>
 					) : (
-						<NotificationsOutlinedIcon className="w-[35px] h-[35px] text-mv-black hover:cursor-pointer" />
+						<NotificationsOutlinedIcon
+							sx={{ fontSize: 35 }}
+							className="text-mv-black hover:cursor-pointer"
+						/>
 					)}
 					{notificationHover && (
 						<div
@@ -103,9 +109,15 @@ export default function NavBar() {
 					onClick={handleAuthenticationClick('/profile')}
 				>
 					{personHover ? (
-						<PersonIcon className="w-[35px] h-[35px] text-mv-green hover:cursor-pointer" />
+						<PersonIcon
+							sx={{ fontSize: 35 }}
+							className="text-mv-green hover:cursor-pointer"
+						/>
 					) : (
-						<PersonOutlinedIcon className="w-[35px] h-[35px] text-mv-black hover:cursor-pointer" />
+						<PersonOutlinedIcon
+							sx={{ fontSize: 35 }}
+							className="text-mv-black hover:cursor-pointer"
+						/>
 					)}
 					{personHover && (
 						<div
@@ -116,7 +128,7 @@ export default function NavBar() {
 								zIndex: 100,
 							}}
 						>
-							<ProfilePopUpCard />
+							<ProfilePopUpModal />
 						</div>
 					)}
 				</div>

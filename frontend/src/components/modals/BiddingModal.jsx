@@ -1,80 +1,103 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import DoNotDisturbOnOutlinedIcon from '@mui/icons-material/DoNotDisturbOnOutlined';
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import BidNowButton from '../buttons/BidNowButton';
+import CancelButton from '../buttons/CancelButton';
 
-export default function BiddingModal({ isOpen, onClose, minimumBid }) {
+export default function BiddingModal({
+	isOpen,
+	onClose,
+	handleBidNow,
+	minimumBid,
+}) {
 	if (!isOpen) return null;
 
-	const [bidAmount, setBidAmount] = React.useState(minimumBid);
+	const increments = minimumBid > 100000 ? 5000 : 1000;
+	const [bidAmount, setBidAmount] = useState(minimumBid + increments);
 
 	const handleBidChange = (e) => {
 		const inputValue = e.target.value.substring(1);
 
 		if (Number.isNaN(inputValue)) {
-			console.error('Invalid input: Please enter a number.');
 			return;
 		}
 
 		const newBid = parseInt(inputValue, 10);
 
 		if (Number.isNaN(newBid)) {
-			console.error('Parsing error: Input is not a valid number.');
 			return;
 		}
 
 		setBidAmount(newBid > 0 ? newBid : 0);
 	};
 
+	const handleOutsideClick = (e) => {
+		if (e.target.id === 'modal-overlay') {
+			onClose();
+		}
+	};
+
+	useEffect(() => {
+		window.addEventListener('click', handleOutsideClick);
+		return () => {
+			window.removeEventListener('click', handleOutsideClick);
+		};
+	}, []);
+
 	return (
-		<div className="fixed z-50 inset-0 bg-mv-white bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
-			<div className="bg-mv-white rounded-lg p-5 shadow-xl px-16 py-8">
-				<h2 className="text-2xl font-semibold text-center font-sans">
-					Please insert your bid amount
-				</h2>
-				<p className="text-sm text-center mt-2">
-					Enter your maximum possible bid
-				</p>
-				<div className="flex items-center justify-center my-8">
-					<button
-						type="button"
-						className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l"
-						onClick={() =>
-							setBidAmount(bidAmount - 1000 >= 0 ? bidAmount - 1000 : 0)
-						}
-					>
-						-
-					</button>
-					<input
-						type="text"
-						value={`₱${bidAmount}`}
-						onChange={handleBidChange}
-						className="text-center font-semibold text-2xl bg-gray-200 border-2 border-gray-200 rounded w-full py-3 px-4 text-gray-700 focus:outline-none"
-					/>
-					<button
-						type="button"
-						className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r"
-						onClick={() => setBidAmount(bidAmount + 1000)}
-					>
-						+
-					</button>
-				</div>
-				<div className="flex items-center justify-center mt-4">
-					{/* Positions buttons vertically */}
-					<div className="flex flex-col items-center">
-						<button
-							type="button"
-							className="bg-mv-green hover:bg-green-700 text-mv-white text-xs font-semibold py-4 px-20 rounded"
-						>
-							Bid now
-						</button>
-						<button
-							type="button"
-							className="mt-2 bg-transparent hover:bg-gray-100 text-gray-700 py-4 px-20 text-xs font-semibold border border-gray-400 rounded shadow"
-							onClick={onClose}
-						>
-							Cancel
-						</button>
+		<div
+			id="modal-overlay"
+			className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+		>
+			<div
+				className="bg-mv-white h-[500px] w-[660px] flex flex-col pt-[46px] pb-[26px] rounded-[20px]"
+				onClick={(e) => e.stopPropagation()}
+			>
+				<div className="flex flex-col flex-grow">
+					<h2 className="text-2xl font-semibold text-center text-mv-black mb-[21px]">
+						Please insert your bid amount
+					</h2>
+					<p className="text-base text-center font-medium text-mv-black tracking-[0.5px] leading-[35px] mb-[21px]">
+						Enter your maximum possible bid
+					</p>
+					<div className="flex items-center justify-center gap-x-[15px]">
+						<DoNotDisturbOnOutlinedIcon
+							sx={{ fontSize: 38 }}
+							className={
+								bidAmount === minimumBid + increments
+									? 'hover:cursor-default text-icon-grey'
+									: 'hover:cursor-pointer text-mv-green'
+							}
+							onClick={() =>
+								setBidAmount(
+									Math.max(minimumBid + increments, bidAmount - increments)
+								)
+							}
+						/>
+						<input
+							type="text"
+							value={`₱${bidAmount}`}
+							onChange={handleBidChange}
+							className="text-center w-[250px] h-[65px] font-medium text-[28px] text-mv-black tracking-[0.5px] leading-[35px] focus:outline-none rounded-[15px] border border-solid border-dark-grey shadow-buttonShadow"
+						/>
+						<AddCircleOutlineOutlinedIcon
+							sx={{ fontSize: 38 }}
+							className="hover:cursor-pointer text-mv-green"
+							onClick={() =>
+								setBidAmount(
+									Math.max(minimumBid + increments, bidAmount + increments)
+								)
+							}
+						/>
+					</div>
+					<div className="flex items-center justify-center mt-[36px]">
+						<div className="flex flex-col items-center gap-y-[17px]">
+							<BidNowButton onClick={handleBidNow} size="md" />
+							<CancelButton onClick={onClose} />
+						</div>
 					</div>
 				</div>
-				<p className="text-xs text-center mt-4">
+				<p className="text-base text-center text-mv-black tracking-[0.5px] leading-[35px]">
 					*All bids are binding and all sales are final
 				</p>
 			</div>

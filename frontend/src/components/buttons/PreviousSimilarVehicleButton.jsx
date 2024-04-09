@@ -16,7 +16,7 @@ export default function PreviousSimilarVehicleButton({
 					: 'text-mv-button-dark-grey border-button-dark-grey'
 			}`}
 		>
-			<ArrowBackIcon className="w-[20px] h-[20px]" />
+			<ArrowBackIcon sx={{ fontSize: 20 }} />
 			<p className="text-base font-normal">Prev</p>
 		</button>
 	);

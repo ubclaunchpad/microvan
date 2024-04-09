@@ -1,16 +1,31 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { ScrollRestoration } from 'react-router-dom';
 import NavBar from '../components/navBars/NavBar';
 import Footer from '../components/footers/Footer';
 import SubmitContactFormButton from '../components/buttons/SubmitContactFormButton';
+import { useUser } from '../providers/UserProvider';
 
 export default function ContactUsPage() {
-	const [name, setName] = useState('Lance Tan');
-	const [email, setEmail] = useState('mail@microvaninc.com');
-	const [phoneNumber, setPhoneNumber] = useState('+63 (917) 123 4567');
-	const [bidderNumber, setBidderNumber] = useState('12345678');
-	const [message, setMessage] = useState(
-		"Hello, I'd like to speak with a Microvan employee regarding an issue I'm facing with downloading my statement of account."
-	);
+	const user = useUser();
+	const [name, setName] = useState('');
+	const [email, setEmail] = useState('');
+	const [phoneNumber, setPhoneNumber] = useState('');
+	const [bidderNumber, setBidderNumber] = useState('');
+	const [message, setMessage] = useState('');
+
+	useEffect(() => {
+		if (user) {
+			setName(`${user.given_name || ''} ${user.family_name || ''}`);
+			setEmail(user.email || '');
+			setPhoneNumber(user.phone_number || '');
+			setBidderNumber(user['custom:bidder_number'] || '');
+		} else {
+			setName('');
+			setEmail('');
+			setPhoneNumber('');
+			setBidderNumber('');
+		}
+	}, [user]);
 
 	const handleNameChange = (e) => {
 		setName(e.target.value);
@@ -34,14 +49,15 @@ export default function ContactUsPage() {
 
 	return (
 		<div className="flex flex-col min-h-screen w-screen">
+			<ScrollRestoration />
 			<NavBar />
 
-			<div className="flex-1 mt-[115px] w-full">
-				<div className="flex flex-col px-[10%] w-full justify-center text-mv-black gap-y-[45px]">
-					<h1 className="text-4xl font-semibold">Contact Us</h1>
-					<div className="flex flex-col items-start w-full mt-[11px] gap-y-[19px]">
-						<p className="text-2xl font-normal">Name</p>
-						<div className="flex items-center w-[50%] h-[55px] px-[23px] py-[13px] shrink-0 rounded-[5px] shadow-searchBarShadow">
+			<div className="flex-1 mt-[45.65px] w-full">
+				<div className="flex flex-col px-[10%] w-full justify-center text-mv-black gap-y-[30px]">
+					<h1 className="text-2xl font-semibold">Contact Us</h1>
+					<div className="flex flex-col items-start w-full mt-[16px] gap-y-[13px]">
+						<p className="text-lg font-normal">Name</p>
+						<div className="flex items-center w-[50%] h-[55px] px-[23px] pt-[15px] pb-[13px] shrink-0 rounded-[5px] shadow-searchBarShadow">
 							<input
 								className="w-full text-lg font-base outline-none"
 								value={name}
@@ -49,9 +65,9 @@ export default function ContactUsPage() {
 							/>
 						</div>
 					</div>
-					<div className="flex flex-col items-start w-full mt-[11px] gap-y-[19px]">
-						<p className="text-2xl font-normal">Email</p>
-						<div className="flex items-center w-[50%] h-[55px] px-[23px] py-[13px] shrink-0 rounded-[5px] shadow-searchBarShadow">
+					<div className="flex flex-col items-start w-full gap-y-[13px]">
+						<p className="text-lg font-normal">Email</p>
+						<div className="flex items-center w-[50%] h-[55px] px-[23px] pt-[15px] pb-[13px] shrink-0 rounded-[5px] shadow-searchBarShadow">
 							<input
 								className="w-full text-lg font-base outline-none"
 								value={email}
@@ -59,9 +75,9 @@ export default function ContactUsPage() {
 							/>
 						</div>
 					</div>
-					<div className="flex flex-col items-start w-full mt-[11px] gap-y-[19px]">
-						<p className="text-2xl font-normal">Phone Number</p>
-						<div className="flex items-center w-[50%] h-[55px] px-[23px] py-[13px] shrink-0 rounded-[5px] shadow-searchBarShadow">
+					<div className="flex flex-col items-start w-full gap-y-[13px]">
+						<p className="text-lg font-normal">Phone Number</p>
+						<div className="flex items-center w-[50%] h-[55px] px-[23px] pt-[15px] pb-[13px] shrink-0 rounded-[5px] shadow-searchBarShadow">
 							<input
 								className="w-full text-lg font-base outline-none"
 								value={phoneNumber}
@@ -69,11 +85,11 @@ export default function ContactUsPage() {
 							/>
 						</div>
 					</div>
-					<div className="flex flex-col items-start w-full mt-[11px] gap-y-[19px]">
-						<p className="text-2xl font-normal">
+					<div className="flex flex-col items-start w-full gap-y-[19px]">
+						<p className="text-lg font-normal">
 							Bidder Number (If you have one)
 						</p>
-						<div className="flex items-center w-[50%] h-[55px] px-[23px] py-[13px] shrink-0 rounded-[5px] shadow-searchBarShadow">
+						<div className="flex items-center w-[50%] h-[55px] px-[23px] pt-[15px] pb-[13px] shrink-0 rounded-[5px] shadow-searchBarShadow">
 							<input
 								className="w-full text-lg font-base outline-none"
 								value={bidderNumber}
@@ -81,21 +97,21 @@ export default function ContactUsPage() {
 							/>
 						</div>
 					</div>
-					<div className="flex flex-col items-start w-full mt-[11px] gap-y-[19px]">
-						<p className="text-2xl font-normal">Message</p>
+					<div className="flex flex-col items-start w-full gap-y-[13px]">
+						<p className="text-lg font-normal">Message</p>
 						<textarea
-							className="flex w-full h-[231px] px-[23px] py-7 shrink-0 gap-5 rounded-[5px] shadow-searchBarShadow text-lg font-base outline-none"
+							className="flex w-full h-[231px] px-[23px] py-[15px] shrink-0 gap-5 rounded-[5px] shadow-searchBarShadow text-lg font-base outline-none"
 							value={message}
 							onChange={handleMessageChange}
 						/>
 					</div>
-					<div className="w-[315px] items-center justify-center mt-[11px]">
+					<div className="items-center justify-center mt-[5px]">
 						<SubmitContactFormButton />
 					</div>
 				</div>
 			</div>
 
-			<div className="mt-[283px]">
+			<div className="mt-[48.15px]">
 				<Footer />
 			</div>
 		</div>

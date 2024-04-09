@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import logo from '../../../assets/microvan_logo.svg';
 import ViewAuctionButton from '../../../components/buttons/ViewAuctionButton';
 

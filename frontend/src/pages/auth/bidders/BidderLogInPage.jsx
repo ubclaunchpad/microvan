@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, ScrollRestoration } from 'react-router-dom';
 import logo from '../../../assets/microvan_logo.svg';
 import OnboardingInputField from '../../../components/inputs/OnboardingInputField';
 import LogInButton from '../../../components/buttons/LogInButton';
-import useAxios from '../../../hooks/useAxios';
+import { useAuth } from '../../../providers/AuthProvider';
 
 export default function BidderLogInPage() {
 	const navigate = useNavigate();
-	const { fetchData } = useAxios();
+	const { signIn } = useAuth();
 
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -18,22 +18,18 @@ export default function BidderLogInPage() {
 
 	const handleLogIn = async () => {
 		try {
-			const result = await fetchData({
-				endpoint: 'auth/login/',
-				method: 'POST',
-				data: { email, password, is_admin: true },
-			});
-			localStorage.setItem('userInfo', JSON.stringify(result.data));
+			await signIn(email, password);
 			navigate('/');
 		} catch (err) {
 			setLoginError(
-				err.response ? err.response.data.error : 'An unknown error occurred'
+				'Failed to log in. Please check your credentials and try again.'
 			);
 		}
 	};
 
 	return (
 		<div className="flex flex-col items-center justify-between min-h-screen min-w-screen bg-mv-white">
+			<ScrollRestoration />
 			<div className="self-start pl-[29px] pt-[27px]">
 				<button
 					type="button"

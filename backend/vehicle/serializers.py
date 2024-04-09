@@ -42,29 +42,26 @@ class EquipmentSerializer(serializers.ModelSerializer):
 
 
 class VehicleSerializer(serializers.ModelSerializer):
+    brand_name = serializers.SerializerMethodField()
+    vehicle_type_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Vehicle
         fields = [
             "id",
-            "unicode_id",
             "model_number",
+            "engine_number",
             "chassis_number",
             "description",
-            "brand",
-            "vehicle_type",
-            "minimum_price",
-            "is_sold",
-            "remarks",
-            "classification_type",
-            "engine_condition",
-            "transmission_condition",
-            "differentials_condition",
-            "brake_condition",
-            "electrical_condition",
-            "operating_system_condition",
-            "chassis_condition",
-            "body_condition",
+            "brand_name",
+            "vehicle_type_name",
         ]
+
+    def get_brand_name(self, obj):
+        return obj.brand.name
+
+    def get_vehicle_type_name(self, obj):
+        return obj.vehicle_type.name
 
 
 class SupplierSerializer(serializers.ModelSerializer):

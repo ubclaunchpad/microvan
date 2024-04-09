@@ -5,16 +5,15 @@ export default function AddToListButton({ onClick, size = 'sm' }) {
 	return (
 		<button
 			type="button"
-			className={`bg-mv-white border-mv-green border-solid border rounded-[5px] shadow-searchBarShadow w-full flex items-center justify-center ${
-				size === 'sm' ? 'px-5 py-3' : 'px-[64.5px] py-4'
+			className={`bg-mv-white border-mv-green border-solid border rounded-[5px] shadow-searchBarShadow w-full flex items-center justify-center whitespace-nowrap ${
+				size === 'sm' ? 'px-[20px] py-[10px]' : 'py-[16px]'
 			}`}
 			onClick={onClick}
 		>
-			<div className="flex items-center justify-center">
+			<div className="flex items-center justify-center gap-x-[5px]">
 				<AddIcon
-					className={`text-mv-black ${
-						size === 'sm' ? 'w-[20px] h-[20px]' : 'w-[24px] h-[24px]'
-					}`}
+					sx={{ fontSize: size === 'sm' ? 20 : 24 }}
+					className="text-mv-black"
 				/>
 				<p
 					className={`text-mv-black font-medium leading-5 tracking-[0.1px] ${

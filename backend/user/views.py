@@ -1,20 +1,24 @@
 from django.shortcuts import get_object_or_404, redirect
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.permissions import IsAdminUser, IsAuthenticated
+from core.permissions import IsAdminUser
 from services.AWSCognitoService import AWSCognitoService
-from util.jwt import decode_token
 
 
 class BidderListApiView(APIView):
     cognitoService = AWSCognitoService()
 
+    def get_authenticators(self):
+        if self.request.method == "POST":
+            self.authentication_classes = []
+        return super().get_authenticators()
+
     def get_permissions(self):
         if self.request.method == "GET":
-            self.permission_classes = [IsAuthenticated]
+            self.permission_classes = [IsAdminUser]
         else:
             self.permission_classes = [AllowAny]
         return super().get_permissions()
@@ -263,20 +267,6 @@ class AdminDetailApiView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ListUnverified(APIView):
-    permission_classes = [IsAdminUser]
-
-    cognitoService = AWSCognitoService()
-
-    def get(self, request):
-        bidders = self.cognitoService.list_users()
-        unverifiedBidders = []
-        for index in range(len(bidders)):
-            if bidders[index].is_verified is False:
-                unverifiedBidders.append(bidders[index])
-        return Response(unverifiedBidders, status=status.HTTP_200_OK)
-
-
 class ListBlacklisted(APIView):
     permission_classes = [IsAdminUser]
 
@@ -291,68 +281,9 @@ class ListBlacklisted(APIView):
         return Response(blacklistedBidders, status=status.HTTP_200_OK)
 
 
-class ListVerified(APIView):
-    permission_classes = [IsAdminUser]
-
-    cognitoService = AWSCognitoService()
-
-    def get(self, request):
-        bidders = self.cognitoService.list_users()
-        verifiedBidders = []
-        for index in range(len(bidders)):
-            if bidders[index].is_verified is True:
-                verifiedBidders.append(bidders[index])
-        return Response(verifiedBidders, status=status.HTTP_200_OK)
-
-
-class LoginAPIView(APIView):
-    permission_classes = [AllowAny]
-
-    cognitoService = AWSCognitoService()
-
-    def post(self, request, *args, **kwargs):
-        email = request.data.get("email")
-        password = request.data.get("password")
-        is_admin = request.data.get("is_admin")
-
-        if not email or not password or is_admin is None:
-            return Response(
-                {"error": "Email, password, and is_admin fields are required."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        auth_result = self.cognitoService.login_user(email, password)
-
-        if auth_result:
-            user_id = decode_token(auth_result.get("IdToken")).get("sub")
-            user_details = self.cognitoService.get_user_details(
-                user_id=user_id, is_admin=is_admin
-            )
-            response = Response(user_details, status=status.HTTP_200_OK)
-            response.set_cookie(
-                "idToken", auth_result.get("IdToken"), httponly=True, samesite="Lax"
-            )
-            response.set_cookie(
-                "accessToken",
-                auth_result.get("AccessToken"),
-                httponly=True,
-                samesite="Lax",
-            )
-            response.set_cookie(
-                "refreshToken",
-                auth_result.get("RefreshToken"),
-                httponly=True,
-                samesite="Lax",
-            )
-            return response
-        else:
-            return Response(
-                {"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-
 class PasswordResetAPIView(APIView):
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     cognitoService = AWSCognitoService()
 
@@ -369,6 +300,7 @@ class PasswordResetAPIView(APIView):
 
 class PasswordResetConfirmAPIView(APIView):
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     cognitoService = AWSCognitoService()
 
@@ -388,6 +320,7 @@ class PasswordResetConfirmAPIView(APIView):
 
 class VerifyEmailAPIView(APIView):
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     cognitoService = AWSCognitoService()
 
@@ -401,31 +334,6 @@ class VerifyEmailAPIView(APIView):
         else:
             return Response(
                 {"error": "Failed to verify email"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-
-class LogoutAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    cognitoService = AWSCognitoService()
-
-    def post(self, request, *args, **kwargs):
-        access_token = request.data.get("access_token")
-
-        if not access_token:
-            return Response(
-                {"error": "Access token is required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Attempt to sign out the user from all devices using the access token
-        result = self.cognitoService.logout_user(access_token)
-
-        if result:
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            return Response(
-                {"error": "Failed to log out"}, status=status.HTTP_400_BAD_REQUEST
             )
 
 
@@ -456,55 +364,5 @@ class EmailChangeAPIView(APIView):
         else:
             return Response(
                 {"error": "Failed to update email address in Cognito."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
-class RefreshTokenAPIView(APIView):
-    permission_classes = [AllowAny]
-
-    cognitoService = AWSCognitoService()
-
-    def post(self, request, *args, **kwargs):
-        refresh_token = request.data.get("refresh_token")
-        if not refresh_token:
-            return Response(
-                {"error": "Refresh token is required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        auth_header = request.headers.get("Authorization")
-        if not auth_header:
-            return Response(
-                {"error": "Authorization header is missing"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        access_token = auth_header.split(" ")[1]
-
-        decoded_token = decode_token(access_token)
-        username = decoded_token.get("sub")
-        if not username:
-            return Response(
-                {"error": "Error decoding token"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        new_tokens = self.cognitoService.refresh_tokens(username, refresh_token)
-
-        if new_tokens:
-            return Response(
-                {
-                    "id_token": new_tokens.get("IdToken"),
-                    "access_token": new_tokens.get("AccessToken"),
-                    "refresh_token": new_tokens.get("RefreshToken")
-                    if new_tokens.get("RefreshToken") is not None
-                    else refresh_token,
-                },
-                status=status.HTTP_200_OK,
-            )
-        else:
-            return Response(
-                {"error": "Failed to refresh tokens"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
