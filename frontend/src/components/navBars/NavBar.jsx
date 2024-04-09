@@ -8,6 +8,7 @@ import logo from '../../assets/microvan_logo.svg';
 import { useAuth } from '../../providers/AuthProvider';
 import ProfilePopUpModal from '../modals/ProfilePopUpModal';
 import { useUser } from '../../providers/UserProvider';
+import NotificationPopUpCard from '../cards/NotificationPopUpCard';
 
 export default function NavBar() {
 	const user = useUser();
@@ -101,6 +102,18 @@ export default function NavBar() {
 							sx={{ fontSize: 35 }}
 							className="text-mv-black hover:cursor-pointer"
 						/>
+					)}
+					{notificationHover && (
+						<div
+							style={{
+								position: 'fixed',
+								bottom: '230',
+								right: '80px',
+								zIndex: 100,
+							}}
+						>
+							<NotificationPopUpCard />
+						</div>
 					)}
 				</div>
 				<div
