@@ -19,15 +19,15 @@ class BidConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        message = text_data_json.get("message")  # Assuming you may receive messages
+        message = text_data_json.get("message")  
         if message:
             await self.send(text_data=json.dumps({"message": message}))
 
     async def bid_update(self, event):
         bid_data = event['bid_data']
-        # Convert UUID fields to strings
+
         bid_data['id'] = str(bid_data['id'])
-        # Include other UUID fields and convert them to strings if needed
+
         await self.send(text_data=json.dumps({
             'type': 'bid.update',
             'bid_data': bid_data

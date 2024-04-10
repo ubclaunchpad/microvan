@@ -10,14 +10,17 @@ channel_layer = get_channel_layer()
 
 @receiver(post_save, sender=Bid)
 def bid_updated(sender, instance, **kwargs):
-    print("got here")
+    bid_data = {
+        'id': str(instance.id),  # Convert UUID to string
+        'amount': instance.amount,
+        'auction': str(instance.auction.id),
+        'bidder' : str(instance.bidder)
+    }
     async_to_sync(channel_layer.group_send)(
         'bid_updates',
         {
             'type': 'bid.update',
-            'bid_data': {
-                'id': instance.id,
-            }
+            'bid_data': bid_data
         }
     )
 

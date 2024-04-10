@@ -13,7 +13,7 @@ from .serializers import BidSerializer
 
 
 class BidListApiView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     serializer_class = BidSerializer
     cognitoService = AWSCognitoService()
