@@ -7,7 +7,7 @@ export const cognitoCustomMessageHandler = async (event) => {
         const email = encodeURIComponent(event.request.userAttributes["email"]);
         const verificationCode = event.request.codeParameter;
 
-        const verificationLink = `https://www.api.auction.microvaninc.com/v1/auth/email-verify/?email=${email}&code=${verificationCode}`;
+        const verificationLink = `https://www.api.auction.microvaninc.com/v1/auth/email-verify?email=${email}&code=${verificationCode}`;
 
         const emailContent = `
           <html>
