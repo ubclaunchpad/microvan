@@ -15,6 +15,7 @@ from datetime import timedelta
 from pathlib import Path
 from corsheaders.defaults import default_headers
 from dotenv import load_dotenv
+
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -36,7 +37,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
-    'daphne',
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -51,15 +52,11 @@ INSTALLED_APPS = [
     "user",
     "vehicle",
     "bid",
-    'channels',
+    "channels",
 ]
-ASGI_APPLICATION = 'core.asgi.application'
+ASGI_APPLICATION = "core.asgi.application"
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
-}
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 # AWS S3 Configuration
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
@@ -94,7 +91,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
-    'Authorization',
+    "Authorization",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -131,7 +128,6 @@ DATABASES = {
         "PORT": os.environ.get("DB_PORT"),
     }
 }
-print(os.environ.get("DB_PASSWORD"))
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

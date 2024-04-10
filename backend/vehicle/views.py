@@ -16,11 +16,12 @@ from .serializers import VehicleSerializer
 # Create your views here.
 class VehicleListApiView(APIView):
     serializer_class = VehicleSerializer
+
     def get_permissions(self):
         if self.request.method == "POST":
             self.permission_classes = [IsAdminUser]
         else:
-            self.permission_classes = [AllowAny]
+            self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
 
     def get(self, request, *args, **kwargs):
