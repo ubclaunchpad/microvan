@@ -3,27 +3,27 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 export default function RemoveFromListButton({ size, onClick }) {
 	const sizeButtonClass = {
-		small: 'w-[173px] h-[46px]',
-		large: 'w-[285px] h-[66px]',
+		sm: 'px-[8.6px] py-[12px]',
+		lg: 'px-[51.11px] py-[21px]',
 	};
 
 	const sizeTextClass = {
-		small: 'text-[14px]',
-		large: 'text-[18px]',
+		sm: 'text-[13px]',
+		lg: 'text-lg',
 	};
 
 	return (
 		<button
 			type="button"
-			className={`${sizeButtonClass[size]} whitespace-nowrap bg-mv-white px-[24px] py-[10px] flex gap-[5px] items-center justify-center rounded-[5px] border border-solid border-mv-green shadow-buttonShadow `}
+			className={`${sizeButtonClass[size]} w-full bg-mv-white flex gap-[4px] items-center justify-center rounded-[5px] border border-solid border-mv-green shadow-buttonShadow `}
 			onClick={onClick}
 		>
 			<DeleteOutlinedIcon
-				sx={{ fontSize: size === 'small' ? 20 : 24 }}
+				sx={{ fontSize: size === 'sm' ? 18 : 24 }}
 				className="text-mv-black"
 			/>
 			<div
-				className={`${sizeTextClass[size]} leading-5 font-medium text-mv-black`}
+				className={`${sizeTextClass[size]} leading-5 tracking-[0.1px] font-medium text-mv-black`}
 			>
 				Remove from list
 			</div>

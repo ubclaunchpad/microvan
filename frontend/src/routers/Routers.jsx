@@ -10,6 +10,7 @@ import BidderRegisterPage from '../pages/auth/bidders/BidderRegisterPage';
 import BidderEmailVerificationPage from '../pages/auth/bidders/BidderEmailVerificationPage';
 import BidderEmailVerifiedPage from '../pages/auth/bidders/BidderEmailVerifiedPage';
 import VehicleDetailsPage from '../pages/VehicleDetailsPage';
+import ProfilePage from '../pages/ProfilePage';
 
 const router = createBrowserRouter([
 	{ path: '/', element: <HomePage /> },
@@ -22,6 +23,8 @@ const router = createBrowserRouter([
 	{ path: '/register', element: <BidderRegisterPage /> },
 	{ path: '/register/email', element: <BidderEmailVerificationPage /> },
 	{ path: '/register/verified', element: <BidderEmailVerifiedPage /> },
+	{ path: '/profile', element: <ProfilePage /> },
+	{ path: '/history', element: <div>History!!!!!</div> },
 ]);
 
 export default router;
