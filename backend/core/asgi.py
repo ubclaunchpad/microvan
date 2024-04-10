@@ -1,6 +1,6 @@
 # mysite/asgi.py
 import os
-
+import bid.routing
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
@@ -11,7 +11,6 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 # is populated before importing code that may import ORM models.
 django_asgi_app = get_asgi_application()
 
-import bid.routing
 
 application = ProtocolTypeRouter(
     {
