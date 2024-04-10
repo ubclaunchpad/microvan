@@ -11,6 +11,7 @@ module.exports = {
 			'mv-cream': '#FFFAFB',
 			'mv-white': '#FFFFFF',
 			'mv-black': '#4B4B4B',
+			'mv-red': '#B63342',
 			'dark-grey': '#7A7A7A',
 			'light-grey': '#F5F5F5',
 			'progress-bar': '#EEEDED',

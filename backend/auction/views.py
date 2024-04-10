@@ -360,8 +360,7 @@ class AuctionVehiclesApiView(APIView):
             status=status.HTTP_200_OK,
         )
 
-    def post(self, request, auction_id):
-        auction_day_id = request.data.get("auction_day_id")
+    def post(self, request, auction_id, auction_day_id):
         content_type = request.data.get("content_type")
         object_ids = request.data.get("object_ids")
 

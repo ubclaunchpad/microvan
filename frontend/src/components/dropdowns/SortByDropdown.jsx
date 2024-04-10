@@ -29,10 +29,7 @@ export default function SortByDropdown({ title, items, onValueChange }) {
 	}, [isOpen]);
 
 	return (
-		<div
-			className="relative flex flex-col min-w-[194px]"
-			ref={dropdownRef}
-		>
+		<div className="relative flex flex-col min-w-[194px]" ref={dropdownRef}>
 			<button
 				type="button"
 				className={`whitespace-nowrap py-[15px] px-[23px] rounded-[10px] bg-light-grey flex justify-between items-center text-left gap-x-[30px] ${

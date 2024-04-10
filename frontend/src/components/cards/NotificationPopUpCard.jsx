@@ -6,7 +6,6 @@ import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import Check from '@mui/icons-material/Check';
 
 export default function NotificationPopUpCard() {
-
 	return (
 		<div className="flex w-[362px] h-[600px] rounded-2xl shadow-2xl m-5 overflow-hidden relative bg-mv-white">
 			<div className="w-full flex">
@@ -27,7 +26,10 @@ export default function NotificationPopUpCard() {
 						<div className="flex flex-row justify-between">
 							<div>
 								<div className="flex flex-row items-center">
-									<EmojiEventsIcon style={{ fontSize: '39px', color: 'mv-green'}} className="mr-2" />
+									<EmojiEventsIcon
+										style={{ fontSize: '39px', color: 'mv-green' }}
+										className="mr-2"
+									/>
 									<div className="flex flex-col justify-between px-6 py-4">
 										<span className="font-poppins text-base font-medium leading-6 text-left overflow-hidden whitespace-nowrap">
 											You won X vehicles!
@@ -45,7 +47,10 @@ export default function NotificationPopUpCard() {
 						<div className="flex flex-row justify-between">
 							<div>
 								<div className="flex flex-row items-center">
-									<WatchLaterIcon style={{ fontSize: '39px', color: 'mv-green'}} className="mr-2" />
+									<WatchLaterIcon
+										style={{ fontSize: '39px', color: 'mv-green' }}
+										className="mr-2"
+									/>
 									<div className="flex flex-col justify-between px-6 py-4">
 										<span className="font-poppins text-base font-medium leading-6 text-left">
 											Auction has ended
@@ -63,7 +68,10 @@ export default function NotificationPopUpCard() {
 						<div className="flex flex-row justify-between">
 							<div>
 								<div className="flex flex-row items-center">
-									<AccessTimeIcon style={{ fontSize: '39px' }} className="mr-2" />
+									<AccessTimeIcon
+										style={{ fontSize: '39px' }}
+										className="mr-2"
+									/>
 									<div className="flex flex-col justify-between px-6 py-4">
 										<span className="font-poppins text-base font-medium leading-6 text-left overflow-hidden whitespace-nowrap">
 											1 hour left until auction ends
@@ -112,12 +120,12 @@ export default function NotificationPopUpCard() {
 						<div className="flex flex-row justify-center my-4">
 							<div>
 								<div className="flex flex-col items-center">
-								<a
-											href="/onboard"
-											className="font-poppins text-xs font-medium leading-5 text-left text-blue-600 hover:text-blue-800 border-2 border-gray-500 rounded-md px-9 py-2"
-										>
-											Notification settings
-										</a>
+									<a
+										href="/onboard"
+										className="font-poppins text-xs font-medium leading-5 text-left text-blue-600 hover:text-blue-800 border-2 border-gray-500 rounded-md px-9 py-2"
+									>
+										Notification settings
+									</a>
 								</div>
 							</div>
 						</div>

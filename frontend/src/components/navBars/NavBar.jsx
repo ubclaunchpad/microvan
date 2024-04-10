@@ -25,6 +25,7 @@ export default function NavBar() {
 	const isListingsPage = location.pathname === '/listings';
 	const isTutorialPage = location.pathname === '/tutorial';
 	const isContactUsPage = location.pathname === '/contact';
+	const isProfilePage = location.pathname === '/profile';
 
 	useEffect(() => {
 		if (routeToNavigate) {
@@ -128,7 +129,7 @@ export default function NavBar() {
 					}}
 					onClick={handleAuthenticationClick('/profile')}
 				>
-					{personHover ? (
+					{personHover || isProfilePage ? (
 						<PersonIcon
 							sx={{ fontSize: 35 }}
 							className="text-mv-green hover:cursor-pointer"
