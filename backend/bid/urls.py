@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.urls import include, path
 
-from .views import BidDetailApiView, BidListApiView
 from . import consumer
+from .views import BidDetailApiView, BidListApiView
 
 urlpatterns = [
     path("/", BidListApiView.as_view(), name="bid_list"),

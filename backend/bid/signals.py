@@ -1,11 +1,14 @@
 # signals.py
-from django.db.models.signals import post_save, post_delete
-from django.dispatch import receiver
-from .models import Bid
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
 import json
+
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from django.db.models.signals import post_delete, post_save
+from django.dispatch import receiver
+
 from auction.models import AuctionDay
+
+from .models import Bid
 
 channel_layer = get_channel_layer()
 

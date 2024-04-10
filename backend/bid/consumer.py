@@ -1,6 +1,7 @@
-from channels.generic.websocket import AsyncWebsocketConsumer
-from asgiref.sync import async_to_sync
 import json
+
+from asgiref.sync import async_to_sync
+from channels.generic.websocket import AsyncWebsocketConsumer
 
 
 class BidConsumer(AsyncWebsocketConsumer):
