@@ -12,7 +12,7 @@ class Bid(MainModel):
     """
 
     amount = models.IntegerField(null=False)
-    bidder = models.CharField(null=False, max_length=255)
+    bidder = models.CharField(null=False, max_length=500)
     auction = models.ForeignKey(Auction, on_delete=models.PROTECT)
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     object_id = models.UUIDField()

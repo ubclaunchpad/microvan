@@ -56,7 +56,7 @@ class AuctionItem(MainModel):
 
 
 class AuctionVerifiedUser(MainModel):
-    cognito_user_id = models.CharField(max_length=255, null=False, blank=False)
+    cognito_user_id = models.CharField(max_length=2500, null=False, blank=False)
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
     is_verified = models.BooleanField(default=False)
 
