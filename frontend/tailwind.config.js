@@ -21,6 +21,7 @@ module.exports = {
 			'border-dark-grey': '#B7B7B7',
 			'onboarding-placeholder': '#D2D2D2',
 			'icon-grey': '#7B7B7B',
+			'not-found-header': '#1E1E1E',
 		},
 		extend: {
 			fontFamily: {
