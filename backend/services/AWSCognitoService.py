@@ -16,7 +16,7 @@ class AWSCognitoService:
             region_name=settings.AWS_S3_REGION_NAME,
         )
 
-    def _generate_unique_bidder_number(self):
+    def _generate_unique_customer_id(self):
         try:
             users = self.client.list_users_in_group(
                 UserPoolId=settings.COGNITO_USER_POOL_ID,
@@ -25,7 +25,7 @@ class AWSCognitoService:
             existing_numbers = []
             for user in users:
                 for attr in user["Attributes"]:
-                    if attr["Name"] == "custom:bidder_number":
+                    if attr["Name"] == "custom:customer_id":
                         existing_numbers.append(attr["Value"])
         except self.client.exceptions.ClientError as e:
             print(f"Error during user existence check: {e}")
@@ -35,15 +35,6 @@ class AWSCognitoService:
             number = str(random.randint(10000000, 99999999))
             if number not in existing_numbers:
                 return number
-
-    def _calculate_secret_hash(self, username):
-        message = username + settings.COGNITO_APP_CLIENT_ID
-        dig = hmac.new(
-            settings.COGNITO_APP_CLIENT_SECRET.encode("utf-8"),
-            msg=message.encode("utf-8"),
-            digestmod=hashlib.sha256,
-        ).digest()
-        return base64.b64encode(dig).decode()
 
     def _map_cognito_attributes(self, attributes, is_admin=False):
         details = {attr["Name"]: attr["Value"] for attr in attributes}
@@ -61,7 +52,7 @@ class AWSCognitoService:
             mapped["company_name"] = details.get("custom:company_name", "")
             mapped["company_address"] = details.get("custom:company_address", "")
             mapped["phone_number"] = details.get("custom:phone_number", "")
-            mapped["bidder_number"] = int(details.get("custom:bidder_number", ""))
+            mapped["customer_id"] = int(details.get("custom:customer_id", ""))
             mapped["is_verified"] = details.get("custom:is_verified", "") == "true"
             mapped["is_blacklisted"] = (
                 details.get("custom:is_blacklisted", "") == "true"
@@ -71,11 +62,9 @@ class AWSCognitoService:
 
     def create_user(self, email, password, **kwargs):
         attributes = self._prepare_user_attributes(**kwargs)
-        secret_hash = self._calculate_secret_hash(email)
         try:
             response = self.client.sign_up(
                 ClientId=settings.COGNITO_APP_CLIENT_ID,
-                SecretHash=secret_hash,
                 Username=email,
                 Password=password,
                 UserAttributes=attributes,
@@ -96,7 +85,7 @@ class AWSCognitoService:
             {"Name": "family_name", "Value": family_name},
         ]
         if is_admin:
-            if kwargs["permission_level"] is not None:
+            if kwargs.get("permission_level") is not None:
                 attributes.append(
                     {
                         "Name": "custom:permission_level",
@@ -105,19 +94,15 @@ class AWSCognitoService:
                 )
         else:
             if not is_update:
-                bidder_number = self._generate_unique_bidder_number()
-                if not bidder_number:
+                customer_id = self._generate_unique_customer_id()
+                if not customer_id:
                     return None
-                attributes.append(
-                    {"Name": "custom:bidder_number", "Value": bidder_number}
-                )
+                attributes.append({"Name": "custom:customer_id", "Value": customer_id})
             attributes.extend(
                 [
                     {"Name": f"custom:{key}", "Value": str(value)}
                     for key, value in kwargs.items()
-                    if key != "is_admin"
-                    and key != "permission_level"
-                    and key != "phone_number"
+                    if key not in ["is_admin", "permission_level", "phone_number"]
                 ]
             )
             if kwargs.get("phone_number") is not None:
@@ -139,6 +124,8 @@ class AWSCognitoService:
         except self.client.exceptions.ClientError as e:
             print(f"Error adding user to group {group_name}: {e}")
 
+    # The functions below no longer require secret hash related parameters
+
     def change_password(self, access_token, previous_password, new_password):
         try:
             self.client.change_password(
@@ -152,12 +139,10 @@ class AWSCognitoService:
             return False
 
     def initiate_password_reset(self, email):
-        secret_hash = self._calculate_secret_hash(email)
         try:
             self.client.forgot_password(
                 ClientId=settings.COGNITO_APP_CLIENT_ID,
                 Username=email,
-                SecretHash=secret_hash,
             )
             return True
         except Exception as e:
@@ -165,11 +150,9 @@ class AWSCognitoService:
             return False
 
     def confirm_password_reset(self, email, verification_code, new_password):
-        secret_hash = self._calculate_secret_hash(email)
         try:
             self.client.confirm_forgot_password(
                 ClientId=settings.COGNITO_APP_CLIENT_ID,
-                SecretHash=secret_hash,
                 Username=email,
                 ConfirmationCode=verification_code,
                 Password=new_password,
@@ -191,13 +174,11 @@ class AWSCognitoService:
             return False
 
     def verify_email(self, email, verification_code):
-        secret_hash = self._calculate_secret_hash(email)
         try:
             self.client.confirm_sign_up(
                 ClientId=settings.COGNITO_APP_CLIENT_ID,
                 Username=email,
                 ConfirmationCode=verification_code,
-                SecretHash=secret_hash,
                 ForceAliasCreation=False,
             )
             return True
@@ -206,14 +187,12 @@ class AWSCognitoService:
             return False
 
     def refresh_tokens(self, username, refresh_token):
-        secret_hash = self._calculate_secret_hash(username)
         try:
             response = self.client.initiate_auth(
                 ClientId=settings.COGNITO_APP_CLIENT_ID,
                 AuthFlow="REFRESH_TOKEN_AUTH",
                 AuthParameters={
                     "REFRESH_TOKEN": refresh_token,
-                    "SECRET_HASH": secret_hash,
                 },
             )
             return response.get("AuthenticationResult")
