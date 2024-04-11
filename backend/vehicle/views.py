@@ -38,7 +38,8 @@ class ItemListApiView(APIView):
 
     def get(self, request, *args, **kwargs):
         """
-        Get a list of items filtered by type, brand, current price range, and search term. Supports pagination.
+        Get a list of items filtered by type, brand, current price range,
+        and search term. Supports pagination.
         """
         item_type = request.query_params.get("type", None)
         brand_id = request.query_params.get("brand", None)

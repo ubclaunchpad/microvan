@@ -2,13 +2,12 @@ from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from auction.models import Auction, AuctionDay
 from services.AWSCognitoService import AWSCognitoService
-from vehicle.models import Equipment, Trailer, Vehicle
 
 from .models import Bid
 from .serializers import BidSerializer
@@ -45,8 +44,6 @@ class BidListApiView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        auction = get_object_or_404(Auction, id=data.get("auction_id"))
-        auction_day = get_object_or_404(AuctionDay, id=data.get("auction_day_id"))
         bidder = self.cognitoService.get_user_details(data.get("bidder_id"))
         if not bidder:
             return Response(

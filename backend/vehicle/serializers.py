@@ -4,18 +4,6 @@ from rest_framework import serializers
 from .models import Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle
 
 
-class BrandSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Brand
-        fields = ["id", "name"]
-
-
-class TypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Type
-        fields = ["id", "name"]
-
-
 class EquipmentSerializer(serializers.ModelSerializer):
     brand_name = serializers.SerializerMethodField()
     type_name = serializers.SerializerMethodField()

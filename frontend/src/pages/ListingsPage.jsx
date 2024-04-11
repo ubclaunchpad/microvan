@@ -23,6 +23,7 @@ import {
 export default function ListingsPage() {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(0);
+	// eslint-disable-next-line no-unused-vars
 	const [loading, setLoading] = useState(false);
 	const [hasNextPage, setHasNextPage] = useState(null);
 	const [hasPrevPage, setHasPrevPage] = useState(null);
