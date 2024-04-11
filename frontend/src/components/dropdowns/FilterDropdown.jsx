@@ -6,6 +6,11 @@ export default function FilterDropdown({ title, items, onValueChange }) {
 	const [selectedValue, setSelectedValue] = useState(title);
 	const dropdownRef = useRef(null);
 
+	const itemsWithAll = [
+		{ id: 'all', name: 'All' },
+		...items.filter((item) => item.name !== 'All'),
+	];
+
 	const handleValueChange = (newValue) => {
 		setSelectedValue(newValue);
 		setIsOpen(false);
@@ -30,7 +35,7 @@ export default function FilterDropdown({ title, items, onValueChange }) {
 
 	return (
 		<div
-			className="relative flex flex-col gap-1.5 min-w-[155px]"
+			className="relative flex flex-col gap-1.5"
 			ref={dropdownRef}
 		>
 			<button
@@ -40,8 +45,8 @@ export default function FilterDropdown({ title, items, onValueChange }) {
 				}`}
 				onClick={() => setIsOpen(!isOpen)}
 			>
-				<span className="text-mv-black text-base leading-normal font-normal overflow-ellipsis">
-					{selectedValue}
+				<span className="text-mv-black text-base leading-normal font-normal overflow-ellipsis truncate">
+					{selectedValue?.name || 'All'}
 				</span>
 				<KeyboardArrowDownIcon
 					className="text-mv-black"
@@ -51,23 +56,23 @@ export default function FilterDropdown({ title, items, onValueChange }) {
 
 			{isOpen && (
 				<div
-					className="absolute z-10 mt-[45px] py-5 px-5 bg-mv-white border border-mv-grey border-solid rounded-[10px] w-full"
+					className="max-h-[200px] overflow-y-auto overflow-x-hidden absolute z-10 mt-[45px] py-5 px-5 bg-mv-white border border-mv-grey border-solid rounded-[5px] w-full"
 					role="menu"
 					aria-orientation="vertical"
 					aria-labelledby="menu-button"
 					tabIndex="-1"
 				>
-					{items.map((value, index) => (
+					{itemsWithAll.map((value, index) => (
 						<button
 							type="button"
-							key={value}
-							className="text-left w-full text-base text-mv-black font-normal overflow-ellipsis"
-							style={{ marginTop: index === 0 ? 0 : 20 }}
+							key={value?.id || index}
+							className="text-left w-full text-base text-mv-black font-normal overflow-ellipsis hover:bg-mv-lightgrey"
+							style={{ marginTop: index === 0 ? 0 : '10px' }}
 							role="menuitem"
 							tabIndex="-1"
 							onClick={() => handleValueChange(value)}
 						>
-							{value}
+							{value?.name}
 						</button>
 					))}
 				</div>

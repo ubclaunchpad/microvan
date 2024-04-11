@@ -76,9 +76,9 @@ export default function NotificationPopUpCard() {
 										<span className="font-poppins text-base font-medium leading-6 text-left overflow-hidden whitespace-nowrap">
 											1 hour left until auction ends
 										</span>
-										<text className="font-poppins text-xs font-normal leading-5 text-left text-blue-600">
+										<p className="font-poppins text-xs font-normal leading-5 text-left text-blue-600">
 											Put in your bids by 21:59!
-										</text>
+										</p>
 									</div>
 								</div>
 							</div>
@@ -109,9 +109,9 @@ export default function NotificationPopUpCard() {
 										<span className="font-poppins text-base font-medium leading-6 text-left overflow-hidden whitespace-nowrap">
 											You have been verified
 										</span>
-										<text className="font-poppins text-xs font-normal leading-5 text-left text-blue-600 overflow-hidden whitespace-nowrap">
+										<p className="font-poppins text-xs font-normal leading-5 text-left text-blue-600 overflow-hidden whitespace-nowrap">
 											You are now registered to make bids
-										</text>
+										</p>
 									</div>
 								</div>
 							</div>

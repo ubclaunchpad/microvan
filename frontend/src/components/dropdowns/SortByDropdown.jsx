@@ -32,7 +32,7 @@ export default function SortByDropdown({ title, items, onValueChange }) {
 		<div className="relative flex flex-col min-w-[194px]" ref={dropdownRef}>
 			<button
 				type="button"
-				className={`whitespace-nowrap py-[15px] px-[23px] rounded-[10px] bg-light-grey flex justify-between items-center text-left gap-x-[30px] ${
+				className={`whitespace-nowrap py-[15px] px-[23px] rounded-[5px] bg-light-grey flex justify-between items-center text-left gap-x-[30px] ${
 					isOpen ? 'shadow-xl' : ''
 				}`}
 				onClick={() => setIsOpen(!isOpen)}
@@ -48,7 +48,7 @@ export default function SortByDropdown({ title, items, onValueChange }) {
 
 			{isOpen && (
 				<div
-					className="absolute z-10 mt-[60px] py-5 px-5 bg-mv-white border border-mv-grey border-solid rounded-[10px] w-full"
+					className="absolute z-10 mt-[60px] py-5 px-5 bg-mv-white border border-mv-grey border-solid rounded-[5px] w-full"
 					role="menu"
 					aria-orientation="vertical"
 					aria-labelledby="menu-button"

@@ -5,7 +5,7 @@ from .views import (
     AuctionDayApiView,
     AuctionDetailApiView,
     AuctionListApiView,
-    AuctionVehiclesApiView,
+    AuctionItemsApiView,
     BidderVerificationApiView,
     CurrentAuctionApiView,
     GetSavedUnitApiView,
@@ -29,7 +29,7 @@ urlpatterns = [
     ),
     path(
         "/<uuid:auction_id>/days/<uuid:auction_day_id>/vehicles",
-        AuctionVehiclesApiView.as_view(),
+        AuctionItemsApiView.as_view(),
         name="auction_vehicles",
     ),
     path(

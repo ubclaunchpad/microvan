@@ -21,11 +21,11 @@ class Vehicle(MainModel):
     engine_number = models.CharField(max_length=150, blank=True, null=True)
     selling_price = models.IntegerField(default=0)
     starting_price = models.IntegerField(default=0)
+    current_price = models.IntegerField(blank=True, null=True)
     chassis_number = models.CharField(max_length=50, blank=True, null=True)
     description = models.CharField(max_length=2000)
     brand = models.ForeignKey(Brand, on_delete=models.PROTECT)
-    vehicle_type = models.ForeignKey(Type, on_delete=models.PROTECT)
-    minimum_price = models.IntegerField(blank=True, null=True)
+    type = models.ForeignKey(Type, on_delete=models.PROTECT)
     is_sold = models.BooleanField(default=False)
     remarks = models.CharField(max_length=2000, blank=True, null=True)
     classification_type = models.CharField(max_length=50, blank=True, null=True)
@@ -41,12 +41,15 @@ class Vehicle(MainModel):
 
 class Equipment(MainModel):
     unicode_id = models.IntegerField(unique=True)
-    prefix_id = models.CharField(max_length=10)
-    chassis_number = models.CharField(max_length=50, blank=True, null=True)
-    engine_number = models.CharField(max_length=50, blank=True, null=True)
+    model_number = models.CharField(max_length=150, blank=True, null=True)
+    chassis_number = models.CharField(max_length=150, blank=True, null=True)
+    engine_number = models.CharField(max_length=150, blank=True, null=True)
     description = models.CharField(max_length=2000)
     brand = models.ForeignKey(Brand, on_delete=models.PROTECT)
-    equipment_type = models.ForeignKey(Type, on_delete=models.PROTECT)
+    type = models.ForeignKey(Type, on_delete=models.PROTECT)
+    selling_price = models.IntegerField(default=0)
+    starting_price = models.IntegerField(default=0)
+    current_price = models.IntegerField(blank=True, null=True)
     location = models.CharField(max_length=50, blank=True, null=True)
     classification_type = models.CharField(max_length=50, blank=True, null=True)
     engine_condition = models.CharField(max_length=100, blank=True, null=True)
@@ -70,11 +73,14 @@ class Supplier(MainModel):
 
 class Trailer(MainModel):
     unicode_id = models.IntegerField(unique=True)
-    chassis_number = models.CharField(max_length=50, blank=True, null=True)
+    model_number = models.CharField(max_length=150, blank=True, null=True)
     description = models.CharField(max_length=2000)
     supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT)
-    trailer_type = models.ForeignKey(Type, on_delete=models.PROTECT)
+    type = models.ForeignKey(Type, on_delete=models.PROTECT)
     number_of_axles = models.IntegerField()
+    selling_price = models.IntegerField(default=0)
+    starting_price = models.IntegerField(default=0)
+    current_price = models.IntegerField(blank=True, null=True)
 
 
 class UnitImage(MainModel):

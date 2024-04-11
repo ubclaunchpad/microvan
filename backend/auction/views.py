@@ -5,9 +5,11 @@ from django.db.models import Prefetch, Q
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.core.paginator import Paginator
 
 from core.permissions import IsAdminUser
 from services.AWSCognitoService import AWSCognitoService
@@ -245,8 +247,6 @@ class SaveUnitApiView(APIView):
         vehicle_id = kwargs.get("vehicle_id")
         auction_id = kwargs.get("auction_id")
 
-        # Replace this later to fetch authentication details
-        # from headers instead of body
         vehicle = get_object_or_404(Vehicle, id=vehicle_id)
         auction_for_vehicle = Auction.objects.get(id=auction_id)
         bidder = self.cognitoService.get_user_details(bidder_id)
@@ -316,49 +316,80 @@ class GetSavedUnitApiView(APIView):
         return Response({"vehicles": vehicle_data}, status=status.HTTP_200_OK)
 
 
-class AuctionVehiclesApiView(APIView):
-    """
-    An endpoint to retrieve an auction's associated vehicles
-    """
+class AuctionItemsApiView(APIView):
+    permission_classes = [IsAuthenticated]
 
-    cognitoService = AWSCognitoService()
+    def get_filtered_queryset(self, model, auction_day_id, filters):
+        """
+        Filters the queryset of a given model based on the provided filters
+        and the relation to AuctionItem through ContentType.
+        """
+        content_type = ContentType.objects.get_for_model(model)
+        related_item_ids = AuctionItem.objects.filter(
+            auction_day_id=auction_day_id,
+            content_type=content_type
+        ).values_list('object_id', flat=True)
 
-    def get_permissions(self):
-        if self.request.method == "GET":
-            self.permission_classes = [IsAuthenticated]
-        else:
-            self.permission_classes = [IsAdminUser]
-        return super().get_permissions()
+        return model.objects.filter(
+            id__in=related_item_ids, **filters
+        )
 
     def get(self, request, auction_id, auction_day_id):
-        auction_day = get_object_or_404(AuctionDay, id=auction_day_id)
+        item_type = request.query_params.get('item_type', None)
+        type = request.query_params.get('type', None)
+        brand_id = request.query_params.get('brand', None)
+        min_price = request.query_params.get('min_price', None)
+        max_price = request.query_params.get('max_price', None)
+        search_term = request.query_params.get('search', None)
 
-        auction_items = AuctionItem.objects.filter(auction_day=auction_day)
+        filters = {}
+        if type:
+            filters['type'] = type
+        if brand_id:
+            filters['brand'] = brand_id
+        if min_price:
+            filters['current_price__gte'] = min_price
+        if max_price:
+            filters['current_price__lte'] = max_price
+        if search_term:
+            filters['description__icontains'] = search_term
 
-        vehicle_list = []
-        equipment_list = []
-        trailer_list = []
+        # Apply filters to each model's queryset
+        if item_type == 'trucks':
+            combined_qs = self.get_filtered_queryset(Vehicle, auction_day_id, filters)
+        elif item_type == 'equipment':
+            combined_qs = self.get_filtered_queryset(Equipment, auction_day_id, filters)
+        elif item_type == 'trailers':
+            combined_qs = self.get_filtered_queryset(Trailer, auction_day_id, filters)
+        else:
+            vehicle_qs = self.get_filtered_queryset(Vehicle, auction_day_id, filters)
+            equipment_qs = self.get_filtered_queryset(Equipment, auction_day_id, filters)
+            trailer_qs = self.get_filtered_queryset(Trailer, auction_day_id, filters)
 
-        for auction_item in auction_items:
-            if isinstance(auction_item.content_object, Vehicle):
-                vehicle_list.append(auction_item.content_object)
-            elif isinstance(auction_item.content_object, Equipment):
-                equipment_list.append(auction_item.content_object)
-            elif isinstance(auction_item.content_object, Trailer):
-                trailer_list.append(auction_item.content_object)
+            combined_qs = list(vehicle_qs) + list(equipment_qs) + list(trailer_qs)
 
-        vehicle_data = [{"id": vehicle.id} for vehicle in vehicle_list]
-        equipment_data = [{"id": equipment.id} for equipment in equipment_list]
-        trailer_data = [{"id": trailer.id} for trailer in trailer_list]
+        # Implement custom pagination
+        page_number = request.query_params.get('page', 1)
+        paginator = Paginator(combined_qs, 5)
+        page_obj = paginator.get_page(page_number)
 
-        return Response(
-            {
-                "vehicles": vehicle_data,
-                "equipment": equipment_data,
-                "trailers": trailer_data,
-            },
-            status=status.HTTP_200_OK,
-        )
+        serialized_data = []
+        for obj in page_obj:
+            if isinstance(obj, Vehicle):
+                serializer = VehicleSerializer(obj)
+            elif isinstance(obj, Equipment):
+                serializer = EquipmentSerializer(obj)
+            elif isinstance(obj, Trailer):
+                serializer = TrailerSerializer(obj)
+            serialized_data.append(serializer.data)
+
+        return Response({
+            'count': paginator.count,
+            'next': page_obj.has_next(),
+            'previous': page_obj.has_previous(),
+            'results': serialized_data
+        })
+
 
     def post(self, request, auction_id, auction_day_id):
         content_type = request.data.get("content_type")

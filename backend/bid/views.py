@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
@@ -5,8 +6,9 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from auction.models import Auction
+from auction.models import Auction, AuctionDay
 from services.AWSCognitoService import AWSCognitoService
+from vehicle.models import Equipment, Trailer, Vehicle
 
 from .models import Bid
 from .serializers import BidSerializer
@@ -14,91 +16,59 @@ from .serializers import BidSerializer
 
 class BidListApiView(APIView):
     permission_classes = [IsAuthenticated]
-
     serializer_class = BidSerializer
     cognitoService = AWSCognitoService()
 
-    def get(self, request, *args, **kwargs):
-        """
-        Get all bids
-        """
-        bids = Bid.objects.all()
-        serializer = BidSerializer(bids, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
     def post(self, request, *args, **kwargs):
-        """
-        Create a bid
-        """
         data = request.data
-        amount = data.get("amount")
-        bidder_id = data.get("bidder")
-        auction_id = data.get("auction")
-        content_type_name = data.get("content_type")
-        object_id = data.get("object_id")
+        item_type = data.get("content_type", "truck")
 
-        # Check for missing fields
-        if not all([amount, bidder_id, auction_id, content_type_name, object_id]):
+        model_map = {
+            "truck": "vehicle",
+            "equipment": "equipment",
+            "trailer": "trailer",
+        }
+        model_name = model_map.get(item_type, "vehicle")
+
+        try:
+            model = apps.get_model(app_label="vehicle", model_name=model_name)
+            content_type = ContentType.objects.get_for_model(model)
+        except (LookupError, ContentType.DoesNotExist):
+            return Response(
+                {"error": "Invalid content type."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        required_fields = ["amount", "bidder_id", "auction_id", "object_id"]
+        if not all(field in data for field in required_fields):
             return Response(
                 {"error": "Missing fields in request."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Validate ContentType
-        try:
-            content_type = ContentType.objects.get(model=content_type_name)
-            if content_type_name not in ["vehicle", "equipment", "trailer"]:
-                raise ValueError("Invalid content type")
-        except (ContentType.DoesNotExist, ValueError):
-            return Response(
-                {"error": "Invalid content type."}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # Validate bidder and auction
-        try:
-            auction = Auction.objects.get(id=auction_id)
-        except Auction.DoesNotExist:
-            return Response(
-                {"error": "Invalid auction."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        bidder = self.cognitoService.get_user_details(bidder_id)
+        auction = get_object_or_404(Auction, id=data.get("auction_id"))
+        auction_day = get_object_or_404(AuctionDay, id=data.get("auction_day_id"))
+        bidder = self.cognitoService.get_user_details(data.get("bidder_id"))
         if not bidder:
             return Response(
-                {"error": "Invalid bidder."},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "Invalid bidder."}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Validate object_id
-        model_class = content_type.model_class()
-        try:
-            model_class.objects.get(id=object_id)
-        except model_class.DoesNotExist:
-            return Response(
-                {"error": "Invalid object ID for the given content type."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        item = get_object_or_404(model, id=data.get("object_id"))
 
-        highest_bid = (
-            Bid.objects.filter(
-                content_type=content_type, object_id=data.get("object_id")
-            )
-            .order_by("-amount")
-            .first()
-        )
-        if highest_bid and int(amount) <= highest_bid.amount:
+        highest_bid = Bid.objects.filter(item=item).order_by("-amount").first()
+        if highest_bid and int(data["amount"]) <= highest_bid.amount:
             return Response(
                 {"error": "Your bid must be higher than the current highest bid."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         bid = Bid.objects.create(
-            amount=amount,
-            bidder=bidder,
-            auction=auction,
+            amount=data["amount"],
+            bidder=data["bidder_id"],
+            auction_id=data["auction_id"],
+            auction_day_id=data.get("auction_day_id"),
             content_type=content_type,
-            object_id=object_id,
+            object_id=data["object_id"],
         )
 
         serialized_data = self.serializer_class(bid)
@@ -106,10 +76,6 @@ class BidListApiView(APIView):
 
 
 class BidDetailApiView(APIView):
-    """
-    Retrieve, update or delete an bid instance.
-    """
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request, bid_id, format=None):
@@ -119,7 +85,7 @@ class BidDetailApiView(APIView):
 
     def put(self, request, bid_id, format=None):
         bid = get_object_or_404(Bid, id=bid_id)
-        serializer = BidSerializer(bid, data=request.data)
+        serializer = BidSerializer(bid, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
