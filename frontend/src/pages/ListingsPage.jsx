@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { ScrollRestoration } from 'react-router-dom';
+import { debounce } from 'lodash';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import NavBar from '../components/navBars/NavBar';
 import CurrentAuctionCountdown from '../components/timers/CurrentAuctionCountdown';
 import ListingSearchBar from '../components/searchBars/ListingsSearchBar';
@@ -10,6 +13,7 @@ import vehicleImage from '../assets/truck.png';
 import Footer from '../components/footers/Footer';
 import PriceInputField from '../components/inputs/PriceInputField';
 import useAxios from '../hooks/useAxios';
+import { priceToString } from '../utils/priceUtil';
 import {
 	formatListingsTodayDate,
 	formatFlexibleDateRange,
@@ -17,22 +21,27 @@ import {
 } from '../utils/dateTime';
 
 export default function ListingsPage() {
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(0);
+	// eslint-disable-next-line no-unused-vars
+	const [loading, setLoading] = useState(false);
+	const [hasNextPage, setHasNextPage] = useState(null);
+	const [hasPrevPage, setHasPrevPage] = useState(null);
+
 	const [auction, setAuction] = useState(null);
+	const [auctionDayId, setAuctionDayId] = useState(null);
 	const [units, setUnits] = useState([]);
+	const [searchTerm, setSearchTerm] = useState('');
 	const [brands, setBrands] = useState([]);
 	const [types, setTypes] = useState([]);
-	const [sortByItems, setSortByItems] = useState([
-		'All',
-		'Trucks',
-		'Equipments',
-		'Trailers',
-	]);
 	const [selectedSortBy, setSelectedSortBy] = useState('All');
 	const [selectedType, setSelectedType] = useState('All');
 	const [selectedBrand, setSelectedBrand] = useState('All');
 	const [selectedMinPrice, setSelectedMinPrice] = useState(0);
 	const [selectedMaxPrice, setSelectedMaxPrice] = useState(0);
 	const { fetchData } = useAxios();
+
+	const sortByItems = ['All', 'Trucks', 'Equipment', 'Trailers'];
 
 	const updateMinPrice = ({ target: { value } }) => {
 		if (value === '') {
@@ -52,14 +61,41 @@ export default function ListingsPage() {
 
 	useEffect(() => {
 		const fetchAuctionAndVehicles = async () => {
+			setLoading(true);
 			try {
-				const currentAuctionResponse = await fetchData({
+				const brandsPromise = fetchData({
+					endpoint: '/v1/vehicles/brands',
+					method: 'GET',
+				});
+
+				const typesPromise = fetchData({
+					endpoint: '/v1/vehicles/types',
+					method: 'GET',
+				});
+
+				const currentAuctionPromise = fetchData({
 					endpoint: '/v1/auctions/current',
 					method: 'GET',
 				});
+
+				const [brandsResponse, typesResponse, currentAuctionResponse] =
+					await Promise.all([
+						brandsPromise,
+						typesPromise,
+						currentAuctionPromise,
+					]);
+
+				setBrands(
+					brandsResponse.data.filter((brand) => brand && brand.name !== 'nan')
+				);
+				setTypes(
+					typesResponse.data.filter((type) => type && type.name !== 'nan')
+				);
+
 				const currentAuction = currentAuctionResponse.data;
 
 				if (!currentAuction.id) {
+					setLoading(false);
 					return;
 				}
 
@@ -70,63 +106,132 @@ export default function ListingsPage() {
 					method: 'GET',
 				});
 
-				const auctionDayId = dateResponse.data.find((day) => {
+				const dayId = dateResponse.data.find((day) => {
 					const requestDate = new Date(day.date).setHours(0, 0, 0, 0);
 					const currentDate = new Date().setHours(0, 0, 0, 0);
 					return requestDate === currentDate;
 				})?.id;
 
-				if (!auctionDayId) {
+				setAuctionDayId(dayId);
+
+				if (!dayId) {
+					setLoading(false);
 					return;
 				}
 
-				const brandSet = new Set();
-				const typeSet = new Set();
-
 				const vehiclesResponse = await fetchData({
-					endpoint: `/v1/auctions/${currentAuction.id}/days/${auctionDayId}/vehicles`,
+					endpoint: `/v1/auctions/${currentAuction.id}/days/${dayId}/vehicles`,
 					method: 'GET',
 				});
 
-				setSortByItems(
-					['All', 'Trucks', 'Equipments', 'Trailers'].filter((item) => {
-						if (item === 'Trucks') {
-							return vehiclesResponse.data.vehicles.length > 0;
-						}
-						if (item === 'Equipments') {
-							return vehiclesResponse.data.equipment.length > 0;
-						}
-						if (item === 'Trailers') {
-							return vehiclesResponse.data.trailers.length > 0;
-						}
-						return true;
-					})
-				);
-
-				const vehicleIds = vehiclesResponse.data.vehicles;
-
-				vehicleIds.forEach(async (vehicle) => {
-					const vehicleResponse = await fetchData({
-						endpoint: `/v1/vehicles/${vehicle.id}`,
-						method: 'GET',
-					});
-
-					const vehicleData = vehicleResponse.data;
-
-					setUnits((prevUnits) => [...prevUnits, vehicleData]);
-
-					brandSet.add(vehicleData.brand_name);
-					typeSet.add(vehicleData.vehicle_type_name);
-					setBrands(['All', ...brandSet]);
-					setTypes(['All', ...typeSet]);
-				});
+				setUnits(vehiclesResponse.data.results);
+				setHasNextPage(vehiclesResponse.data.next);
+				setHasPrevPage(vehiclesResponse.data.previous);
+				setTotalPages(Math.ceil(vehiclesResponse.data.count / 5));
 			} catch (error) {
 				/* empty */
+			} finally {
+				setLoading(false);
 			}
 		};
 
 		fetchAuctionAndVehicles();
 	}, []);
+
+	const handleFetchVehicles = useCallback(
+		debounce(async (url) => {
+			setLoading(true);
+			try {
+				const response = await fetchData({
+					endpoint: url,
+					method: 'GET',
+				});
+				setUnits(response.data.results);
+				setHasNextPage(response.data.next);
+				setHasPrevPage(response.data.previous);
+				setTotalPages(Math.ceil(response.data.count / 5));
+			} catch (error) {
+				/* empty */
+			} finally {
+				setLoading(false);
+			}
+		}, 500),
+		[auction?.id, currentPage]
+	);
+
+	const generateUrlFromFilters = (url) => {
+		let filtersString = '';
+		if (selectedSortBy !== 'All') {
+			filtersString += `&item_type=${selectedSortBy.toLowerCase()}`;
+		}
+
+		if (selectedType !== 'All' && selectedType?.name !== 'All') {
+			filtersString += `&type=${selectedType.id}`;
+		}
+
+		if (selectedBrand !== 'All' && selectedBrand?.name !== 'All') {
+			filtersString += `&brand=${selectedBrand.id}`;
+		}
+
+		if (selectedMinPrice > 0) {
+			filtersString += `&min_price=${selectedMinPrice}`;
+		}
+
+		if (selectedMaxPrice > 0) {
+			filtersString += `&max_price=${selectedMaxPrice}`;
+		}
+
+		if (searchTerm && searchTerm !== '') {
+			filtersString += `&search=${encodeURIComponent(searchTerm)}`;
+		}
+
+		return url + filtersString;
+	};
+
+	const handleNextPage = () => {
+		if (hasNextPage) {
+			handleFetchVehicles(
+				generateUrlFromFilters(
+					`v1/auctions/${auction?.id}/days/${auctionDayId}/vehicles?page=${
+						currentPage + 1
+					}`
+				)
+			);
+			setCurrentPage((prev) => prev + 1);
+			window.scrollTo(0, 0);
+		}
+	};
+
+	const handlePreviousPage = () => {
+		if (hasPrevPage) {
+			handleFetchVehicles(
+				generateUrlFromFilters(
+					`v1/auctions/${auction?.id}/days/${auctionDayId}/vehicles?page=${
+						currentPage - 1
+					}`
+				)
+			);
+			setCurrentPage((prev) => prev + 1);
+			window.scrollTo(0, 0);
+		}
+	};
+
+	useEffect(() => {
+		if (auction && auctionDayId) {
+			handleFetchVehicles(
+				generateUrlFromFilters(
+					`/v1/auctions/${auction?.id}/days/${auctionDayId}/vehicles?page=${currentPage}`
+				)
+			);
+		}
+	}, [
+		selectedSortBy,
+		selectedType,
+		selectedBrand,
+		selectedMinPrice,
+		selectedMaxPrice,
+		searchTerm,
+	]);
 
 	if (
 		!auction ||
@@ -190,11 +295,11 @@ export default function ListingsPage() {
 				</div>
 
 				<div className="mt-[26px]">
-					<ListingSearchBar setResults={setUnits} />
+					<ListingSearchBar input={searchTerm} setInput={setSearchTerm} />
 				</div>
 
 				<div className="mt-[34px] flex gap-x-9">
-					<div className="w-[22%] flex flex-col mt-[28px] gap-y-4 sticky top-0">
+					<div className="w-[23%] flex flex-col mt-[28px] gap-y-4 sticky top-0">
 						<h2 className="text-mv-black text-xl font-medium">Filters</h2>
 						<div className="px-5 pt-5 pb-[80px] bg-light-grey rounded-[20px] flex flex-col gap-y-[36px] shadow-filterBoxShadow">
 							<div className="flex flex-col gap-y-2.5">
@@ -215,7 +320,7 @@ export default function ListingsPage() {
 							</div>
 							<div className="flex flex-col gap-y-2.5">
 								<h3 className="text-mv-black text-base font-medium">Price</h3>
-								<div className="flex items-center justify-center gap-x-[13px]">
+								<div className="flex items-center justify-center gap-x-[10px]">
 									<PriceInputField
 										value={selectedMinPrice}
 										onChange={updateMinPrice}
@@ -240,6 +345,7 @@ export default function ListingsPage() {
 								onValueChange={setSelectedSortBy}
 							/>
 						</div>
+
 						<div className="flex flex-col gap-y-[28px] w-full">
 							{units.map((vehicle) => (
 								<VehicleItemCard
@@ -249,16 +355,54 @@ export default function ListingsPage() {
 									modelNumber={vehicle.model_number}
 									engineNumber={vehicle.engine_number}
 									chassisNumber={vehicle.chassis_number}
-									price="210,000"
+									price={
+										vehicle.current_price === 0
+											? priceToString(vehicle.starting_price)
+											: priceToString(vehicle.current_price)
+									}
 									imageUrl={vehicleImage}
 								/>
 							))}
+						</div>
+
+						<div className="w-full flex flex-col items-end justify-center mt-[15px]">
+							<div className="flex w-full items-center justify-end">
+								{hasPrevPage && (
+									<div
+										className="flex gap-x-1 hover:cursor-pointer"
+										onClick={handlePreviousPage}
+									>
+										<KeyboardArrowLeftIcon
+											className="text-mv-black"
+											sx={{ fontSize: 18 }}
+										/>
+										<p className="text-mv-black text-lg font-medium leading-5 tracking-[0.1px]">
+											Previous page
+										</p>
+									</div>
+								)}
+								{hasNextPage && (
+									<div
+										className="flex gap-x-1 hover:cursor-pointer ml-10"
+										onClick={handleNextPage}
+									>
+										<p className="text-mv-black text-lg font-medium leading-5 tracking-[0.1px]">
+											Next page
+										</p>
+										<KeyboardArrowRightIcon
+											className="text-mv-black"
+											sx={{ fontSize: 18 }}
+										/>
+									</div>
+								)}
+							</div>
+							<p className="text-mv-black text-lg font-normal leading-5 tracking-[0.1px] mt-[21px]">{`Page ${currentPage} of ${totalPages}`}</p>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<div className="mt-[101px]">
+			<div className="mt-[40px]">
 				<Footer />
 			</div>
 		</div>

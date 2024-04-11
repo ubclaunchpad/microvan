@@ -10,12 +10,13 @@ class BidAdmin(admin.ModelAdmin):
         "amount",
         "bidder",
         "auction",
+        "auction_day",
         "content_type",
         "object_id",
         "created_at",
     )
-    search_fields = ("bidder__username", "auction__name", "amount")
-    list_filter = ("auction", "bidder", "content_type")
+    search_fields = ("bidder", "amount")
+    list_filter = ("auction", "auction_day", "content_type")
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "content_type":

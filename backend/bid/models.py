@@ -2,7 +2,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
-from auction.models import Auction
+from auction.models import Auction, AuctionDay
 from core.models import MainModel
 
 
@@ -14,6 +14,7 @@ class Bid(MainModel):
     amount = models.IntegerField(null=False)
     bidder = models.CharField(null=False, max_length=500)
     auction = models.ForeignKey(Auction, on_delete=models.PROTECT)
+    auction_day = models.ForeignKey(AuctionDay, on_delete=models.PROTECT)
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     object_id = models.UUIDField()
     content_object = GenericForeignKey("content_type", "object_id")

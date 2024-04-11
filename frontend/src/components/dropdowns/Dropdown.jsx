@@ -51,7 +51,7 @@ export default function Dropdown({ title, items, onValueChange }) {
 
 			{isOpen && (
 				<div
-					className="absolute z-10 mt-[60px] py-5 px-5 bg-mv-white border border-mv-grey border-solid rounded-[10px] w-full"
+					className="absolute z-10 mt-[60px] py-5 px-5 bg-mv-white border border-mv-grey border-solid rounded-[5px] w-full"
 					role="menu"
 					aria-orientation="vertical"
 					aria-labelledby="menu-button"

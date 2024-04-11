@@ -6,46 +6,14 @@ from .models import Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicl
 from .serializers import VehicleSerializer
 
 
-def infinite_filter(request):
-    url_parameter = request.GET.get("search")
-    if url_parameter:
-        limit = request.GET.get("l")
-        offset = request.GET.get("o")
-        if limit and offset:
-            return Vehicle.objects.filter(unicode_id__icontains=url_parameter)[
-                : int(offset) + int(limit)
-            ]
-        elif limit:
-            return Vehicle.objects.filter(unicode_id__icontains=url_parameter)[
-                : int(limit)
-            ]
-        else:
-            return Vehicle.objects.filter(unicode_id__icontains=url_parameter)[:15]
-    return Vehicle.objects.all()[:40]
-
-
-def has_more_data(request):
-    offset = request.GET.get("o")
-    limit = request.GET.get("l")
-    if offset:
-        return Vehicle.objects.all().count() > (int(offset) + int(limit))
-
-    elif limit:
-        return Vehicle.objects.all().count() > int(limit)
-    else:
-        return False
-
-
 def parse_excel_to_vehicle(excel_file):
     df0 = pd.read_excel(excel_file, sheet_name=0, engine="openpyxl")
 
-    # empty list to store Vehicle object
     vehicles = []
 
-    # iterate through rows in dataframe
     for index, row in df0.iterrows():
         if pd.isna(row.iloc[2]) or pd.isna(row.iloc[19]) or pd.isna(row.iloc[1]):
-            continue  # exit the loop if an empty cell is encountered
+            continue
 
         vehicle_data = {
             "unicode_id": row["UNICODE"],
@@ -54,7 +22,7 @@ def parse_excel_to_vehicle(excel_file):
             "engine_number": row["ENGINE NUMBER"],
             "description": row["DESCRIPTION"],
             "brand": row["BRAND"],
-            "vehicle_type": row["TYPE"],
+            "type": row["TYPE"],
             "minimum_price": row["SALE PRICE (PhP)"],
             # "is_sold": row[""],
             "remarks": row["REMARKS"],
@@ -71,7 +39,7 @@ def parse_excel_to_vehicle(excel_file):
             "body_condition": row["Body"],
         }
         brand_id = vehicle_data.pop("brand", None)
-        type_id = vehicle_data.pop("vehicle_type", None)
+        type_id = vehicle_data.pop("type", None)
         brand = Brand.objects.filter(name=brand_id).first()
         if brand is None:
             brand = Brand.objects.create(name=brand_id)

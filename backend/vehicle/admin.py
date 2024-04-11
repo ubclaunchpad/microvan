@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.contenttypes.models import ContentType
 
 from .models import (
@@ -13,14 +14,21 @@ from .models import (
 )
 
 
+class UnitImageInline(GenericTabularInline):
+    model = UnitImage
+    extra = 1
+
+
 class BrandAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "created_at")
     search_fields = ("name",)
+    readonly_fields = ("created_at",)
 
 
 class TypeAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "created_at")
     search_fields = ("name",)
+    readonly_fields = ("created_at",)
 
 
 class VehicleAdmin(admin.ModelAdmin):
@@ -31,7 +39,7 @@ class VehicleAdmin(admin.ModelAdmin):
         "model_number",
         "chassis_number",
         "brand",
-        "vehicle_type",
+        "type",
         "is_sold",
         "created_at",
     )
@@ -39,60 +47,69 @@ class VehicleAdmin(admin.ModelAdmin):
         "model_number",
         "chassis_number",
         "brand__name",
-        "vehicle_type__name",
+        "type__name",
     )
-    list_filter = ("brand", "vehicle_type", "is_sold")
+    list_filter = ("brand", "type", "is_sold")
+    readonly_fields = ("created_at",)
+    inlines = [UnitImageInline]
 
 
 class EquipmentAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "unicode_id",
-        "prefix_id",
+        "model_number",
         "chassis_number",
         "engine_number",
         "brand",
-        "equipment_type",
+        "type",
         "created_at",
     )
     search_fields = (
-        "prefix_id",
+        "model_number",
         "chassis_number",
         "engine_number",
         "brand__name",
-        "equipment_type__name",
+        "type__name",
     )
-    list_filter = ("brand", "equipment_type")
+    list_filter = ("brand", "type")
+    readonly_fields = ("created_at",)
+    inlines = [UnitImageInline]
 
 
 class SupplierAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "created_at")
     search_fields = ("name",)
+    readonly_fields = ("created_at",)
 
 
 class TrailerAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "unicode_id",
-        "chassis_number",
+        "model_number",
         "supplier",
-        "trailer_type",
+        "type",
         "number_of_axles",
         "created_at",
     )
-    search_fields = ("chassis_number", "supplier__name", "trailer_type__name")
-    list_filter = ("supplier", "trailer_type")
+    search_fields = ("model_number", "supplier__name", "type__name")
+    list_filter = ("supplier", "type")
+    readonly_fields = ("created_at",)
+    inlines = [UnitImageInline]
 
 
 class UnitImageAdmin(admin.ModelAdmin):
     list_display = ("id", "image_url", "content_type", "object_id", "created_at")
     search_fields = ("content_type__model",)
     list_filter = ("content_type",)
+    readonly_fields = ("created_at",)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "content_type":
-            valid_models = ["vehicle", "equipment", "trailer"]
-            kwargs["queryset"] = ContentType.objects.filter(model__in=valid_models)
+            kwargs["queryset"] = ContentType.objects.filter(
+                model__in=["vehicle", "equipment", "trailer"]
+            )
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
@@ -107,15 +124,17 @@ class SavedUnitsAdmin(admin.ModelAdmin):
     )
     search_fields = ("auction_id__name", "content_type__model")
     list_filter = ("auction_id", "content_type")
+    readonly_fields = ("created_at",)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "content_type":
-            valid_models = ["vehicle", "equipment", "trailer"]
-            kwargs["queryset"] = ContentType.objects.filter(model__in=valid_models)
+            kwargs["queryset"] = ContentType.objects.filter(
+                model__in=["vehicle", "equipment", "trailer"]
+            )
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
-# Register your models here
+# Register your models and their admins
 admin.site.register(Brand, BrandAdmin)
 admin.site.register(Type, TypeAdmin)
 admin.site.register(Vehicle, VehicleAdmin)

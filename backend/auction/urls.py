@@ -4,8 +4,8 @@ from django.urls import include, path
 from .views import (
     AuctionDayApiView,
     AuctionDetailApiView,
+    AuctionItemsApiView,
     AuctionListApiView,
-    AuctionVehiclesApiView,
     BidderVerificationApiView,
     CurrentAuctionApiView,
     GetSavedUnitApiView,
@@ -29,7 +29,7 @@ urlpatterns = [
     ),
     path(
         "/<uuid:auction_id>/days/<uuid:auction_day_id>/vehicles",
-        AuctionVehiclesApiView.as_view(),
+        AuctionItemsApiView.as_view(),
         name="auction_vehicles",
     ),
     path(
