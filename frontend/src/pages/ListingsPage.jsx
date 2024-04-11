@@ -87,7 +87,9 @@ export default function ListingsPage() {
 				setBrands(
 					brandsResponse.data.filter((brand) => brand && brand.name !== 'nan')
 				);
-				setTypes(typesResponse.data.filter((type) => type && type.name !== 'nan'));
+				setTypes(
+					typesResponse.data.filter((type) => type && type.name !== 'nan')
+				);
 
 				const currentAuction = currentAuctionResponse.data;
 
@@ -162,11 +164,11 @@ export default function ListingsPage() {
 			filtersString += `&item_type=${selectedSortBy.toLowerCase()}`;
 		}
 
-		if (selectedType !== "All" && selectedType?.name !== 'All') {
+		if (selectedType !== 'All' && selectedType?.name !== 'All') {
 			filtersString += `&type=${selectedType.id}`;
 		}
 
-		if (selectedBrand !== "All" && selectedBrand?.name !== 'All') {
+		if (selectedBrand !== 'All' && selectedBrand?.name !== 'All') {
 			filtersString += `&brand=${selectedBrand.id}`;
 		}
 

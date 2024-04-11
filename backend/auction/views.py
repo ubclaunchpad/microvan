@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.contrib.contenttypes.models import ContentType
+from django.core.paginator import Paginator
 from django.db.models import Prefetch, Q
 from django.utils import timezone
 from rest_framework import status
@@ -9,7 +10,6 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.core.paginator import Paginator
 
 from core.permissions import IsAdminUser
 from services.AWSCognitoService import AWSCognitoService
@@ -326,50 +326,49 @@ class AuctionItemsApiView(APIView):
         """
         content_type = ContentType.objects.get_for_model(model)
         related_item_ids = AuctionItem.objects.filter(
-            auction_day_id=auction_day_id,
-            content_type=content_type
-        ).values_list('object_id', flat=True)
+            auction_day_id=auction_day_id, content_type=content_type
+        ).values_list("object_id", flat=True)
 
-        return model.objects.filter(
-            id__in=related_item_ids, **filters
-        )
+        return model.objects.filter(id__in=related_item_ids, **filters)
 
     def get(self, request, auction_id, auction_day_id):
-        item_type = request.query_params.get('item_type', None)
-        type = request.query_params.get('type', None)
-        brand_id = request.query_params.get('brand', None)
-        min_price = request.query_params.get('min_price', None)
-        max_price = request.query_params.get('max_price', None)
-        search_term = request.query_params.get('search', None)
+        item_type = request.query_params.get("item_type", None)
+        type = request.query_params.get("type", None)
+        brand_id = request.query_params.get("brand", None)
+        min_price = request.query_params.get("min_price", None)
+        max_price = request.query_params.get("max_price", None)
+        search_term = request.query_params.get("search", None)
 
         filters = {}
         if type:
-            filters['type'] = type
+            filters["type"] = type
         if brand_id:
-            filters['brand'] = brand_id
+            filters["brand"] = brand_id
         if min_price:
-            filters['current_price__gte'] = min_price
+            filters["current_price__gte"] = min_price
         if max_price:
-            filters['current_price__lte'] = max_price
+            filters["current_price__lte"] = max_price
         if search_term:
-            filters['description__icontains'] = search_term
+            filters["description__icontains"] = search_term
 
         # Apply filters to each model's queryset
-        if item_type == 'trucks':
+        if item_type == "trucks":
             combined_qs = self.get_filtered_queryset(Vehicle, auction_day_id, filters)
-        elif item_type == 'equipment':
+        elif item_type == "equipment":
             combined_qs = self.get_filtered_queryset(Equipment, auction_day_id, filters)
-        elif item_type == 'trailers':
+        elif item_type == "trailers":
             combined_qs = self.get_filtered_queryset(Trailer, auction_day_id, filters)
         else:
             vehicle_qs = self.get_filtered_queryset(Vehicle, auction_day_id, filters)
-            equipment_qs = self.get_filtered_queryset(Equipment, auction_day_id, filters)
+            equipment_qs = self.get_filtered_queryset(
+                Equipment, auction_day_id, filters
+            )
             trailer_qs = self.get_filtered_queryset(Trailer, auction_day_id, filters)
 
             combined_qs = list(vehicle_qs) + list(equipment_qs) + list(trailer_qs)
 
         # Implement custom pagination
-        page_number = request.query_params.get('page', 1)
+        page_number = request.query_params.get("page", 1)
         paginator = Paginator(combined_qs, 5)
         page_obj = paginator.get_page(page_number)
 
@@ -383,13 +382,14 @@ class AuctionItemsApiView(APIView):
                 serializer = TrailerSerializer(obj)
             serialized_data.append(serializer.data)
 
-        return Response({
-            'count': paginator.count,
-            'next': page_obj.has_next(),
-            'previous': page_obj.has_previous(),
-            'results': serialized_data
-        })
-
+        return Response(
+            {
+                "count": paginator.count,
+                "next": page_obj.has_next(),
+                "previous": page_obj.has_previous(),
+                "results": serialized_data,
+            }
+        )
 
     def post(self, request, auction_id, auction_day_id):
         content_type = request.data.get("content_type")

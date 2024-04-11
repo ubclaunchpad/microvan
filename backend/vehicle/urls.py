@@ -1,7 +1,13 @@
 from django.contrib import admin
 from django.urls import include, path
 
-from .views import DetailApiView, ItemListApiView, UploadFileView, BrandListApiView, TypeListApiView
+from .views import (
+    BrandListApiView,
+    DetailApiView,
+    ItemListApiView,
+    TypeListApiView,
+    UploadFileView,
+)
 
 urlpatterns = [
     path("", ItemListApiView.as_view(), name="vehicle"),

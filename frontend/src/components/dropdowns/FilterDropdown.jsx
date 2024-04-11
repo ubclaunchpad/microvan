@@ -34,10 +34,7 @@ export default function FilterDropdown({ title, items, onValueChange }) {
 	}, [isOpen]);
 
 	return (
-		<div
-			className="relative flex flex-col gap-1.5"
-			ref={dropdownRef}
-		>
+		<div className="relative flex flex-col gap-1.5" ref={dropdownRef}>
 			<button
 				type="button"
 				className={`whitespace-nowrap py-[9px] pl-[18px] pr-[12px] rounded-[5px] bg-mv-white flex justify-between items-center text-left ${

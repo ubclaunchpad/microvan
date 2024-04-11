@@ -4,8 +4,8 @@ from django.urls import include, path
 from .views import (
     AuctionDayApiView,
     AuctionDetailApiView,
-    AuctionListApiView,
     AuctionItemsApiView,
+    AuctionListApiView,
     BidderVerificationApiView,
     CurrentAuctionApiView,
     GetSavedUnitApiView,

@@ -1,5 +1,5 @@
-from rest_framework import serializers
 from django.contrib.contenttypes.models import ContentType
+from rest_framework import serializers
 
 from .models import Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle
 
@@ -42,7 +42,7 @@ class EquipmentSerializer(serializers.ModelSerializer):
 
     def get_type_name(self, obj):
         return obj.type.name
-    
+
     def get_content_type(self, obj):
         return obj._meta.model_name
 
@@ -73,7 +73,7 @@ class VehicleSerializer(serializers.ModelSerializer):
 
     def get_type_name(self, obj):
         return obj.type.name
-    
+
     def get_content_type(self, obj):
         return obj._meta.model_name
 
@@ -107,7 +107,7 @@ class TrailerSerializer(serializers.ModelSerializer):
 
     def get_type_name(self, obj):
         return obj.type.name
-    
+
     def get_content_type(self, obj):
         return obj._meta.model_name
 
@@ -124,10 +124,12 @@ class UnitImageSerializer(serializers.ModelSerializer):
             return obj.content_type.model
         return None
 
+
 class BrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brand
         fields = ["id", "name"]
+
 
 class TypeSerializer(serializers.ModelSerializer):
     class Meta:

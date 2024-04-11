@@ -12,7 +12,13 @@ from core.permissions import IsAdminUser
 
 from .helpers import parse_excel_to_vehicle
 from .models import Brand, Equipment, Trailer, Type, Vehicle
-from .serializers import EquipmentSerializer, TrailerSerializer, VehicleSerializer, BrandSerializer, TypeSerializer
+from .serializers import (
+    BrandSerializer,
+    EquipmentSerializer,
+    TrailerSerializer,
+    TypeSerializer,
+    VehicleSerializer,
+)
 
 
 class StandardResultsPagination(PageNumberPagination):
@@ -172,6 +178,7 @@ class UploadFileView(APIView):
             error_message = str(e)
             return Response({"status": "error", "message": error_message})
 
+
 class BrandListApiView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -179,7 +186,7 @@ class BrandListApiView(APIView):
         brands = Brand.objects.all()
         serialized_data = BrandSerializer(brands, many=True).data
         return Response(serialized_data, status=status.HTTP_200_OK)
-    
+
 
 class TypeListApiView(APIView):
     permission_classes = [IsAuthenticated]

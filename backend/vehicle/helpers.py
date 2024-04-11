@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from .models import Brand, Equipment, Supplier, Trailer, Type, UnitImage, Vehicle
 from .serializers import VehicleSerializer
 
+
 def parse_excel_to_vehicle(excel_file):
     df0 = pd.read_excel(excel_file, sheet_name=0, engine="openpyxl")
 
