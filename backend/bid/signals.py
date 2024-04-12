@@ -43,7 +43,7 @@ def bid_updated(sender, instance, created, **kwargs):
         }
 
         async_to_sync(channel_layer.group_send)(
-            "auction_{}".format(instance.auction_id),
+            "bid_updates",
             {"type": "bid.update", "bid_data": bid_data},
         )
 
