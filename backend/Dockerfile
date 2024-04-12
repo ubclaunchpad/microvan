@@ -13,4 +13,4 @@ COPY . /app
 
 EXPOSE 8000
 
-CMD sh -c 'gunicorn core.asgi:application --bind 0.0.0.0:${PORT:-8000}'
+CMD sh -c 'daphne -b 0.0.0.0 -p ${PORT:-8000} core.asgi:application'
