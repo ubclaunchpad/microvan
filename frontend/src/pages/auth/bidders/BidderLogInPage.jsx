@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, ScrollRestoration } from 'react-router-dom';
 import logo from '../../../assets/microvan_logo.svg';
-import OnboardingInputField from '../../../components/inputs/OnboardingInputField';
+import SignInInputField from '../../../components/inputs/SignInInputField';
 import LogInButton from '../../../components/buttons/LogInButton';
 import { useAuth } from '../../../providers/AuthProvider';
 
@@ -52,20 +52,20 @@ export default function BidderLogInPage() {
 					Microvan Inc.
 				</h1>
 				<h2 className="text-mv-green text-3xl font-normal">Virtual Auctions</h2>
-				<div className="flex flex-col items-start w-[60%] mt-[22px] gap-y-[5px]">
+				<div className="flex flex-col items-start w-[60%] mt-[22px] gap-y-[5px] max-w-[700px]">
 					<p className="text-dark-grey text-xl font-normal">Email</p>
-					<OnboardingInputField
-						placeholder="johndoe@gmail.com"
+					<SignInInputField
+						placeholder="Email"
 						className="w-full h-[56px]"
 						type="email"
 						value={email}
 						onChange={handleEmailChange}
 					/>
 				</div>
-				<div className="flex flex-col items-start w-[60%] mt-[22px] gap-y-[5px]">
+				<div className="flex flex-col items-start w-[60%] mt-[22px] gap-y-[5px] max-w-[700px]">
 					<p className="text-dark-grey text-xl font-normal">Password</p>
-					<OnboardingInputField
-						placeholder="**********"
+					<SignInInputField
+						placeholder="Password"
 						className="w-full h-[56px]"
 						type="password"
 						value={password}
@@ -78,7 +78,7 @@ export default function BidderLogInPage() {
 					</p>
 				)}
 
-				<div className="mt-[49px] w-full flex items-center justify-center">
+				<div className="mt-[49px] w-full flex items-center justify-center max-w-[525px]">
 					<LogInButton onClick={handleLogIn} />
 				</div>
 				<button

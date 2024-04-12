@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, ScrollRestoration } from 'react-router-dom';
 import logo from '../../../assets/microvan_logo.svg';
-import OnboardingInputField from '../../../components/inputs/OnboardingInputField';
+import RegisterInputField from '../../../components/inputs/RegisterInputField';
 import RegisterButton from '../../../components/buttons/RegisterButton';
 import useAxios from '../../../hooks/useAxios';
 
@@ -78,7 +78,7 @@ export default function BidderRegisterPage() {
 						</h2>
 						<div className="flex flex-col w-full">
 							<p className="text-mv-black text-base font-normal">First Name</p>
-							<OnboardingInputField
+							<RegisterInputField
 								placeholder="Paul"
 								type="text"
 								value={firstName}
@@ -87,7 +87,7 @@ export default function BidderRegisterPage() {
 						</div>
 						<div className="flex flex-col w-full">
 							<p className="text-mv-black text-base font-normal">Surname</p>
-							<OnboardingInputField
+							<RegisterInputField
 								placeholder="Dos Santos"
 								type="text"
 								value={surname}
@@ -96,7 +96,7 @@ export default function BidderRegisterPage() {
 						</div>
 						<div className="flex flex-col w-full">
 							<p className="text-mv-black text-base font-normal">Email</p>
-							<OnboardingInputField
+							<RegisterInputField
 								placeholder="pauldossantos@gmail.com"
 								type="email"
 								value={email}
@@ -107,7 +107,7 @@ export default function BidderRegisterPage() {
 							<p className="text-mv-black text-base font-normal">
 								Phone Number
 							</p>
-							<OnboardingInputField
+							<RegisterInputField
 								placeholder="+63 (917) 123 4567"
 								type="tel"
 								value={phoneNumber}
@@ -122,7 +122,7 @@ export default function BidderRegisterPage() {
 						</h2>
 						<div className="flex flex-col w-full">
 							<p className="text-mv-black text-base font-normal">Company</p>
-							<OnboardingInputField
+							<RegisterInputField
 								placeholder="Bank of Manila"
 								type="text"
 								value={company}
@@ -133,7 +133,7 @@ export default function BidderRegisterPage() {
 							<p className="text-mv-black text-base font-normal">
 								Company Address
 							</p>
-							<OnboardingInputField
+							<RegisterInputField
 								placeholder="1234 Manila Street, Manila, Philippines"
 								type="text"
 								value={companyAddress}
@@ -150,7 +150,7 @@ export default function BidderRegisterPage() {
 							<p className="text-mv-black text-base font-normal">
 								Input Password
 							</p>
-							<OnboardingInputField
+							<RegisterInputField
 								placeholder=""
 								type="password"
 								value={password}
@@ -161,7 +161,7 @@ export default function BidderRegisterPage() {
 							<p className="text-mv-black text-base font-normal">
 								Confirm Password
 							</p>
-							<OnboardingInputField
+							<RegisterInputField
 								placeholder=""
 								type="password"
 								value={confirmPassword}

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function OnboardingInputField({
+export default function RegisterInputField({
 	placeholder,
 	type,
 	value,

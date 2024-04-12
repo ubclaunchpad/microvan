@@ -41,12 +41,10 @@ export default function CurrentAuctionCard({
 				/>
 
 				<div
-					className="absolute z-10 items-center justify-center w-[23%]"
+					className="absolute z-10 flex items-center justify-center w-full"
 					style={{
 						height: joinAuctionButtonHeight,
 						top: `${joinAuctionButtonTopOffset}px`,
-						left: '50%',
-						transform: 'translate(-50%, 0)',
 					}}
 				>
 					{button}
