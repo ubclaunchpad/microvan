@@ -6,7 +6,7 @@ export default function AddToListButton({ onClick, size = 'sm' }) {
 		<button
 			type="button"
 			className={`bg-mv-white border-mv-green border-solid border rounded-[5px] shadow-searchBarShadow w-full flex items-center justify-center whitespace-nowrap ${
-				size === 'sm' ? 'px-[20px] py-[10px]' : 'py-[16px]'
+				size === 'sm' ? 'px-[20px] py-[10px]' : 'px-[65px] py-[16px]'
 			}`}
 			onClick={onClick}
 		>

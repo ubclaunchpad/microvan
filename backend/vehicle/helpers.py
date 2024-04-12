@@ -50,7 +50,7 @@ def parse_excel_to_vehicle(excel_file):
         if brand is None or type is None:
             continue
         vehicle, created = Vehicle.objects.get_or_create(
-            brand=brand, vehicle_type=type, **vehicle_data
+            brand=brand, type=type, **vehicle_data
         )
 
         vehicles.append(vehicle)

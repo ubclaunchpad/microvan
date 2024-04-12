@@ -146,7 +146,11 @@ export default function VehicleDetailsPage() {
 									Current bid:
 								</p>
 								<p className="text-mv-black text-3xl font-medium leading-6 tracking-[0.125px]">
-									₱210,000
+									{`₱${
+										vehicle?.current_price === 0
+											? vehicle?.starting_price
+											: vehicle?.current_price
+									}`}
 								</p>
 							</div>
 							<div className="mt-[43px] w-full flex gap-x-[17px]">

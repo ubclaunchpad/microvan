@@ -95,12 +95,12 @@ export default function NavBar() {
 				>
 					{notificationHover ? (
 						<NotificationsIcon
-							sx={{ fontSize: 35 }}
+							sx={{ fontSize: 24 }}
 							className="text-mv-green hover:cursor-pointer"
 						/>
 					) : (
 						<NotificationsOutlinedIcon
-							sx={{ fontSize: 35 }}
+							sx={{ fontSize: 24 }}
 							className="text-mv-black hover:cursor-pointer"
 						/>
 					)}
@@ -131,12 +131,12 @@ export default function NavBar() {
 				>
 					{personHover || isProfilePage ? (
 						<PersonIcon
-							sx={{ fontSize: 35 }}
+							sx={{ fontSize: 24 }}
 							className="text-mv-green hover:cursor-pointer"
 						/>
 					) : (
 						<PersonOutlinedIcon
-							sx={{ fontSize: 35 }}
+							sx={{ fontSize: 24 }}
 							className="text-mv-black hover:cursor-pointer"
 						/>
 					)}

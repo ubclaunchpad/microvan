@@ -11,7 +11,7 @@ export default function RegisterForAuctionButton() {
 	return (
 		<button
 			type="button"
-			className="bg-mv-green rounded-[10px] inline-flex px-[36.5px] py-[25px] flex-start shrink-0 items-center justify-center h-[74px]"
+			className="bg-mv-green rounded-[10px] inline-flex px-[36.5px] py-[25px] max-w-[231px] flex-start shrink-0 items-center justify-center h-[74px]"
 			onClick={handleClick}
 		>
 			<div className="text-mv-white text-sm font-medium">

@@ -13,7 +13,6 @@ import vehicleImage from '../assets/truck.png';
 import Footer from '../components/footers/Footer';
 import PriceInputField from '../components/inputs/PriceInputField';
 import useAxios from '../hooks/useAxios';
-import { priceToString } from '../utils/priceUtil';
 import {
 	formatListingsTodayDate,
 	formatFlexibleDateRange,
@@ -357,8 +356,8 @@ export default function ListingsPage() {
 									chassisNumber={vehicle.chassis_number}
 									price={
 										vehicle.current_price === 0
-											? priceToString(vehicle.starting_price)
-											: priceToString(vehicle.current_price)
+											? vehicle.starting_price
+											: vehicle.current_price
 									}
 									imageUrl={vehicleImage}
 								/>
@@ -402,7 +401,7 @@ export default function ListingsPage() {
 				</div>
 			</div>
 
-			<div className="mt-[40px]">
+			<div className="mt-[74px]">
 				<Footer />
 			</div>
 		</div>

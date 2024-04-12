@@ -14,7 +14,7 @@ export default function ViewModelButton({ onClick, size = 'sm' }) {
 	return (
 		<button
 			type="button"
-			className={`bg-mv-green border-solid border-mv-green rounded-[5px] shadow-searchBarShadow flex items-center justify-center gap-2.5 ${buttonStyle[size]}`}
+			className={`bg-mv-green border-solid border-mv-green rounded-[5px] shadow-searchBarShadow w-full flex items-center justify-center gap-2.5 ${buttonStyle[size]}`}
 			onClick={onClick}
 		>
 			<div className={`text-mv-white font-medium ${textStyle[size]}`}>

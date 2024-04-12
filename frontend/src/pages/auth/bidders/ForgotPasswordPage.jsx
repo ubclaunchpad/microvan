@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import logo from '../../../assets/microvan_logo.svg';
-import OnboardingInputField from '../../../components/inputs/OnboardingInputField';
+import SignInInputField from '../../../components/inputs/SignInInputField';
 
 export default function ForgotPasswordPage() {
 	const navigate = useNavigate();
@@ -44,8 +44,8 @@ export default function ForgotPasswordPage() {
 					</p>
 					<div className="w-full gap-y-[5px]">
 						<p className="text-mv-black text-xl font-medium">Email Address</p>
-						<div className="flex flex-row items-center justify-between w-full gap-x-[27px] h-[56px]">
-							<OnboardingInputField
+						<div className="flex flex-row items-center justify-between w-full gap-x-[27px]">
+							<SignInInputField
 								placeholder="johndoe@gmail.com"
 								className="w-full h-full"
 								type="email"
@@ -54,7 +54,7 @@ export default function ForgotPasswordPage() {
 							/>
 							<button
 								type="button"
-								className="bg-mv-white w-[15%] h-full rounded-[10px] border-solid border-2 border-mv-green text-mv-green font-normal text-xl"
+								className="bg-mv-white w-[15%] max-w-[150px] py-[11px] px-[33.5px] h-full rounded-[10px] border-solid border-2 border-mv-green text-mv-green font-normal text-xl"
 								onClick={handlePress}
 							>
 								Next
