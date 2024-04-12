@@ -39,9 +39,10 @@ export default function ListingsPage() {
 	const [selectedMinPrice, setSelectedMinPrice] = useState(0);
 	const [selectedMaxPrice, setSelectedMaxPrice] = useState(0);
 	const { fetchData } = useAxios();
-	const wsURL = process.env.REACT_APP_NODE_ENV === 'dev'
-		? process.env.REACT_APP_DEV_BACKEND_WS_BASE_URL
-		: process.env.REACT_APP_PROD_BACKEND_WS_BASE_URL
+	const wsURL =
+		process.env.REACT_APP_NODE_ENV === 'dev'
+			? process.env.REACT_APP_DEV_BACKEND_WS_BASE_URL
+			: process.env.REACT_APP_PROD_BACKEND_WS_BASE_URL;
 	const sortByItems = ['All', 'Trucks', 'Equipment', 'Trailers'];
 
 	const updateMinPrice = ({ target: { value } }) => {
@@ -54,26 +55,26 @@ export default function ListingsPage() {
 
 	useEffect(() => {
 		const chatSocket = new WebSocket(wsURL);
-		
+
 		chatSocket.onmessage = (event) => {
-		  const message = JSON.parse(event.data);
-		  
-		  if (message.bid_data) {
-			const bidData = message.bid_data;
-			
-			setUnits(prevUnits => 
-			  prevUnits.map(unit => 
-				unit.id === bidData.object_id 
-				  ? { ...unit, current_price: bidData.amount } 
-				  : unit
-			  )
-			);
-		  }
+			const message = JSON.parse(event.data);
+
+			if (message.bid_data) {
+				const bidData = message.bid_data;
+
+				setUnits((prevUnits) =>
+					prevUnits.map((unit) =>
+						unit.id === bidData.object_id
+							? { ...unit, current_price: bidData.amount }
+							: unit
+					)
+				);
+			}
 		};
-	  
+
 		return () => chatSocket.close();
-	  }, []);
-	  
+	}, []);
+
 	const updateMaxPrice = ({ target: { value } }) => {
 		if (value === '') {
 			setSelectedMaxPrice(0);

@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ScrollRestoration } from 'react-router-dom';
 import { Avatar } from '@mui/material';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import NavBar from '../components/navBars/NavBar';
 import { useUser } from '../providers/UserProvider';
-import SaveChangesButton from '../components/buttons/SaveChangesButton';
 import Checkbox from '../components/inputs/Checkbox';
 import SortByDropdown from '../components/dropdowns/SortByDropdown';
 import BiddedItemCard from '../components/cards/BiddedItemCard';
 import vehicleImage from '../assets/truck.png';
 import SavedItemCard from '../components/cards/SavedItemCard';
+import EditProfileButton from '../components/buttons/EditProfileButton';
+import Footer from '../components/footers/Footer';
 
 export default function ProfilePage() {
 	const user = useUser();
@@ -74,121 +74,81 @@ export default function ProfilePage() {
 			<ScrollRestoration />
 			<NavBar />
 
-			<div className="w-[90%] flex mt-[43.94px] items-start gap-x-[52px] mb-[282px]">
-				<div className="w-[25%] flex flex-col items-start">
-					<div className="flex items-start gap-x-[13px] mb-[30px]">
-						<Avatar sx={{ width: '200px', height: '200px' }} />
-						<EditOutlinedIcon
-							sx={{ fontSize: 18 }}
-							className="hover:cursor-pointer"
-							onClick={() => {}}
-						/>
-					</div>
-					<div className="flex flex-col gap-y-[19.1px] items-start w-full">
+			<div className="w-[90%] flex mt-[43px] items-start gap-x-[52px]">
+				<div className="w-[22.5%] flex flex-col items-start">
+					<div className="flex items-center gap-x-[16.5px] mb-[25px]">
+						<Avatar sx={{ width: '93px', height: '93px' }} />
 						<div className="flex flex-col gap-y-[10px]">
-							<p className="text-sm text-mv-black font-normal leading-4">
+							<p className="text-sm text-mv-black font-normal leading-[120%]">
 								Bidder Number
 							</p>
-							<p className="text-base text-mv-black font-normal leading-4">
+							<p className="text-base text-mv-black font-normal leading-[120%]">
 								{user?.['custom:bidder_number']
 									? `#${user?.['custom:bidder_number']}`
 									: 'N/A'}
 							</p>
 						</div>
-						<div className="flex flex-col gap-y-[11.9px] w-[80%]">
-							<div className="flex items-center gap-x-[8.8px]">
-								<p className="text-sm text-mv-black font-normal leading-4">
-									Name
-								</p>
-								<EditOutlinedIcon
-									sx={{ fontSize: 18 }}
-									className="hover:cursor-pointer"
-									onClick={() => {}}
-								/>
-							</div>
+					</div>
+					<div className="flex flex-col gap-y-[17px] items-start w-full">
+						<div className="flex flex-col gap-y-[5px] w-[80%]">
+							<p className="text-sm text-mv-black font-normal leading-[120%]">
+								Name
+							</p>
 							<input
-								className=" rounded-[5px] bg-light-grey w-full px-5 py-[10.5px] items-center text-sm font-base leading-4 text-mv-black placeholder:text-dark-grey"
+								className=" rounded-[5px] bg-light-grey w-full px-5 py-[10.5px] items-center text-sm font-base leading-[120%] text-mv-black placeholder:text-dark-grey"
 								placeholder={`${user?.given_name} ${user?.family_name}`}
 								disabled
 							/>
 						</div>
-						<div className="flex flex-col gap-y-[11.9px] w-[80%]">
-							<div className="flex items-center gap-x-[8.8px]">
-								<p className="text-sm text-mv-black font-normal leading-4">
-									Email
-								</p>
-								<EditOutlinedIcon
-									sx={{ fontSize: 18 }}
-									className="hover:cursor-pointer"
-									onClick={() => {}}
-								/>
-							</div>
+						<div className="flex flex-col gap-y-[5px] w-[80%]">
+							<p className="text-sm text-mv-black font-normal leading-[120%]">
+								Email
+							</p>
 							<input
-								className="rounded-[5px] bg-light-grey w-full px-5 py-[10.5px] items-center text-sm font-base leading-4 text-mv-black placeholder:text-dark-grey"
+								className="rounded-[5px] bg-light-grey w-full px-5 py-[10.5px] items-center text-sm font-base leading-[120%] text-mv-black placeholder:text-dark-grey"
 								placeholder={user?.email}
 								disabled
 							/>
 						</div>
-						<div className="flex flex-col gap-y-[11.9px] w-[80%]">
-							<div className="flex items-center gap-x-[8.8px]">
-								<p className="text-sm text-mv-black font-normal leading-4">
-									Phone Number
-								</p>
-								<EditOutlinedIcon
-									sx={{ fontSize: 18 }}
-									className="hover:cursor-pointer"
-									onClick={() => {}}
-								/>
-							</div>
+						<div className="flex flex-col gap-y-[5px] w-[80%]">
+							<p className="text-sm text-mv-black font-normal leading-[120%]">
+								Phone Number
+							</p>
 							<input
-								className="rounded-[5px] bg-light-grey w-full px-5 py-[10.5px] items-center text-sm font-base leading-4 text-mv-black placeholder:text-dark-grey"
+								className="rounded-[5px] bg-light-grey w-full px-5 py-[10.5px] items-center text-sm font-base leading-[120%] text-mv-black placeholder:text-dark-grey"
 								placeholder={user?.phone_number}
 								disabled
 							/>
 						</div>
-						<div className="flex flex-col gap-y-[11.9px] w-[80%]">
-							<div className="flex items-center gap-x-[8.8px]">
-								<p className="text-sm text-mv-black font-normal leading-4">
-									Company Name
-								</p>
-								<EditOutlinedIcon
-									sx={{ fontSize: 18 }}
-									className="hover:cursor-pointer"
-									onClick={() => {}}
-								/>
-							</div>
+						<div className="flex flex-col gap-y-[5px] w-[80%]">
+							<p className="text-sm text-mv-black font-normal leading-[120%]">
+								Company Name
+							</p>
 							<input
-								className="rounded-[5px] bg-light-grey w-full px-5 py-[10.5px] items-center text-sm font-base leading-4 text-mv-black placeholder:text-dark-grey"
+								className="rounded-[5px] bg-light-grey w-full px-5 py-[10.5px] items-center text-sm font-base leading-[120%] text-mv-black placeholder:text-dark-grey"
 								placeholder={user?.['custom:company_name']}
 								disabled
 							/>
 						</div>
 						<div className="flex flex-col gap-y-[11.9px] w-[80%]">
-							<div className="flex items-center gap-x-[8.8px]">
-								<p className="text-sm text-mv-black font-normal leading-4">
-									Company Address
-								</p>
-								<EditOutlinedIcon
-									sx={{ fontSize: 18 }}
-									className="hover:cursor-pointer"
-									onClick={() => {}}
-								/>
-							</div>
+							<p className="text-sm text-mv-black font-normal leading-[120%]">
+								Company Address
+							</p>
 							<input
-								className="rounded-[5px] bg-light-grey w-full px-5 py-[10.5px] items-center text-sm font-base leading-4 text-mv-black placeholder:text-dark-grey"
+								className="rounded-[5px] bg-light-grey w-full px-5 py-[10.5px] items-center text-sm font-base leading-[120%] text-mv-black placeholder:text-dark-grey"
 								placeholder={user?.['custom:company_address']}
 								disabled
 							/>
 						</div>
 					</div>
-					<div className="mt-[20px]">
-						<SaveChangesButton onClick={() => {}} />
+					<div className="mt-[25px]">
+						<EditProfileButton onClick={() => {}} />
 					</div>
-					<div className="mt-[70px] w-full flex flex-col items-start">
+					<div className="mt-[40px] w-full flex flex-col items-start">
 						<h2 className="text-mv-black text-xl font-medium">
 							Notification Settings
 						</h2>
-						<div className="mt-[30px] flex items-center justify-start gap-x-[20px]">
+						<div className="mt-[20px] flex items-center justify-start gap-x-[20px]">
 							<Checkbox
 								checked={emailNotificationsEnabled}
 								onChange={() => setEmailNotificationsEnabled((prev) => !prev)}
@@ -197,7 +157,7 @@ export default function ProfilePage() {
 								Turn on email notifications
 							</p>
 						</div>
-						<div className="mt-[26px] flex items-center justify-start gap-x-[20px]">
+						<div className="mt-[23.5px] flex items-center justify-start gap-x-[20px]">
 							<Checkbox
 								checked={upcomingAuctionNotificationsEnabled}
 								onChange={() =>
@@ -205,10 +165,11 @@ export default function ProfilePage() {
 								}
 							/>
 							<p className="text-mv-black text-sm font-normal leading-[120%]">
-								Get notified about upcoming auctions
+								Get notified about <br />
+								upcoming auctions
 							</p>
 						</div>
-						<div className="mt-[26px] flex items-center justify-start gap-x-[20px]">
+						<div className="mt-[19.25px] flex items-center justify-start gap-x-[20px]">
 							<Checkbox
 								checked={promotionNotificationsEnabled}
 								onChange={() =>
@@ -216,11 +177,10 @@ export default function ProfilePage() {
 								}
 							/>
 							<p className="text-mv-black text-sm font-normal leading-[120%]">
-								Receive promotional emails and updates
+								Receive promotional
+								<br />
+								emails and updates
 							</p>
-						</div>
-						<div className="mt-[30px]">
-							<SaveChangesButton onClick={() => {}} />
 						</div>
 					</div>
 				</div>
@@ -322,6 +282,10 @@ export default function ProfilePage() {
 						</div>
 					)}
 				</div>
+			</div>
+
+			<div className="w-full mt-[105px]">
+				<Footer />
 			</div>
 		</div>
 	);
