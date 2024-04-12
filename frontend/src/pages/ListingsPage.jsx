@@ -53,27 +53,30 @@ export default function ListingsPage() {
 		}
 	};
 
-	useEffect(() => {
-		const chatSocket = new WebSocket(wsURL);
-	  
-		chatSocket.onmessage = function(event) {
-		  const message = JSON.parse(event.data);
-		  
-		  if (message.bid_data) {
-			const bidData = message.bid_data;
-			
-			setUnits(prevUnits => 
-			  prevUnits.map(unit => 
-				unit.id === bidData.object_id 
-				  ? { ...unit, current_price: bidData.amount } 
-				  : unit
-			  )
-			);
-		  }
-		};
-	  
-		return () => chatSocket.close();
-	  }, []);
+	function handleWebSocketMessage(event) {
+		const message = JSON.parse(event.data);
+		
+		if (message.bid_data) {
+		const bidData = message.bid_data;
+		
+		setUnits(prevUnits => 
+			prevUnits.map(unit => 
+			unit.id === bidData.object_id 
+				? { ...unit, current_price: bidData.amount } 
+				: unit
+			)
+		);
+		}
+	}
+  
+  useEffect(() => {
+	const chatSocket = new WebSocket(wsURL);
+	
+	chatSocket.onmessage = handleWebSocketMessage;
+  
+	return () => chatSocket.close();
+  }, []);
+  
 	const updateMaxPrice = ({ target: { value } }) => {
 		if (value === '') {
 			setSelectedMaxPrice(0);
