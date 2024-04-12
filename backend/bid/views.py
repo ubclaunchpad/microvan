@@ -15,6 +15,7 @@ from .serializers import BidSerializer
 
 class BidListApiView(APIView):
     permission_classes = [IsAuthenticated]
+
     serializer_class = BidSerializer
     cognitoService = AWSCognitoService()
 
@@ -52,8 +53,14 @@ class BidListApiView(APIView):
 
         item = get_object_or_404(model, id=data.get("object_id"))
 
-        highest_bid = Bid.objects.filter(item=item).order_by("-amount").first()
-        if highest_bid and int(data["amount"]) <= highest_bid.amount:
+        highest_bid = Bid.objects.filter(object_id=item.id).order_by("-amount").first()
+        if highest_bid is None:
+            if int(data["amount"]) < item.starting_price:
+                return Response(
+                    {"error": "Your bid must be higher than the starting price."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        elif highest_bid and int(data["amount"]) <= highest_bid.amount:
             return Response(
                 {"error": "Your bid must be higher than the current highest bid."},
                 status=status.HTTP_400_BAD_REQUEST,

@@ -317,7 +317,7 @@ class GetSavedUnitApiView(APIView):
 
 
 class AuctionItemsApiView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_filtered_queryset(self, model, auction_day_id, filters):
         """
