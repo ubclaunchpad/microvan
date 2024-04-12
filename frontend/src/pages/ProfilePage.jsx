@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ScrollRestoration } from 'react-router-dom';
 import { Avatar } from '@mui/material';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import NavBar from '../components/navBars/NavBar';
 import { useUser } from '../providers/UserProvider';
-import SaveChangesButton from '../components/buttons/SaveChangesButton';
 import Checkbox from '../components/inputs/Checkbox';
 import SortByDropdown from '../components/dropdowns/SortByDropdown';
 import BiddedItemCard from '../components/cards/BiddedItemCard';
 import vehicleImage from '../assets/truck.png';
 import SavedItemCard from '../components/cards/SavedItemCard';
 import EditProfileButton from '../components/buttons/EditProfileButton';
+import Footer from '../components/footers/Footer';
 
 export default function ProfilePage() {
 	const user = useUser();
@@ -75,7 +74,7 @@ export default function ProfilePage() {
 			<ScrollRestoration />
 			<NavBar />
 
-			<div className="w-[90%] flex mt-[43px] items-start gap-x-[52px] mb-[282px]">
+			<div className="w-[90%] flex mt-[43px] items-start gap-x-[52px]">
 				<div className="w-[22.5%] flex flex-col items-start">
 					<div className="flex items-center gap-x-[16.5px] mb-[25px]">
 						<Avatar sx={{ width: '93px', height: '93px' }} />
@@ -283,6 +282,10 @@ export default function ProfilePage() {
 						</div>
 					)}
 				</div>
+			</div>
+
+			<div className="w-full mt-[105px]">
+				<Footer />
 			</div>
 		</div>
 	);
