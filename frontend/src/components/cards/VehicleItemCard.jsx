@@ -7,6 +7,7 @@ import AddToListButton from '../buttons/AddToListButton';
 import ViewModelButton from '../buttons/ViewModelButton';
 import QuickViewButton from '../buttons/QuickViewButton';
 import QuickViewModal from '../modals/QuickViewModal';
+import { priceToString } from '../../utils/priceUtil';
 
 export default function VehicleItemCard({
 	vehicleId,
@@ -97,7 +98,9 @@ export default function VehicleItemCard({
 							</p>
 						</span>
 						<span className="mb-[5px]">
-							<p className="text-mv-black text-[28px] font-medium leading-5 tracking-[0.1px]">{`₱${price}`}</p>
+							<p className="text-mv-black text-[28px] font-medium leading-5 tracking-[0.1px]">{`₱${priceToString(
+								price
+							)}`}</p>
 						</span>
 						<ViewModelButton onClick={handleViewClick} />
 						<span className="mb-[2px]">

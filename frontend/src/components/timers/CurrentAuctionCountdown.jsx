@@ -32,7 +32,7 @@ export default function CurrentAuctionCountdown({
 	if (!isActive) {
 		statusString = 'Auction has not started';
 	} else if (isExpired) {
-		statusString = 'Auction has ended';
+		statusString = "Today's auction has ended";
 	}
 
 	return (

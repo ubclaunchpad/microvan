@@ -19,12 +19,12 @@ import sortAuctions from '../utils/auctionUtils';
 import AwaitingApprovalButton from '../components/buttons/AwaitingApprovalButton';
 import StartBiddingButton from '../components/buttons/StartBiddingButton';
 import { useUser } from '../providers/UserProvider';
+import { useCurrentAuction } from '../providers/CurrentAuctionProvider';
 
 export default function HomePage() {
 	const user = useUser();
-	// eslint-disable-next-line no-unused-vars
-	const [searchedAuctions, setSearchedAuctions] = useState([]);
-	const [currentAuctionList, setCurrentAuctionList] = useState([]);
+	const { currentAuction } = useCurrentAuction();
+
 	const [upcomingAuctionList, setUpcomingAuctionList] = useState([]);
 	const [pastAuctionList, setPastAuctionList] = useState([]);
 	const [currentVerified, setCurrentVerified] = useState(null);
@@ -33,35 +33,44 @@ export default function HomePage() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		async function fetchDataAsync() {
-			try {
-				const auctionsResponse = await fetchData({
-					endpoint: '/v1/auctions',
+		const fetchUpcomingAuctions = async () => {
+			const response = await fetchData({
+				endpoint: '/v1/auctions/upcoming',
+				method: 'GET',
+			});
+
+			setUpcomingAuctionList(response.data);
+		};
+
+		const fetchPastAuctions = async () => {
+			const response = await fetchData({
+				endpoint: '/v1/auctions/past',
+				method: 'GET',
+			});
+
+			setPastAuctionList(response.data);
+		};
+
+		const fetchCurrentVerification = async () => {
+			if (user && isLoggedIn && currentAuction) {
+				const response = await fetchData({
+					endpoint: `/v1/auctions/${currentAuction.id}/verification?bidder_id=${user.sub}`,
 					method: 'GET',
 				});
-				const auctionList = sortAuctions(auctionsResponse.data);
 
-				setUpcomingAuctionList(auctionList.upcoming);
-				setCurrentAuctionList(auctionList.current);
-				setPastAuctionList(auctionList.past);
-
-				if (user && isLoggedIn && auctionList.current.length > 0) {
-					const response = await fetchData({
-						endpoint: `/v1/auctions/${auctionList.current[0].id}/verification?bidder_id=${user.sub}`,
-						method: 'GET',
-					});
-
-					setCurrentVerified(
-						response.data.length > 0 ? response.data[0].is_verified : null
-					);
-				}
-			} catch (error) {
-				/* empty */
+				setCurrentVerified(
+					response.data.length > 0 ? response.data[0].is_verified : null
+				);
 			}
-		}
+		};
 
-		fetchDataAsync();
-	}, [isLoggedIn, user]);
+		fetchPastAuctions();
+		if (!currentAuction) {
+			fetchUpcomingAuctions();
+		} else {
+			fetchCurrentVerification();
+		}
+	}, [currentAuction, user, isLoggedIn]);
 
 	const handleStartBiddingButton = async () => {
 		navigate('/listings');
@@ -147,18 +156,18 @@ export default function HomePage() {
 			</div>
 			<div className="flex flex-col min-h-screen w-full items-center z-10 gap-y-[123px]">
 				<div className="flex flex-col gap-y-[36px] w-[80%] items-start">
-					{currentAuctionList.length > 0 ? (
+					{currentAuction ? (
 						<>
 							<h2 className="text-mv-black text-2xl font-semibold">
 								Current Auction
 							</h2>
 							<CurrentAuctionCard
 								imageUrls={[image, image, image, image]}
-								startDate={new Date(currentAuctionList[0].start_date)}
-								endDate={new Date(currentAuctionList[0].end_date)}
-								numberOfEquipment={currentAuctionList[0].equipment_count}
-								numberOfTrailers={currentAuctionList[0].trailer_count}
-								numberOfTrucks={currentAuctionList[0].truck_count}
+								startDate={new Date(currentAuction.start_date)}
+								endDate={new Date(currentAuction.end_date)}
+								numberOfEquipment={currentAuction.equipment_count}
+								numberOfTrailers={currentAuction.trailer_count}
+								numberOfTrucks={currentAuction.truck_count}
 								button={currentAuctionButton}
 							/>
 						</>

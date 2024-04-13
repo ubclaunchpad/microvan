@@ -17,17 +17,18 @@ import {
 	formatListingsTodayDate,
 	formatFlexibleDateRange,
 	convertSGTToLocalDateObject,
+	getCurrentDateInSingapore,
 } from '../utils/dateTime';
+import { useCurrentAuction } from '../providers/CurrentAuctionProvider';
 
 export default function ListingsPage() {
+	const { currentAuction } = useCurrentAuction();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(0);
 	// eslint-disable-next-line no-unused-vars
 	const [loading, setLoading] = useState(false);
 	const [hasNextPage, setHasNextPage] = useState(null);
 	const [hasPrevPage, setHasPrevPage] = useState(null);
-
-	const [auction, setAuction] = useState(null);
 	const [auctionDayId, setAuctionDayId] = useState(null);
 	const [units, setUnits] = useState([]);
 	const [searchTerm, setSearchTerm] = useState('');
@@ -97,17 +98,10 @@ export default function ListingsPage() {
 					method: 'GET',
 				});
 
-				const currentAuctionPromise = fetchData({
-					endpoint: '/v1/auctions/current',
-					method: 'GET',
-				});
-
-				const [brandsResponse, typesResponse, currentAuctionResponse] =
-					await Promise.all([
-						brandsPromise,
-						typesPromise,
-						currentAuctionPromise,
-					]);
+				const [brandsResponse, typesResponse] = await Promise.all([
+					brandsPromise,
+					typesPromise,
+				]);
 
 				setBrands(
 					brandsResponse.data.filter((brand) => brand && brand.name !== 'nan')
@@ -115,15 +109,6 @@ export default function ListingsPage() {
 				setTypes(
 					typesResponse.data.filter((type) => type && type.name !== 'nan')
 				);
-
-				const currentAuction = currentAuctionResponse.data;
-
-				if (!currentAuction.id) {
-					setLoading(false);
-					return;
-				}
-
-				setAuction(currentAuction);
 
 				const dateResponse = await fetchData({
 					endpoint: `/v1/auctions/${currentAuction.id}/day`,
@@ -160,7 +145,7 @@ export default function ListingsPage() {
 		};
 
 		fetchAuctionAndVehicles();
-	}, []);
+	}, [currentAuction]);
 
 	const handleFetchVehicles = useCallback(
 		debounce(async (url) => {
@@ -180,7 +165,7 @@ export default function ListingsPage() {
 				setLoading(false);
 			}
 		}, 500),
-		[auction?.id, currentPage]
+		[currentAuction, currentPage]
 	);
 
 	const generateUrlFromFilters = (url) => {
@@ -216,9 +201,9 @@ export default function ListingsPage() {
 		if (hasNextPage) {
 			handleFetchVehicles(
 				generateUrlFromFilters(
-					`v1/auctions/${auction?.id}/days/${auctionDayId}/vehicles?page=${
-						currentPage + 1
-					}`
+					`v1/auctions/${
+						currentAuction?.id
+					}/days/${auctionDayId}/vehicles?page=${currentPage + 1}`
 				)
 			);
 			setCurrentPage((prev) => prev + 1);
@@ -230,9 +215,9 @@ export default function ListingsPage() {
 		if (hasPrevPage) {
 			handleFetchVehicles(
 				generateUrlFromFilters(
-					`v1/auctions/${auction?.id}/days/${auctionDayId}/vehicles?page=${
-						currentPage - 1
-					}`
+					`v1/auctions/${
+						currentAuction?.id
+					}/days/${auctionDayId}/vehicles?page=${currentPage - 1}`
 				)
 			);
 			setCurrentPage((prev) => prev + 1);
@@ -241,10 +226,10 @@ export default function ListingsPage() {
 	};
 
 	useEffect(() => {
-		if (auction && auctionDayId) {
+		if (currentAuction && auctionDayId) {
 			handleFetchVehicles(
 				generateUrlFromFilters(
-					`/v1/auctions/${auction?.id}/days/${auctionDayId}/vehicles?page=${currentPage}`
+					`/v1/auctions/${currentAuction?.id}/days/${auctionDayId}/vehicles?page=${currentPage}`
 				)
 			);
 		}
@@ -258,8 +243,8 @@ export default function ListingsPage() {
 	]);
 
 	if (
-		!auction ||
-		new Date().getTime() < new Date(auction?.start_date).getTime()
+		!currentAuction ||
+		new Date().getTime() < new Date(currentAuction?.start_date).getTime()
 	) {
 		return (
 			<div className="flex flex-col justify-between min-h-screen max-h-screen max-w-screen min-w-screen">
@@ -283,13 +268,24 @@ export default function ListingsPage() {
 		);
 	}
 
-	const startTime = convertSGTToLocalDateObject(auction.start_time);
-	const endTime = convertSGTToLocalDateObject(auction.end_time);
-	const currentDate = new Date();
-	if (currentDate.getTime() > endTime.getTime()) {
-		startTime.setDate(startTime.getDate() + 1);
-		endTime.setDate(endTime.getDate() + 1);
-	}
+	const startDateTimeString = `${getCurrentDateInSingapore().toLocaleDateString(
+		'fr-CA',
+		{
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit',
+		}
+	)}T${currentAuction?.start_time}+08:00`;
+	const endDateTimeString = `${getCurrentDateInSingapore().toLocaleDateString(
+		'fr-CA',
+		{
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit',
+		}
+	)}T${currentAuction?.end_time}+08:00`;
+	const startDateTime = new Date(startDateTimeString);
+	const endDateTime = new Date(endDateTimeString);
 
 	return (
 		<div className="flex flex-col max-w-screen min-w-screen min-h-screen justify-between">
@@ -300,21 +296,21 @@ export default function ListingsPage() {
 				<div className="mt-[46px]">
 					<h1 className="text-mv-black text-2xl font-semibold">
 						{`Auction Listings (${formatFlexibleDateRange(
-							new Date(auction?.start_date),
-							new Date(auction?.end_date)
+							new Date(currentAuction?.start_date),
+							new Date(currentAuction?.end_date)
 						)})`}
 					</h1>
 				</div>
 
 				<div className="mt-[49px] flex justify-between items-end">
 					<h2 className="text-mv-black text-xl font-medium">
-						{`Items for ${formatListingsTodayDate(currentDate)}`}
+						{`Items for ${formatListingsTodayDate(new Date())}`}
 					</h2>
 
 					<CurrentAuctionCountdown
 						maxWidth="60%"
-						startDateTime={startTime}
-						endDateTime={endTime}
+						startDateTime={startDateTime}
+						endDateTime={endDateTime}
 					/>
 				</div>
 

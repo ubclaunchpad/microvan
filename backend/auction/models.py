@@ -16,8 +16,8 @@ class Auction(MainModel):
     end_date = models.DateTimeField(null=False)
     cover_image = models.CharField(max_length=500, null=True, blank=True)
     is_published = models.BooleanField(default=False)
-    start_time = models.TimeField(null=False, default="00:00")
-    end_time = models.TimeField(null=False, default="23:59")
+    start_time = models.TimeField(null=False, default="00:00:00")
+    end_time = models.TimeField(null=False, default="23:59:59")
 
     def __str__(self):
         return (

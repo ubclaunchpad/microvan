@@ -84,16 +84,10 @@ function getTimeToEndDate(endDate) {
 }
 
 function getCurrentDateInSingapore() {
+	const offset = 8;
 	const now = new Date();
-
-	// Convert to Singapore time by adding 8 hours to UTC (Singapore is UTC+8)
-	const singaporeOffset = 8 * 60;
-	const utcOffset = now.getTimezoneOffset();
-	const singaporeTime = new Date(
-		now.getTime() + (singaporeOffset + utcOffset) * 60000
-	);
-
-	singaporeTime.setHours(0, 0, 0, 0);
+	const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+	const singaporeTime = new Date(utc + 3600000 * offset);
 
 	return singaporeTime;
 }
