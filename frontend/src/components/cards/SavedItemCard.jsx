@@ -4,6 +4,7 @@ import AgricultureIcon from '@mui/icons-material/Agriculture';
 import StarsOutlinedIcon from '@mui/icons-material/StarsOutlined';
 import BidNowButton from '../buttons/BidNowButton';
 import RemoveFromListButton from '../buttons/RemoveFromListButton';
+import { priceToString } from '../../utils/priceUtil';
 
 export default function SavedItemCard({
 	// eslint-disable-next-line no-unused-vars
@@ -80,7 +81,9 @@ export default function SavedItemCard({
 					<p className="text-mv-black text-sm font-normal leading-5 tracking-[0.1px]">
 						Highest bid:
 					</p>
-					<p className="text-mv-black text-[26px] font-medium leading-5 tracking-[0.1px] mt-[12px]">{`₱${price}`}</p>
+					<p className="text-mv-black text-[26px] font-medium leading-5 tracking-[0.1px] mt-[12px]">{`₱${priceToString(
+						price
+					)}`}</p>
 					<div className="mt-[40px] w-[100%] flex flex-col gap-y-[14px]">
 						<BidNowButton onClick={() => {}} size="sm" />
 						<RemoveFromListButton size="sm" onClick={() => {}} />

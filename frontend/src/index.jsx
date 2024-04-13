@@ -6,12 +6,15 @@ import reportWebVitals from './reportWebVitals';
 import router from './routers/Routers';
 import { AuthProvider } from './providers/AuthProvider';
 import { UserProvider } from './providers/UserProvider';
+import { CurrentAuctionProvider } from './providers/CurrentAuctionProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 	<AuthProvider>
 		<UserProvider>
-			<RouterProvider router={router} />
+			<CurrentAuctionProvider>
+				<RouterProvider router={router} />
+			</CurrentAuctionProvider>
 		</UserProvider>
 	</AuthProvider>
 );

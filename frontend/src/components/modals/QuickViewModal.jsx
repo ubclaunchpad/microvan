@@ -11,6 +11,7 @@ import truck4 from '../../assets/truck4.png';
 import truck5 from '../../assets/truck5.png';
 import ViewModelButton from '../buttons/ViewModelButton';
 import CloseButton from '../buttons/CloseButton';
+import { priceToString } from '../../utils/priceUtil';
 
 export default function QuickViewModal({
 	isOpen,
@@ -108,7 +109,7 @@ export default function QuickViewModal({
 								Highest bid:
 							</p>
 							<p className="text-mv-black text-2xl text-right font-medium leading-[25px]">
-								{`₱${price}`}
+								{`₱${priceToString(price)}`}
 							</p>
 						</div>
 					</div>

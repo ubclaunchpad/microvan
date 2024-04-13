@@ -6,7 +6,7 @@ import StarsOutlinedIcon from '@mui/icons-material/StarsOutlined';
 import { useNavigate, useParams, ScrollRestoration } from 'react-router-dom';
 import NavBar from '../components/navBars/NavBar';
 import Footer from '../components/footers/Footer';
-import VehicleDetailsCountdown from '../components/timers/VehicleDetailsCountdown';
+import CurrentAuctionCountdown from '../components/timers/CurrentAuctionCountdown';
 import ImageSlideshow from '../components/imageSlideshows/ImageSlideshow';
 import truck from '../assets/truck.png';
 import truck2 from '../assets/truck2.png';
@@ -83,7 +83,7 @@ export default function VehicleDetailsPage() {
 							Back to available items
 						</p>
 					</div>
-					<VehicleDetailsCountdown
+					<CurrentAuctionCountdown
 						maxWidth="63%"
 						startDateTime={startTime}
 						endDateTime={endTime}
