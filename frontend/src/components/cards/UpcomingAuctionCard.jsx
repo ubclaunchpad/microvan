@@ -1,24 +1,24 @@
 import React from 'react';
-import defaultImage from '../../assets/truck.png';
 import { formatDateAuctionCard } from '../../utils/dateTime';
+import defaultImage from '../../assets/truck.png';
 import UpcomingAuctionCountdown from '../timers/UpcomingAuctionCountdown';
 
-export default function UpcomingAuctionCard({
+export default function CurrentAuctionCard({
 	imageUrls,
 	startDate,
 	endDate,
+	numberOfTrucks,
 	numberOfEquipment,
 	numberOfTrailers,
-	numberOfTrucks,
 	button,
 }) {
 	while (imageUrls.length < 4) {
 		imageUrls.push(defaultImage);
 	}
 
-	const gridHeight = 335;
-	const bottomHeightCard = 94;
-	const joinAuctionButtonHeight = 60;
+	const gridHeight = 452;
+	const bottomHeightCard = 100;
+	const joinAuctionButtonHeight = 72;
 
 	const adjustedCenter =
 		(gridHeight - bottomHeightCard) / 2 + bottomHeightCard / 2;
@@ -34,16 +34,15 @@ export default function UpcomingAuctionCard({
 				className="grid grid-cols-2 grid-rows-2 w-full"
 				style={{ height: `${gridHeight}px` }}
 			>
-				<div className="absolute top-[18px] right-[13px] z-10">
+				<div className="absolute top-[27px] right-[27px] z-10">
 					<UpcomingAuctionCountdown endDate={startDate} />
 				</div>
+
 				<div
-					className="absolute z-10 items-center justify-center w-[75%]"
+					className="absolute z-10 flex items-center justify-center w-full"
 					style={{
 						height: joinAuctionButtonHeight,
 						top: `${joinAuctionButtonTopOffset}px`,
-						left: '50%',
-						transform: 'translate(-50%, 0)',
 					}}
 				>
 					{button}
@@ -51,7 +50,7 @@ export default function UpcomingAuctionCard({
 
 				<div className="relative w-full h-full">
 					<img
-						src={imageUrls[0]}
+						src={defaultImage}
 						alt="Vehicle 1"
 						className="w-full h-full object-cover absolute rounded-tl-[20px]"
 					/>
@@ -83,15 +82,15 @@ export default function UpcomingAuctionCard({
 				</div>
 			</div>
 			<div
-				className="flex px-6 justify-between items-center w-full"
+				className="flex px-9 justify-between items-center w-full"
 				style={{ height: `${bottomHeightCard}px` }}
 			>
-				<h3 className="text-mv-black text-xl font-normal">
-					{`${formatDateAuctionCard(startDate)} -`}
-					<br />
-					{formatDateAuctionCard(endDate)}
+				<h3 className="text-mv-black text-2xl font-normal">
+					{`${formatDateAuctionCard(startDate)} - ${formatDateAuctionCard(
+						endDate
+					)}`}
 				</h3>
-				<div className="text-right text-mv-black text-[10px] font-normal leading-relaxed">
+				<div className="text-right text-mv-black text-xs font-normal leading-relaxed">
 					Featuring:
 					<br />
 					{numberOfTrucks > 0 && (

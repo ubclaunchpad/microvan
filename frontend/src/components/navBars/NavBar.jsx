@@ -8,7 +8,7 @@ import logo from '../../assets/microvan_logo.svg';
 import { useAuth } from '../../providers/AuthProvider';
 import ProfilePopUpModal from '../modals/ProfilePopUpModal';
 import { useUser } from '../../providers/UserProvider';
-import NotificationPopUpCard from '../cards/NotificationPopUpCard';
+import NotificationHistoryModal from '../modals/NotificationHistoryModal';
 
 export default function NavBar() {
 	const user = useUser();
@@ -108,12 +108,12 @@ export default function NavBar() {
 						<div
 							style={{
 								position: 'fixed',
-								bottom: '230',
+								bottom: '260',
 								right: '80px',
 								zIndex: 100,
 							}}
 						>
-							<NotificationPopUpCard />
+							<NotificationHistoryModal />
 						</div>
 					)}
 				</div>

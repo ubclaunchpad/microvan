@@ -27,6 +27,7 @@ export default function ProfilePage() {
 	const biddedRef = useRef(null);
 	const savedRef = useRef(null);
 	const containerRef = useRef(null);
+	const notificationSettingsRef = useRef(null);
 
 	const sortByItems = [
 		'Bid price',
@@ -68,6 +69,15 @@ export default function ProfilePage() {
 		window.addEventListener('resize', updateDividerMetrics);
 		return () => window.removeEventListener('resize', updateDividerMetrics);
 	}, [selectedTab]);
+
+	useEffect(() => {
+		if (
+			window.location.hash === '#notification-settings' &&
+			notificationSettingsRef.current
+		) {
+			notificationSettingsRef.current.scrollIntoView({ behavior: 'smooth' });
+		}
+	}, []);
 
 	return (
 		<div className="flex flex-col max-w-screen min-w-screen min-h-screen items-center">
@@ -144,7 +154,10 @@ export default function ProfilePage() {
 					<div className="mt-[25px]">
 						<EditProfileButton onClick={() => {}} />
 					</div>
-					<div className="mt-[40px] w-full flex flex-col items-start">
+					<div
+						ref={notificationSettingsRef}
+						className="mt-[40px] w-full flex flex-col items-start"
+					>
 						<h2 className="text-mv-black text-xl font-medium">
 							Notification Settings
 						</h2>
