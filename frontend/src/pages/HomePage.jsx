@@ -15,7 +15,6 @@ import RegisterForAuctionButton from '../components/buttons/RegisterForAuctionBu
 import DefaultUpcomingAuctionCard from '../components/cards/DefaultUpcomingAuctionCard';
 import { useAuth } from '../providers/AuthProvider';
 import useAxios from '../hooks/useAxios';
-import sortAuctions from '../utils/auctionUtils';
 import AwaitingApprovalButton from '../components/buttons/AwaitingApprovalButton';
 import StartBiddingButton from '../components/buttons/StartBiddingButton';
 import { useUser } from '../providers/UserProvider';

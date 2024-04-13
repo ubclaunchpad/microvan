@@ -16,7 +16,6 @@ import useAxios from '../hooks/useAxios';
 import {
 	formatListingsTodayDate,
 	formatFlexibleDateRange,
-	convertSGTToLocalDateObject,
 	getCurrentDateInSingapore,
 } from '../utils/dateTime';
 import { useCurrentAuction } from '../providers/CurrentAuctionProvider';
