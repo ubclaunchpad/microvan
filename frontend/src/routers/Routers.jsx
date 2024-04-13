@@ -12,6 +12,7 @@ import BidderEmailVerifiedPage from '../pages/auth/bidders/BidderEmailVerifiedPa
 import VehicleDetailsPage from '../pages/VehicleDetailsPage';
 import ProfilePage from '../pages/ProfilePage';
 import NotFoundPage from '../pages/NotFoundPage';
+import BidHistoryPage from '../pages/BidHistoryPage';
 
 const router = createBrowserRouter([
 	{ path: '/', element: <HomePage /> },
@@ -25,7 +26,7 @@ const router = createBrowserRouter([
 	{ path: '/register/email', element: <BidderEmailVerificationPage /> },
 	{ path: '/register/verified', element: <BidderEmailVerifiedPage /> },
 	{ path: '/profile', element: <ProfilePage /> },
-	{ path: '/history', element: <div>History!!!!!</div> },
+	{ path: '/history', element: <BidHistoryPage /> },
 	{ path: '*', element: <NotFoundPage /> },
 ]);
 

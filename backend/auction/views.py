@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, time, timedelta
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator
@@ -92,13 +92,13 @@ class AuctionListApiView(APIView):
         if serializer.is_valid():
             auction = serializer.save()
 
-            start_date = auction.start_date.date()
-            end_date = auction.end_date.date()
+            start_datetime = datetime.combine(auction.start_date.date(), time())
+            end_datetime = datetime.combine(auction.end_date.date(), time())
             delta = timedelta(days=1)
-            current_date = start_date
+            current_date = start_datetime
 
-            while current_date <= end_date:
-                AuctionDay.objects.create(auction=auction, date=current_date)
+            while current_date <= end_datetime:
+                AuctionDay.objects.create(auction=auction, date=current_date.date())
                 current_date += delta
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -129,25 +129,164 @@ class CurrentAuctionApiView(APIView):
 
     def get(self, request, *args, **kwargs):
         """
-        Get the current auction
+        Get the current auction with counts of different types of items.
         """
         today = timezone.now().date()
         current_auctions = Auction.objects.filter(
             start_date__lte=today, end_date__gte=today
+        ).prefetch_related(
+            Prefetch(
+                "days",
+                queryset=AuctionDay.objects.prefetch_related(
+                    Prefetch(
+                        "items",
+                        queryset=AuctionItem.objects.select_related("content_type"),
+                    )
+                ),
+            )
         )
 
         if not current_auctions.exists():
             return Response(
-                {"message": "No current auction found"},
-                status=status.HTTP_404_NOT_FOUND,
+                status=status.HTTP_204_NO_CONTENT,
             )
 
         current_auction = current_auctions.first()
 
-        serialized_data = AuctionSerializer(current_auction)
+        truck_count = 0
+        equipment_count = 0
+        trailer_count = 0
+
+        for day in current_auction.days.all():
+            for item in day.items.all():
+                if isinstance(item.content_object, Vehicle):
+                    truck_count += 1
+                elif isinstance(item.content_object, Equipment):
+                    equipment_count += 1
+                elif isinstance(item.content_object, Trailer):
+                    trailer_count += 1
+
+        serialized_data = AuctionSerializer(current_auction).data
+        serialized_data.update(
+            {
+                "truck_count": truck_count,
+                "equipment_count": equipment_count,
+                "trailer_count": trailer_count,
+            }
+        )
 
         return Response(
-            serialized_data.data,
+            serialized_data,
+            status=status.HTTP_200_OK,
+        )
+
+
+class PastAuctionsApiView(APIView):
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def get(self, request, *args, **kwargs):
+        """
+        Get all past auctions with counts of different types of items.
+        """
+        today = timezone.now().date()
+        past_auctions = Auction.objects.filter(end_date__lt=today).prefetch_related(
+            Prefetch(
+                "days",
+                queryset=AuctionDay.objects.prefetch_related(
+                    Prefetch(
+                        "items",
+                        queryset=AuctionItem.objects.select_related("content_type"),
+                    )
+                ),
+            )
+        )
+
+        auctions_data = []
+        for auction in past_auctions:
+            truck_count = 0
+            equipment_count = 0
+            trailer_count = 0
+
+            for day in auction.days.all():
+                for item in day.items.all():
+                    if isinstance(item.content_object, Vehicle):
+                        truck_count += 1
+                    elif isinstance(item.content_object, Equipment):
+                        equipment_count += 1
+                    elif isinstance(item.content_object, Trailer):
+                        trailer_count += 1
+
+            auction_data = AuctionSerializer(auction).data
+            auction_data.update(
+                {
+                    "truck_count": truck_count,
+                    "equipment_count": equipment_count,
+                    "trailer_count": trailer_count,
+                }
+            )
+
+            auctions_data.append(auction_data)
+
+        return Response(auctions_data, status=status.HTTP_200_OK)
+
+
+class UpcomingAuctionApiView(APIView):
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def get(self, request, *args, **kwargs):
+        """
+        Get the closest upcoming auction.
+        """
+        today = timezone.now().date()
+        upcoming_auctions = (
+            Auction.objects.filter(start_date__gt=today)
+            .order_by("start_date")
+            .prefetch_related(
+                Prefetch(
+                    "days",
+                    queryset=AuctionDay.objects.prefetch_related(
+                        Prefetch(
+                            "items",
+                            queryset=AuctionItem.objects.select_related("content_type"),
+                        )
+                    ),
+                )
+            )
+        )
+
+        if not upcoming_auctions.exists():
+            return Response(
+                status=status.HTTP_204_NO_CONTENT,
+            )
+
+        closest_auction = upcoming_auctions.first()
+
+        truck_count = 0
+        equipment_count = 0
+        trailer_count = 0
+
+        for day in closest_auction.days.all():
+            for item in day.items.all():
+                if isinstance(item.content_object, Vehicle):
+                    truck_count += 1
+                elif isinstance(item.content_object, Equipment):
+                    equipment_count += 1
+                elif isinstance(item.content_object, Trailer):
+                    trailer_count += 1
+
+        auction_data = AuctionSerializer(closest_auction).data
+        auction_data.update(
+            {
+                "truck_count": truck_count,
+                "equipment_count": equipment_count,
+                "trailer_count": trailer_count,
+            }
+        )
+
+        return Response(
+            auction_data,
             status=status.HTTP_200_OK,
         )
 

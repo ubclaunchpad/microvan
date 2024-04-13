@@ -4,6 +4,7 @@ import AgricultureIcon from '@mui/icons-material/Agriculture';
 import StarsOutlinedIcon from '@mui/icons-material/StarsOutlined';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import BidNowButton from '../buttons/BidNowButton';
+import { priceToString } from '../../utils/priceUtil';
 
 export default function BiddedItemCard({
 	// eslint-disable-next-line no-unused-vars
@@ -81,7 +82,9 @@ export default function BiddedItemCard({
 					<p className="text-mv-black text-sm font-normal leading-5 tracking-[0.1px]">
 						{isTopBid ? 'Your bid:' : 'Highest bid:'}
 					</p>
-					<p className="text-mv-black text-[26px] font-medium leading-5 tracking-[0.1px] mt-[12px]">{`₱${price}`}</p>
+					<p className="text-mv-black text-[26px] font-medium leading-5 tracking-[0.1px] mt-[12px]">{`₱${priceToString(
+						price
+					)}`}</p>
 					{isTopBid ? (
 						<div className="flex gap-x-[5px] mt-[38px]">
 							<p className="text-mv-black text-lg font-semibold leading-[23px] tracking-[0.1px]">
