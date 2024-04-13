@@ -11,7 +11,7 @@ export default function BiddingModal({
 	auction,
 	vehicle,
 	minimumBid,
-	onPriceUpdate
+	onPriceUpdate,
 }) {
 	if (!isOpen) return null;
 	const { fetchData } = useAxios();
@@ -41,33 +41,29 @@ export default function BiddingModal({
 	};
 
 	const handleBidNow = async () => {
-		const bidderId = 1; 
-	  
-		try {
-		  const response = await fetchData({
-			method: 'POST',
-			endpoint: '/v1/bids/',
-			data: JSON.stringify({
-			  amount: bidAmount,
-			  bidder_id: bidderId,
-			  auction_id: auction.id,
-			  auction_day_id: auction.auctionday_id, 
-			  object_id: vehicle.id, 
-			}),
-			headers: {
-			  'Content-Type': 'application/json',
-			},
-		  });
-		  if (response.status === 201) {
-            onClose();
-            onPriceUpdate(bidAmount);
-        }
+		const bidderId = 1;
 
+		try {
+			const response = await fetchData({
+				method: 'POST',
+				endpoint: '/v1/bids/',
+				data: {
+					amount: bidAmount,
+					bidder_id: bidderId,
+					auction_id: auction.id,
+					auction_day_id: auction.auctionday_id,
+					object_id: vehicle.id,
+				},
+			});
+			if (response.status === 201) {
+				onClose();
+				onPriceUpdate(bidAmount);
+			}
 		} catch (error) {
-		  console.error('Error creating bid:', error);
+			/* empty */
 		}
-	  };
-	  
+	};
+
 	useEffect(() => {
 		window.addEventListener('click', handleOutsideClick);
 		return () => {

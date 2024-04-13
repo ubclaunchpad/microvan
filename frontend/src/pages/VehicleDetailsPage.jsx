@@ -63,11 +63,11 @@ export default function VehicleDetailsPage() {
 		endTime.setDate(endTime.getDate() + 1);
 	}
 	const handlePriceUpdate = (newPrice) => {
-		setVehicle(prevVehicle => ({
-		  ...prevVehicle,
-		  current_price: newPrice
+		setVehicle((prevVehicle) => ({
+			...prevVehicle,
+			current_price: newPrice,
 		}));
-	  };
+	};
 	return (
 		<div className="flex flex-col max-w-screen min-w-screen min-h-screen justify-between">
 			<ScrollRestoration />

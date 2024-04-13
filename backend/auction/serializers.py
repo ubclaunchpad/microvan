@@ -1,11 +1,8 @@
+from datetime import date
+
 from rest_framework import serializers
 
 from .models import Auction, AuctionItem, AuctionVerifiedUser
-from datetime import date
-
-
-from rest_framework import serializers
-from .models import Auction, AuctionDay
 
 
 class AuctionSerializer(serializers.ModelSerializer):
