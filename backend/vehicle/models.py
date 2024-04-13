@@ -58,10 +58,10 @@ class Equipment(MainModel):
     brake_condition = models.CharField(max_length=100, blank=True, null=True)
     electrical_condition = models.CharField(max_length=100, blank=True, null=True)
     hydraulic_cylinder_condition = models.CharField(
-        max_length=100, blank=True, null=True
+        max_length=500, blank=True, null=True
     )
     hydraulic_hoses_and_chrome_condition = models.CharField(
-        max_length=100, blank=True, null=True
+        max_length=500, blank=True, null=True
     )
     chassis_condition = models.CharField(max_length=100, blank=True, null=True)
     body_condition = models.CharField(max_length=100, blank=True, null=True)
@@ -95,14 +95,14 @@ class UnitImage(MainModel):
 
 
 class SavedUnits(MainModel):
-    bidder_id = (models.CharField(null=False, max_length=255),)
-    auction_id = models.ForeignKey("auction.Auction", on_delete=models.PROTECT)
+    bidder_id = models.CharField(null=False, max_length=255)
+    auction_day = models.ForeignKey("auction.AuctionDay", on_delete=models.PROTECT)
     content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     object_id = models.UUIDField()
     content_object = GenericForeignKey("content_type", "object_id")
 
     class Meta:
-        unique_together = ("auction_id", "object_id")
+        unique_together = ("auction_day", "object_id")
 
     def save(self, *args, **kwargs):
         self.clean()

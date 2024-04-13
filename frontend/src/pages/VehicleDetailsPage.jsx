@@ -19,10 +19,13 @@ import NextSimilarVehicleButton from '../components/buttons/NextSimilarVehicleBu
 import PreviousSimilarVehicleButton from '../components/buttons/PreviousSimilarVehicleButton';
 import SimilarVehicleCard from '../components/cards/SimilarVehicleCard';
 import useAxios from '../hooks/useAxios';
-import { convertSGTToLocalDateObject } from '../utils/dateTime';
+import { getCurrentDateInSingapore } from '../utils/dateTime';
 import BiddingModal from '../components/modals/BiddingModal';
+import { priceToString } from '../utils/priceUtil';
+import { useCurrentAuction } from '../providers/CurrentAuctionProvider';
 
 export default function VehicleDetailsPage() {
+	const { currentAuction } = useCurrentAuction();
 	const navigate = useNavigate();
 	const { fetchData } = useAxios();
 	const [auction, setAuction] = useState(null);
@@ -55,13 +58,25 @@ export default function VehicleDetailsPage() {
 		fetchVehicleData();
 	}, [vehicleId]);
 
-	const startTime = convertSGTToLocalDateObject(auction?.start_time);
-	const endTime = convertSGTToLocalDateObject(auction?.end_time);
-	const currentDate = new Date();
-	if (currentDate.getTime() > endTime.getTime()) {
-		startTime.setDate(startTime.getDate() + 1);
-		endTime.setDate(endTime.getDate() + 1);
-	}
+	const startDateTimeString = `${getCurrentDateInSingapore().toLocaleDateString(
+		'fr-CA',
+		{
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit',
+		}
+	)}T${currentAuction?.start_time}+08:00`;
+	const endDateTimeString = `${getCurrentDateInSingapore().toLocaleDateString(
+		'fr-CA',
+		{
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit',
+		}
+	)}T${currentAuction?.end_time}+08:00`;
+	const startDateTime = new Date(startDateTimeString);
+	const endDateTime = new Date(endDateTimeString);
+
 	const handlePriceUpdate = (newPrice) => {
 		setVehicle((prevVehicle) => ({
 			...prevVehicle,
@@ -89,8 +104,8 @@ export default function VehicleDetailsPage() {
 					</div>
 					<CurrentAuctionCountdown
 						maxWidth="63%"
-						startDateTime={startTime}
-						endDateTime={endTime}
+						startDateTime={startDateTime}
+						endDateTime={endDateTime}
 					/>
 				</div>
 
@@ -150,11 +165,12 @@ export default function VehicleDetailsPage() {
 									Current bid:
 								</p>
 								<p className="text-mv-black text-3xl font-medium leading-6 tracking-[0.125px]">
-									{`₱${
-										vehicle?.current_price === 0
-											? vehicle?.starting_price
-											: vehicle?.current_price
-									}`}
+									{vehicle &&
+										`₱${
+											!vehicle?.current_price || vehicle.current_price === 0
+												? priceToString(vehicle?.starting_price)
+												: priceToString(vehicle?.current_price)
+										}`}
 								</p>
 							</div>
 							<div className="mt-[43px] w-full flex gap-x-[17px]">

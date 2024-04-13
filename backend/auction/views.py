@@ -4,6 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator
 from django.db.models import Prefetch, Q
 from django.utils import timezone
+from django.utils.timezone import make_aware
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
@@ -23,6 +24,13 @@ from vehicle.serializers import (
 
 from .models import Auction, AuctionDay, AuctionItem, AuctionVerifiedUser
 from .serializers import AuctionSerializer, AuctionVerifiedUserSerializer
+
+
+def combine_date_time(date, time):
+    """Combine a date and time into a single datetime object."""
+    if date is not None and time is not None:
+        return make_aware(datetime.combine(date, time))
+    return None
 
 
 class AuctionListApiView(APIView):
@@ -113,13 +121,7 @@ class AuctionDayApiView(APIView):
     def get(self, request, auction_id, *args, **kwargs):
         auction = get_object_or_404(Auction, id=auction_id)
         auction_days = AuctionDay.objects.filter(auction=auction)
-        auction_days_data = []
-        for auction_day in auction_days:
-            auction_day_data = {
-                "id": auction_day.id,
-                "date": auction_day.date,
-            }
-            auction_days_data.append(auction_day_data)
+        auction_days_data = [{"id": day.id, "date": day.date} for day in auction_days]
         return Response(auction_days_data, status=status.HTTP_200_OK)
 
 
@@ -131,10 +133,8 @@ class CurrentAuctionApiView(APIView):
         """
         Get the current auction with counts of different types of items.
         """
-        today = timezone.now().date()
-        current_auctions = Auction.objects.filter(
-            start_date__lte=today, end_date__gte=today
-        ).prefetch_related(
+        now = timezone.now()
+        current_auctions = Auction.objects.all().prefetch_related(
             Prefetch(
                 "days",
                 queryset=AuctionDay.objects.prefetch_related(
@@ -145,13 +145,19 @@ class CurrentAuctionApiView(APIView):
                 ),
             )
         )
+        current_auction_list = []
 
-        if not current_auctions.exists():
-            return Response(
-                status=status.HTTP_204_NO_CONTENT,
-            )
+        for auction in current_auctions:
+            start_dt = combine_date_time(auction.start_date, auction.start_time)
+            end_dt = combine_date_time(auction.end_date, auction.end_time)
 
-        current_auction = current_auctions.first()
+            if start_dt <= now <= end_dt:
+                current_auction_list.append(auction)
+
+        if not current_auction_list:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        current_auction = current_auction_list[0]
 
         truck_count = 0
         equipment_count = 0
@@ -239,10 +245,10 @@ class UpcomingAuctionApiView(APIView):
         """
         Get the closest upcoming auction.
         """
-        today = timezone.now().date()
+        now = timezone.now()
         upcoming_auctions = (
-            Auction.objects.filter(start_date__gt=today)
-            .order_by("start_date")
+            Auction.objects.all()
+            .order_by("start_date", "start_time")
             .prefetch_related(
                 Prefetch(
                     "days",
@@ -255,40 +261,37 @@ class UpcomingAuctionApiView(APIView):
                 )
             )
         )
+        for auction in upcoming_auctions:
+            start_dt = combine_date_time(auction.start_date, auction.start_time)
+            if start_dt > now:
+                truck_count = 0
+                equipment_count = 0
+                trailer_count = 0
 
-        if not upcoming_auctions.exists():
-            return Response(
-                status=status.HTTP_204_NO_CONTENT,
-            )
+                for day in auction.days.all():
+                    for item in day.items.all():
+                        if isinstance(item.content_object, Vehicle):
+                            truck_count += 1
+                        elif isinstance(item.content_object, Equipment):
+                            equipment_count += 1
+                        elif isinstance(item.content_object, Trailer):
+                            trailer_count += 1
 
-        closest_auction = upcoming_auctions.first()
+                auction_data = AuctionSerializer(auction).data
+                auction_data.update(
+                    {
+                        "truck_count": truck_count,
+                        "equipment_count": equipment_count,
+                        "trailer_count": trailer_count,
+                    }
+                )
 
-        truck_count = 0
-        equipment_count = 0
-        trailer_count = 0
+                return Response(
+                    auction_data,
+                    status=status.HTTP_200_OK,
+                )
 
-        for day in closest_auction.days.all():
-            for item in day.items.all():
-                if isinstance(item.content_object, Vehicle):
-                    truck_count += 1
-                elif isinstance(item.content_object, Equipment):
-                    equipment_count += 1
-                elif isinstance(item.content_object, Trailer):
-                    trailer_count += 1
-
-        auction_data = AuctionSerializer(closest_auction).data
-        auction_data.update(
-            {
-                "truck_count": truck_count,
-                "equipment_count": equipment_count,
-                "trailer_count": trailer_count,
-            }
-        )
-
-        return Response(
-            auction_data,
-            status=status.HTTP_200_OK,
-        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AuctionDetailApiView(APIView):
@@ -372,87 +375,107 @@ class AuctionDetailApiView(APIView):
 
 
 class SaveUnitApiView(APIView):
-    """
-    An endpoint to handle saving a vehicle to a bidder's saved vehicle list,
-    as well as retrieving a list of all saved vehicles
-    """
-
     permission_classes = [IsAuthenticated]
 
-    cognitoService = AWSCognitoService()
+    def post(self, request, auction_day_id, bidder_id, vehicle_id, format=None):
+        unit_type = request.data.get("type").lower()
 
-    def post(self, request, **kwargs):
-        bidder_id = kwargs.get("bidder_id")
-        vehicle_id = kwargs.get("vehicle_id")
-        auction_id = kwargs.get("auction_id")
+        # Model mapping based on type
+        model = {"truck": Vehicle, "equipment": Equipment, "trailer": Trailer}.get(
+            unit_type
+        )
 
-        vehicle = get_object_or_404(Vehicle, id=vehicle_id)
-        auction_for_vehicle = Auction.objects.get(id=auction_id)
-        bidder = self.cognitoService.get_user_details(bidder_id)
-        if SavedUnits.objects.filter(
-            auction_id=auction_for_vehicle, bidder_id=bidder, object_id=vehicle.id
-        ):
+        if not model:
             return Response(
-                {"message": "Vehicle already saved"},
-                status=status.HTTP_204_NO_CONTENT,
+                {"error": "Invalid unit type specified."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-        saved_unit = SavedUnits(
-            auction_id=auction_for_vehicle,
-            bidder_id=bidder,
-            object_id=vehicle.id,
-            content_object=vehicle,
+        content_type = ContentType.objects.get_for_model(model)
+        object = get_object_or_404(model, id=vehicle_id)
+        auction_day = get_object_or_404(AuctionDay, id=auction_day_id)
+
+        if SavedUnits.objects.filter(
+            content_type=content_type, object_id=vehicle_id, bidder_id=bidder_id
+        ).exists():
+            return Response(
+                {"message": "Unit already saved"}, status=status.HTTP_409_CONFLICT
+            )
+
+        SavedUnits.objects.create(
+            bidder_id=bidder_id,
+            auction_day=auction_day,
+            content_type=content_type,
+            object_id=vehicle_id,
         )
-        saved_unit.save()
         return Response(
-            {"message": "Vehicle saved successfully"},
-            status=status.HTTP_200_OK,
+            {"message": "Unit saved successfully"}, status=status.HTTP_201_CREATED
         )
 
-    def delete(self, request, **kwargs):
-        vehicle_id = kwargs.get("vehicle_id")
-        bidder_id = kwargs.get("bidder_id")
-        auction = kwargs.get("auction_id")
-        bidder = self.cognitoService.get_user_details(bidder_id)
+    def delete(self, request, auction_day_id, bidder_id, vehicle_id, format=None):
+        unit_type = request.data.get("type").lower()
+
+        model = {"truck": Vehicle, "equipment": Equipment, "trailer": Trailer}.get(
+            unit_type
+        )
+
+        if not model:
+            return Response(
+                {"error": "Invalid unit type specified."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        content_type = ContentType.objects.get_for_model(model)
+        auction_day = get_object_or_404(AuctionDay, id=auction_day_id)
 
         saved_unit = get_object_or_404(
-            SavedUnits, object_id=vehicle_id, bidder_id=bidder, auction_id=auction
+            SavedUnits,
+            content_type=content_type,
+            object_id=vehicle_id,
+            bidder_id=bidder_id,
+            auction_day=auction_day,
         )
-
         saved_unit.delete()
-
         return Response(
             {"message": "Saved unit deleted successfully"},
-            status=status.HTTP_200_OK,
+            status=status.HTTP_204_NO_CONTENT,
         )
 
 
 class GetSavedUnitApiView(APIView):
-    """
-    An endpoint to retrieve all of bidder's saved units associated with
-    a provided auction
-    """
-
     permission_classes = [IsAuthenticated]
 
-    cognitoService = AWSCognitoService()
+    def get(self, request, auction_day_id, bidder_id, format=None):
+        auction_day = get_object_or_404(AuctionDay, id=auction_day_id)
+        saved_units = SavedUnits.objects.filter(
+            bidder_id=bidder_id, auction_day=auction_day
+        ).select_related("content_type")
 
-    def get(self, request, **kwargs):
-        bidder_id = kwargs.get("bidder_id")
-        auction_id = kwargs.get("auction_id")
-        bidder = self.cognitoService.get_user_details(bidder_id)
-        auction = get_object_or_404(Auction, id=auction_id)
+        vehicles = []
+        equipments = []
+        trailers = []
 
-        saved_units = SavedUnits.objects.filter(bidder_id=bidder, auction_id=auction)
-        vehicle_list = [
-            saved_unit.content_object
-            for saved_unit in saved_units
-            if isinstance(saved_unit.content_object, Vehicle)
-        ]
+        for saved_unit in saved_units:
+            if saved_unit.content_type.model == "vehicle":
+                vehicles.append(saved_unit.content_object)
+            elif saved_unit.content_type.model == "equipment":
+                equipments.append(saved_unit.content_object)
+            elif saved_unit.content_type.model == "trailer":
+                trailers.append(saved_unit.content_object)
 
-        vehicle_data = [{"id": vehicle.id} for vehicle in vehicle_list]
+        # Serializing data
+        vehicle_data = VehicleSerializer(vehicles, many=True).data
+        equipment_data = EquipmentSerializer(equipments, many=True).data
+        trailer_data = TrailerSerializer(trailers, many=True).data
 
-        return Response({"vehicles": vehicle_data}, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "vehicles": vehicle_data,
+                "equipment": equipment_data,
+                "trailers": trailer_data,
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class AuctionItemsApiView(APIView):

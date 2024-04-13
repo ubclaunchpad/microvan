@@ -22,12 +22,12 @@ urlpatterns = [
     path("/<uuid:auction_id>", AuctionDetailApiView.as_view(), name="auction_detail"),
     path("/<uuid:auction_id>/day", AuctionDayApiView.as_view(), name="auction_day"),
     path(
-        "/<uuid:auction_id>/bidders/<str:bidder_id>/vehicles/<uuid:vehicle_id>",
+        "/<uuid:auction_day_id>/bidders/<str:bidder_id>/vehicles/<uuid:vehicle_id>",
         SaveUnitApiView.as_view(),
         name="auction_detail",
     ),
     path(
-        "/<uuid:auction_id>/bidders/<str:bidder_id>/vehicles",
+        "/<uuid:auction_day_id>/bidders/<str:bidder_id>/vehicles",
         GetSavedUnitApiView.as_view(),
         name="auction_detail",
     ),
@@ -37,7 +37,7 @@ urlpatterns = [
         name="auction_vehicles",
     ),
     path(
-        "/<uuid:auction_id>/verification",
+        "/<uuid:auction_id>/verified",
         BidderVerificationApiView.as_view(),
         name="bidder_verification",
     ),

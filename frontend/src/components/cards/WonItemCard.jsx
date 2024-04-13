@@ -6,7 +6,7 @@ import StarsOutlinedIcon from '@mui/icons-material/StarsOutlined';
 import ViewModelButton from '../buttons/ViewModelButton';
 import { priceToString } from '../../utils/priceUtil';
 
-export default function VehicleItemCard({
+export default function WonItemCard({
 	vehicleId,
 	description,
 	modelNumber,
