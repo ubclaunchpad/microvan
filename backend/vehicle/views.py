@@ -10,7 +10,11 @@ from rest_framework.views import APIView
 
 from core.permissions import IsAdminUser
 
-from .helpers import parse_excel_to_vehicle
+from .helpers import (
+    parse_excel_to_equipment,
+    parse_excel_to_trailer,
+    parse_excel_to_vehicle,
+)
 from .models import Brand, Equipment, Trailer, Type, Vehicle
 from .serializers import (
     BrandSerializer,
@@ -173,8 +177,19 @@ class UploadFileView(APIView):
         try:
             file_obj = request.data["file"]
             file_content = file_obj.read()
-            data = parse_excel_to_vehicle(file_content)
-            return Response({"status": "success", "message": data})
+            vehicle_data = parse_excel_to_vehicle(file_content)
+            equipment_data = parse_excel_to_equipment(file_content)
+            trailer_data = parse_excel_to_trailer(file_content)
+            return Response(
+                {
+                    "status": "success",
+                    "message": {
+                        "vehicles": vehicle_data,
+                        "equipments": equipment_data,
+                        "trailers": trailer_data,
+                    },
+                }
+            )
         except Exception as e:
             error_message = str(e)
             return Response({"status": "error", "message": error_message})

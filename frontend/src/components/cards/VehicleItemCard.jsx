@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
@@ -8,6 +8,9 @@ import ViewModelButton from '../buttons/ViewModelButton';
 import QuickViewButton from '../buttons/QuickViewButton';
 import QuickViewModal from '../modals/QuickViewModal';
 import { priceToString } from '../../utils/priceUtil';
+import useAxios from '../../hooks/useAxios';
+import { useUser } from '../../providers/UserProvider';
+import RemoveFromListButton from '../buttons/RemoveFromListButton';
 
 export default function VehicleItemCard({
 	vehicleId,
@@ -17,14 +20,46 @@ export default function VehicleItemCard({
 	chassisNumber,
 	price,
 	imageUrl,
+	type,
+	auctionDayId,
+	saved,
 }) {
+	const [isSaved, setIsSaved] = useState(saved);
 	const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+	const { fetchData } = useAxios();
+	const user = useUser();
 
 	const navigate = useNavigate();
 
 	const handleViewClick = () => {
 		navigate(`/listings/${vehicleId}`);
 	};
+
+	const handleAddToListClick = async () => {
+		setIsSaved(true);
+		fetchData({
+			endpoint: `/v1/auctions/${auctionDayId}/bidders/${user.sub}/vehicles/${vehicleId}`,
+			method: 'POST',
+			data: {
+				type,
+			},
+		});
+	};
+
+	const handleRemoveListClick = async () => {
+		setIsSaved(false);
+		fetchData({
+			endpoint: `/v1/auctions/${auctionDayId}/bidders/${user.sub}/vehicles/${vehicleId}`,
+			method: 'DELETE',
+			data: {
+				type,
+			},
+		});
+	};
+
+	useEffect(() => {
+		setIsSaved(saved);
+	}, [saved]);
 
 	return (
 		<>
@@ -108,7 +143,11 @@ export default function VehicleItemCard({
 								or
 							</p>
 						</span>
-						<AddToListButton />
+						{isSaved ? (
+							<RemoveFromListButton onClick={handleRemoveListClick} size="sm" />
+						) : (
+							<AddToListButton onClick={handleAddToListClick} />
+						)}
 					</div>
 				</div>
 			</div>

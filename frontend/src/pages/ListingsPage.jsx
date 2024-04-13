@@ -19,9 +19,11 @@ import {
 	getCurrentDateInSingapore,
 } from '../utils/dateTime';
 import { useCurrentAuction } from '../providers/CurrentAuctionProvider';
+import { useUser } from '../providers/UserProvider';
 
 export default function ListingsPage() {
 	const { currentAuction } = useCurrentAuction();
+	const user = useUser();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(0);
 	// eslint-disable-next-line no-unused-vars
@@ -38,6 +40,11 @@ export default function ListingsPage() {
 	const [selectedBrand, setSelectedBrand] = useState('All');
 	const [selectedMinPrice, setSelectedMinPrice] = useState(0);
 	const [selectedMaxPrice, setSelectedMaxPrice] = useState(0);
+	const [savedVehicles, setSavedVehicles] = useState({
+		vehicles: [],
+		equipment: [],
+		trailers: [],
+	});
 	const { fetchData } = useAxios();
 	const wsURL =
 		process.env.REACT_APP_NODE_ENV === 'dev'
@@ -52,6 +59,21 @@ export default function ListingsPage() {
 			setSelectedMinPrice(parseInt(value, 10));
 		}
 	};
+
+	useEffect(() => {
+		const fetchSavedVehicles = async () => {
+			const response = await fetchData({
+				endpoint: `/v1/auctions/${auctionDayId}/bidders/${user?.sub}/vehicles`,
+				method: 'GET',
+			});
+
+			setSavedVehicles(response.data);
+		};
+
+		if (auctionDayId && user) {
+			fetchSavedVehicles();
+		}
+	}, [auctionDayId, user]);
 
 	useEffect(() => {
 		const chatSocket = new WebSocket(wsURL);
@@ -375,11 +397,28 @@ export default function ListingsPage() {
 									engineNumber={vehicle.engine_number}
 									chassisNumber={vehicle.chassis_number}
 									price={
-										vehicle.current_price === 0
+										!vehicle.current_price || vehicle.current_price === 0
 											? vehicle.starting_price
 											: vehicle.current_price
 									}
 									imageUrl={vehicleImage}
+									type={
+										vehicle.content_type === 'vehicle'
+											? 'truck'
+											: vehicle.content_type
+									}
+									auctionDayId={auctionDayId}
+									saved={
+										vehicle.content_type === 'vehicle'
+											? savedVehicles.vehicles.some((v) => v.id === vehicle.id)
+											: vehicle.content_type === 'equipment'
+											  ? savedVehicles.equipment.some(
+														(v) => v.id === vehicle.id
+											    )
+											  : savedVehicles.trailers.some(
+														(v) => v.id === vehicle.id
+											    )
+									}
 								/>
 							))}
 						</div>

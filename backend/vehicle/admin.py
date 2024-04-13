@@ -117,13 +117,12 @@ class SavedUnitsAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "bidder_id",
-        "auction_id",
+        "auction_day",
         "content_type",
         "object_id",
         "created_at",
     )
-    search_fields = ("auction_id__name", "content_type__model")
-    list_filter = ("auction_id", "content_type")
+    list_filter = ("auction_day", "content_type")
     readonly_fields = ("created_at",)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):

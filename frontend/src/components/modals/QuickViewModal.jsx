@@ -53,7 +53,16 @@ export default function QuickViewModal({
 					<ImageSlideshow images={[truck, truck2, truck3, truck4, truck5]} />
 				</div>
 				<div className="flex flex-col items-start w-[47%]">
-					<h3 className="text-mv-black text-xl font-semibold leading-[28px]">
+					<h3
+						className="text-mv-black text-xl font-semibold leading-[28px]"
+						style={{
+							display: '-webkit-box',
+							WebkitLineClamp: 3,
+							WebkitBoxOrient: 'vertical',
+							overflow: 'hidden',
+							textOverflow: 'ellipsis',
+						}}
+					>
 						{description}
 					</h3>
 
@@ -114,15 +123,17 @@ export default function QuickViewModal({
 						</div>
 					</div>
 
-					<div className="flex flex-col w-full items-center mt-[33px] gap-y-[15px]">
-						<ViewModelButton
-							onClick={() => {
-								onClose();
-								navigate(`/listings/${id}`);
-							}}
-							size="lg"
-						/>
-						<CloseButton onClick={onClose} size="lg" />
+					<div className="flex w-full items-center justify-center">
+						<div className="flex flex-col items-center mt-[33px] gap-y-[15px]">
+							<ViewModelButton
+								onClick={() => {
+									onClose();
+									navigate(`/listings/${id}`);
+								}}
+								size="lg"
+							/>
+							<CloseButton onClick={onClose} size="lg" />
+						</div>
 					</div>
 				</div>
 			</div>

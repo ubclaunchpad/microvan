@@ -73,14 +73,15 @@ class SupplierSerializer(serializers.ModelSerializer):
 
 
 class TrailerSerializer(serializers.ModelSerializer):
-    brand_name = serializers.SerializerMethodField()
+    supplier_name = serializers.SerializerMethodField()
     type_name = serializers.SerializerMethodField()
     content_type = serializers.SerializerMethodField()
 
     class Meta:
         model = Trailer
         fields = [
-            "id," "unicode_id",
+            "id",
+            "unicode_id",
             "model_number",
             "description",
             "supplier_name",

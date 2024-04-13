@@ -4,6 +4,7 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import BidNowButton from '../buttons/BidNowButton';
 import CancelButton from '../buttons/CancelButton';
 import useAxios from '../../hooks/useAxios';
+import { priceToString } from '../../utils/priceUtil';
 
 export default function BiddingModal({
 	isOpen,
@@ -17,22 +18,6 @@ export default function BiddingModal({
 	const { fetchData } = useAxios();
 	const increments = minimumBid > 100000 ? 5000 : 1000;
 	const [bidAmount, setBidAmount] = useState(minimumBid + increments);
-
-	const handleBidChange = (e) => {
-		const inputValue = e.target.value.substring(1);
-
-		if (Number.isNaN(inputValue)) {
-			return;
-		}
-
-		const newBid = parseInt(inputValue, 10);
-
-		if (Number.isNaN(newBid)) {
-			return;
-		}
-
-		setBidAmount(newBid > 0 ? newBid : 0);
-	};
 
 	const handleOutsideClick = (e) => {
 		if (e.target.id === 'modal-overlay') {
@@ -103,9 +88,8 @@ export default function BiddingModal({
 						/>
 						<input
 							type="text"
-							value={`₱${bidAmount}`}
-							onChange={handleBidChange}
-							className="text-center w-[250px] h-[65px] font-medium text-[28px] text-mv-black tracking-[0.5px] leading-[35px] focus:outline-none rounded-[15px] border border-solid border-dark-grey shadow-buttonShadow"
+							value={`₱${priceToString(bidAmount)}`}
+							className="text-center w-[250px] h-[65px] font-medium text-[28px] text-mv-black tracking-[0.5px] leading-[35px] focus:outline-none rounded-[15px] border border-solid border-dark-grey shadow-buttonShadow hover:cursor-default"
 						/>
 						<AddCircleOutlineOutlinedIcon
 							sx={{ fontSize: 38 }}

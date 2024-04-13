@@ -24,7 +24,7 @@ export default function HomePage() {
 	const user = useUser();
 	const { currentAuction } = useCurrentAuction();
 
-	const [upcomingAuctionList, setUpcomingAuctionList] = useState([]);
+	const [upcomingAuction, setUpcomingAuction] = useState(null);
 	const [pastAuctionList, setPastAuctionList] = useState([]);
 	const [currentVerified, setCurrentVerified] = useState(null);
 	const { fetchData } = useAxios();
@@ -38,7 +38,7 @@ export default function HomePage() {
 				method: 'GET',
 			});
 
-			setUpcomingAuctionList(response.data);
+			setUpcomingAuction(response.data);
 		};
 
 		const fetchPastAuctions = async () => {
@@ -53,7 +53,7 @@ export default function HomePage() {
 		const fetchCurrentVerification = async () => {
 			if (user && isLoggedIn && currentAuction) {
 				const response = await fetchData({
-					endpoint: `/v1/auctions/${currentAuction.id}/verification?bidder_id=${user.sub}`,
+					endpoint: `/v1/auctions/${currentAuction.id}/verified?bidder_id=${user.sub}`,
 					method: 'GET',
 				});
 
@@ -170,20 +170,18 @@ export default function HomePage() {
 								button={currentAuctionButton}
 							/>
 						</>
-					) : upcomingAuctionList.length > 0 ? (
+					) : upcomingAuction ? (
 						<>
 							<h2 className="text-mv-black text-2xl font-semibold">
 								Upcoming Auction
 							</h2>
 							<UpcomingAuctionCard
 								imageUrls={[image, image, image, image]}
-								startDate={new Date(upcomingAuctionList[0].start_date)}
-								endDate={new Date(upcomingAuctionList[0].end_date)}
-								numberOfEquipment={
-									upcomingAuctionList[0].items.equipment.length
-								}
-								numberOfTrailers={upcomingAuctionList[0].items.trailers.length}
-								numberOfTrucks={upcomingAuctionList[0].items.vehicles.length}
+								startDate={new Date(upcomingAuction.start_date)}
+								endDate={new Date(upcomingAuction.end_date)}
+								numberOfEquipment={upcomingAuction.equipment_count}
+								numberOfTrailers={upcomingAuction.equipment_count}
+								numberOfTrucks={upcomingAuction.equipment_count}
 								button={upcomingAuctionButton}
 							/>
 						</>
@@ -197,19 +195,19 @@ export default function HomePage() {
 					)}
 				</div>
 				{pastAuctionList.length > 0 && (
-					<div className="flex flex-col gap-y-[18px] w-[80%] items-start">
-						<h2 className="text-mv-black text-4xl font-semibold">
+					<div className="flex flex-col gap-y-[36px] w-[80%] items-start">
+						<h2 className="text-mv-black text-xl font-semibold">
 							Past Auctions
 						</h2>
-						<div className="grid grid-cols-3 grid-rows-1 gap-[4.3rem] w-full">
+						<div className="grid grid-cols-3 grid-rows-1 gap-x-[84.5px] w-full">
 							{pastAuctionList.map((auction) => (
 								<PastAuctionCard
 									imageUrls={[image, image, image, image]}
 									startDate={new Date(auction.start_date)}
 									endDate={new Date(auction.end_date)}
-									numberOfEquipment={auction.items.equipment.length}
-									numberOfTrailers={auction.items.trailers.length}
-									numberOfTrucks={auction.items.vehicles.length}
+									numberOfEquipment={auction.equipment_count}
+									numberOfTrailers={auction.trailer_count}
+									numberOfTrucks={auction.vehicle_count}
 								/>
 							))}
 						</div>
@@ -223,7 +221,7 @@ export default function HomePage() {
 					</div>
 				)}
 			</div>
-			<div className="w-full items-center mt-[73px]">
+			<div className="w-full items-center mt-[132px]">
 				<Footer />
 			</div>
 		</div>
