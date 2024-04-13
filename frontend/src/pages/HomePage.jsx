@@ -4,7 +4,6 @@ import { useNavigate, ScrollRestoration } from 'react-router-dom';
 import NavBar from '../components/navBars/NavBar';
 import CoverImage from '../assets/cover-image.png';
 import AboutMeImage from '../assets/about-me-logo.png';
-import AuctionsSearchBar from '../components/searchBars/AuctionsSearchBar';
 import CurrentAuctionCard from '../components/cards/CurrentAuctionCard';
 import image from '../assets/truck.png';
 import Footer from '../components/footers/Footer';
@@ -19,7 +18,6 @@ import useAxios from '../hooks/useAxios';
 import sortAuctions from '../utils/auctionUtils';
 import AwaitingApprovalButton from '../components/buttons/AwaitingApprovalButton';
 import StartBiddingButton from '../components/buttons/StartBiddingButton';
-import DefaultCurrentAuctionCard from '../components/cards/DefaultCurrentAuctionCard';
 import { useUser } from '../providers/UserProvider';
 
 export default function HomePage() {
@@ -94,7 +92,7 @@ export default function HomePage() {
 					<img
 						src={CoverImage}
 						alt="Trucks in a row"
-						className="absolute top-0 left-0 w-full min-h-screen object-cover z-[-2]"
+						className="absolute top-0 left-0 w-full h-screen object-cover z-[-2]"
 					/>
 
 					<div className="absolute top-0 left-0 w-full h-full bg-black opacity-50 z-[-1]" />
@@ -148,52 +146,46 @@ export default function HomePage() {
 				</div>
 			</div>
 			<div className="flex flex-col min-h-screen w-full items-center z-10 gap-y-[123px]">
-				<div className="flex flex-col gap-y-[41px] w-[80%] items-start">
-					<h2 className="text-mv-black text-2xl font-semibold w-full">
-						Search Auctions
-					</h2>
-					<AuctionsSearchBar setResults={setSearchedAuctions} />
-				</div>
 				<div className="flex flex-col gap-y-[36px] w-[80%] items-start">
-					<h2 className="text-mv-black text-2xl font-semibold">
-						Current Auction
-					</h2>
 					{currentAuctionList.length > 0 ? (
-						<CurrentAuctionCard
-							imageUrls={[image, image, image, image]}
-							startDate={new Date(currentAuctionList[0].start_date)}
-							endDate={new Date(currentAuctionList[0].end_date)}
-							numberOfEquipment={currentAuctionList[0].equipment_count}
-							numberOfTrailers={currentAuctionList[0].trailer_count}
-							numberOfTrucks={currentAuctionList[0].truck_count}
-							button={currentAuctionButton}
-						/>
+						<>
+							<h2 className="text-mv-black text-2xl font-semibold">
+								Current Auction
+							</h2>
+							<CurrentAuctionCard
+								imageUrls={[image, image, image, image]}
+								startDate={new Date(currentAuctionList[0].start_date)}
+								endDate={new Date(currentAuctionList[0].end_date)}
+								numberOfEquipment={currentAuctionList[0].equipment_count}
+								numberOfTrailers={currentAuctionList[0].trailer_count}
+								numberOfTrucks={currentAuctionList[0].truck_count}
+								button={currentAuctionButton}
+							/>
+						</>
+					) : upcomingAuctionList.length > 0 ? (
+						<>
+							<h2 className="text-mv-black text-2xl font-semibold">
+								Upcoming Auction
+							</h2>
+							<UpcomingAuctionCard
+								imageUrls={[image, image, image, image]}
+								startDate={new Date(upcomingAuctionList[0].start_date)}
+								endDate={new Date(upcomingAuctionList[0].end_date)}
+								numberOfEquipment={
+									upcomingAuctionList[0].items.equipment.length
+								}
+								numberOfTrailers={upcomingAuctionList[0].items.trailers.length}
+								numberOfTrucks={upcomingAuctionList[0].items.vehicles.length}
+								button={upcomingAuctionButton}
+							/>
+						</>
 					) : (
-						<DefaultCurrentAuctionCard />
-					)}
-				</div>
-				<div className="flex flex-col gap-y-[34px] w-[80%] items-start">
-					<h2 className="text-mv-black text-2xl font-semibold">
-						Upcoming Auctions
-					</h2>
-					{upcomingAuctionList.length > 0 ? (
-						<div className="grid grid-cols-3 grid-rows-1 gap-[4.3rem] w-full">
-							{upcomingAuctionList.map((auction) => (
-								<UpcomingAuctionCard
-									imageUrls={[image, image, image, image]}
-									startDate={new Date(auction.start_date)}
-									endDate={new Date(auction.end_date)}
-									numberOfEquipment={auction.items.equipment.length}
-									numberOfTrailers={auction.items.trailers.length}
-									numberOfTrucks={auction.items.vehicles.length}
-									button={upcomingAuctionButton}
-								/>
-							))}
-						</div>
-					) : (
-						<div>
+						<>
+							<h2 className="text-mv-black text-2xl font-semibold">
+								Upcoming Auction
+							</h2>
 							<DefaultUpcomingAuctionCard />
-						</div>
+						</>
 					)}
 				</div>
 				{pastAuctionList.length > 0 && (
@@ -223,7 +215,7 @@ export default function HomePage() {
 					</div>
 				)}
 			</div>
-			<div className="w-full items-center mt-[218px]">
+			<div className="w-full items-center mt-[73px]">
 				<Footer />
 			</div>
 		</div>

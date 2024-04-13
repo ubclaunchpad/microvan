@@ -22,6 +22,8 @@ module.exports = {
 			'onboarding-placeholder': '#D2D2D2',
 			'icon-grey': '#7B7B7B',
 			'not-found-header': '#1E1E1E',
+			'divider-grey': 'rgba(0, 0, 0, 0.3)',
+			'mid-grey': '#A9A9A9',
 		},
 		extend: {
 			fontFamily: {
@@ -35,6 +37,7 @@ module.exports = {
 				defaultAuctionCardShadow: '10px 10px 25px 0px rgba(0, 0, 0, 0.20)',
 				upcomingAuctionCountdownShadow: '0px 4px 10px 0px rgba(0, 0, 0, 0.25)',
 				filterBoxShadow: 'drop-shadow(0px 2px 4px rgba(22, 22, 22, 0.10))',
+				notificationModalShadow: '0px 0px 4px 0px rgba(0, 0, 0, 0.25)',
 			},
 			fontSize: {
 				xxs: '0.5rem',

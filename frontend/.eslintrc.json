@@ -21,7 +21,8 @@
 		"react/no-array-index-key": "warn",
 		"no-return-assign": "off",
 		"react/jsx-props-no-spreading": "off",
-		"eslint-plugin-import/no-cycle": "off"
+		"eslint-plugin-import/no-cycle": "off",
+		"no-nested-ternary": "off"
 	},
 	"ignorePatterns": ["build/", "node_modules/"]
 }
