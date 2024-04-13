@@ -392,7 +392,6 @@ class SaveUnitApiView(APIView):
             )
 
         content_type = ContentType.objects.get_for_model(model)
-        object = get_object_or_404(model, id=vehicle_id)
         auction_day = get_object_or_404(AuctionDay, id=auction_day_id)
 
         if SavedUnits.objects.filter(

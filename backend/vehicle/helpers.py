@@ -65,7 +65,7 @@ def parse_excel_to_equipment(excel_file):
 
         if Equipment.objects.filter(unicode_id=row["UNICODE"]).exists():
             print(
-                f"Skipping equipment with UNICODE {row['UNICODE']} as it already exists."
+                f"Skipping equipment with UNICODE {row['UNICODE']} as it exists."
             )
             continue
 
