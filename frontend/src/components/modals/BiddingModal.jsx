@@ -3,15 +3,18 @@ import DoNotDisturbOnOutlinedIcon from '@mui/icons-material/DoNotDisturbOnOutlin
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import BidNowButton from '../buttons/BidNowButton';
 import CancelButton from '../buttons/CancelButton';
+import useAxios from '../../hooks/useAxios';
 
 export default function BiddingModal({
 	isOpen,
 	onClose,
-	handleBidNow,
+	auction,
+	vehicle,
 	minimumBid,
+	onPriceUpdate
 }) {
 	if (!isOpen) return null;
-
+	const { fetchData } = useAxios();
 	const increments = minimumBid > 100000 ? 5000 : 1000;
 	const [bidAmount, setBidAmount] = useState(minimumBid + increments);
 
@@ -37,6 +40,34 @@ export default function BiddingModal({
 		}
 	};
 
+	const handleBidNow = async () => {
+		const bidderId = 1; 
+	  
+		try {
+		  const response = await fetchData({
+			method: 'POST',
+			endpoint: '/v1/bids/',
+			data: JSON.stringify({
+			  amount: bidAmount,
+			  bidder_id: bidderId,
+			  auction_id: auction.id,
+			  auction_day_id: auction.auctionday_id, 
+			  object_id: vehicle.id, 
+			}),
+			headers: {
+			  'Content-Type': 'application/json',
+			},
+		  });
+		  if (response.status === 201) {
+            onClose();
+            onPriceUpdate(bidAmount);
+        }
+
+		} catch (error) {
+		  console.error('Error creating bid:', error);
+		}
+	  };
+	  
 	useEffect(() => {
 		window.addEventListener('click', handleOutsideClick);
 		return () => {

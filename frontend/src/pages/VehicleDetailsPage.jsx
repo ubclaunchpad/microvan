@@ -37,7 +37,6 @@ export default function VehicleDetailsPage() {
 				endpoint: '/v1/auctions/current',
 				method: 'GET',
 			});
-
 			setAuction(response.data);
 		};
 		fetchAuction();
@@ -63,7 +62,12 @@ export default function VehicleDetailsPage() {
 		startTime.setDate(startTime.getDate() + 1);
 		endTime.setDate(endTime.getDate() + 1);
 	}
-
+	const handlePriceUpdate = (newPrice) => {
+		setVehicle(prevVehicle => ({
+		  ...prevVehicle,
+		  current_price: newPrice
+		}));
+	  };
 	return (
 		<div className="flex flex-col max-w-screen min-w-screen min-h-screen justify-between">
 			<ScrollRestoration />
@@ -187,10 +191,12 @@ export default function VehicleDetailsPage() {
 			</div>
 			{bidModalOpen && (
 				<BiddingModal
+					vehicle={vehicle}
+					auction={auction}
 					isOpen={bidModalOpen}
 					onClose={() => setBidModalOpen(false)}
-					handleBidNow={() => {}}
-					minimumBid={210000}
+					minimumBid={vehicle.current_price}
+					onPriceUpdate={handlePriceUpdate}
 				/>
 			)}
 
