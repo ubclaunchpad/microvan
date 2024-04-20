@@ -1,55 +1,72 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-	content: ['./src/**/*.{js,jsx,ts,tsx}'],
-	theme: {
-		colors: {
-			transparent: 'transparent',
-			current: 'currentColor',
-			black: '#000000',
-			'mv-green': '#236F41',
-			'mv-grey': '#E9EBEA',
-			'mv-cream': '#FFFAFB',
-			'mv-white': '#FFFFFF',
-			'mv-black': '#4B4B4B',
-			'mv-red': '#B63342',
-			'dark-grey': '#7A7A7A',
-			'light-grey': '#F5F5F5',
-			'progress-bar': '#EEEDED',
-			'dark-green': '#144126',
-			'button-dark-grey': '#575757',
-			'button-disabled': '#D1D1D1',
-			'border-dark-grey': '#B7B7B7',
-			'onboarding-placeholder': '#D2D2D2',
-			'icon-grey': '#7B7B7B',
-			'not-found-header': '#1E1E1E',
-			'divider-grey': 'rgba(0, 0, 0, 0.3)',
-			'mid-grey': '#A9A9A9',
-		},
-		extend: {
-			fontFamily: {
-				sans: ['Poppins', 'sans-serif'],
-			},
-			boxShadow: {
-				buttonShadow: '0px 4px 16px 0px rgba(22, 22, 22, 0.10)',
-				navBarShadow: '0px 2px 4px 0px rgba(22, 22, 22, 0.10)',
-				searchBarShadow: '0px 4px 16px 0px rgba(22, 22, 22, 0.10)',
-				auctionCardShadow: '10px 10px 50px 0px rgba(0, 0, 0, 0.25)',
-				defaultAuctionCardShadow: '10px 10px 25px 0px rgba(0, 0, 0, 0.20)',
-				upcomingAuctionCountdownShadow: '0px 4px 10px 0px rgba(0, 0, 0, 0.25)',
-				filterBoxShadow: 'drop-shadow(0px 2px 4px rgba(22, 22, 22, 0.10))',
-				notificationModalShadow: '0px 0px 4px 0px rgba(0, 0, 0, 0.25)',
-			},
-			fontSize: {
-				xxs: '0.5rem',
-			},
-			backdropFilter: {
-				none: 'none',
-				blur: 'blur(2px)',
-			},
-		},
-	},
-	plugins: [
-		// eslint-disable-next-line import/no-extraneous-dependencies, global-require
-		require('tailwindcss-filters'),
-	],
+  darkMode: ["class"],
+  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  prefix: "",
+  theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
+    extend: {
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate")],
 };
