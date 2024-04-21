@@ -12,6 +12,15 @@ module.exports = {
       },
     },
     extend: {
+      boxShadow: {
+        buttonShadow: "0px 4px 16px 0px rgba(22, 22, 22, 0.10)",
+        navBarShadow: "0px 2px 4px 0px rgba(22, 22, 22, 0.10)",
+        auctionCardShadow: "10px 10px 50px 0px rgba(0, 0, 0, 0.25)",
+        defaultAuctionCardShadow: "10px 10px 25px 0px rgba(0, 0, 0, 0.20)",
+        upcomingAuctionCountdownShadow: "0px 4px 10px 0px rgba(0, 0, 0, 0.25)",
+        filterBoxShadow: "drop-shadow(0px 2px 4px rgba(22, 22, 22, 0.10))",
+        notificationModalShadow: "0px 0px 4px 0px rgba(0, 0, 0, 0.25)",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -45,6 +54,10 @@ module.exports = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        footer: {
+          DEFAULT: "hsl(var(--footer))",
+          foreground: "hsl(var(--footer-foreground))",
         },
       },
       borderRadius: {
