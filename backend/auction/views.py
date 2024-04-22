@@ -1,4 +1,7 @@
-from datetime import datetime, time, timedelta
+from datetime import datetime, timedelta
+from django.utils.timezone import make_aware
+from django.utils.dateparse import parse_date
+import pytz
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import Paginator
@@ -7,14 +10,11 @@ from django.utils import timezone
 from django.utils.timezone import make_aware
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core.permissions import IsAdminUser
-from services.AWSCognitoService import AWSCognitoService
-from user.serializers import UserSerializer
 from vehicle.models import Equipment, SavedUnits, Trailer, Vehicle
 from vehicle.serializers import (
     EquipmentSerializer,
@@ -93,21 +93,20 @@ class AuctionListApiView(APIView):
     def post(self, request, *args, **kwargs):
         """
         Create an Auction with given data, including start and end times,
-        and create AuctionDay models for every day between start_date and
-        end_date inclusive.
+        and create AuctionDay models for every day between start_date and end_date inclusive.
         """
         serializer = AuctionSerializer(data=request.data)
         if serializer.is_valid():
             auction = serializer.save()
 
-            start_datetime = datetime.combine(auction.start_date.date(), time())
-            end_datetime = datetime.combine(auction.end_date.date(), time())
-            delta = timedelta(days=1)
-            current_date = start_datetime
+            sg_tz = pytz.timezone('Asia/Singapore')
+            start_date = make_aware(timezone.combine(parse_date(str(auction.start_date)), timezone.min.time()), sg_tz)
+            end_date = make_aware(timezone.combine(parse_date(str(auction.end_date)), timezone.min.time()), sg_tz)
 
-            while current_date <= end_datetime:
+            current_date = start_date
+            while current_date.date() <= end_date.date():
                 AuctionDay.objects.create(auction=auction, date=current_date.date())
-                current_date += delta
+                current_date += timedelta(days=1)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 

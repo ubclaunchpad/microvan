@@ -1,4 +1,5 @@
 from django.contrib.contenttypes.fields import GenericForeignKey
+from datetime import time
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -12,12 +13,12 @@ class Auction(MainModel):
     """
 
     name = models.CharField(max_length=150, null=True, blank=True)
-    start_date = models.DateTimeField(null=False)
-    end_date = models.DateTimeField(null=False)
+    start_date = models.DateField(null=False)
+    end_date = models.DateField(null=False)
     cover_image = models.CharField(max_length=500, null=True, blank=True)
     is_published = models.BooleanField(default=False)
-    start_time = models.TimeField(null=False, default="00:00:00")
-    end_time = models.TimeField(null=False, default="23:59:59")
+    start_time = models.TimeField(null=False, default=time(0, 0, 0))
+    end_time = models.TimeField(null=False, default=time(23, 59, 59))
 
     def __str__(self):
         return (

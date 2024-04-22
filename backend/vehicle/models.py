@@ -77,7 +77,7 @@ class Trailer(MainModel):
     description = models.CharField(max_length=2000)
     supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT)
     type = models.ForeignKey(Type, on_delete=models.PROTECT)
-    number_of_axles = models.IntegerField()
+    number_of_axles = models.CharField(max_length=50, blank=True, null=True)
     selling_price = models.IntegerField(default=0)
     starting_price = models.IntegerField(default=0)
     current_price = models.IntegerField(blank=True, null=True)
